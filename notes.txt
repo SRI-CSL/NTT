@@ -1,0 +1,612 @@
+The modulus q is 2^m * k + 1 where k is small.
+
+For Q=12289, we have k=3 and m=12.
+
+Given an integer x, write x = a * 2^m + r where (0 <= r < 2^m-1)
+then red(x) is defined as (k*r - a).
+
+Prop 1: red(x) = k*x modulo q
+
+Prop 2: - (x/2^m) <= red(x) < -(x/2^m) + (q - k)
+
+Prop 3: | red(x) | <= |x|/2^m + (q - k)
+
+Prop 4: if 0 <= w <= q-1 then |red(w * x)| <= k * |x| + (q - k)
+
+
+
+
+Safe bounds for red(x) to fit on 32bit (signed)
+-----------------------------------------------
+Safe lower bound = -8796042698752 
+                 = 0xffff f800 02ff e000
+                 = (-2^43 + 4096 * 12286)
+
+Safe upper bound = 8796093026303 
+                 = 0x0000 0800 0a000 0fff
+                 = (2^43 + 4095)
+
+
+In general:
+
+Safe lower bound = -2^(31 + m) + 2^m (q - k)
+
+Safe upper bound =  2^(31 + m) + (2^m - 1)
+
+
+Safe bound for red(x * w) to fit on 32bits
+------------------------------------------
+
+We have 0 <= w <= q-1. To ensure (x * w) is between
+the safe bounds, we need:
+
+(-2^(31+m) + 2^m (q - k))/(q-1) <= x <= (2^(31+m) + 2^m - 1)/(q-1)
+
+Safe lower bound = -8796042698752/12288
+                 = -715823787
+
+Safe upper bound = 8796093026303/12288
+                 = 715827882
+
+
+Bounds after a reduction
+------------------------
+
+If |x| <= C then |red(x)| <= C/2^m + (q-k).
+
+
+Bounds after CT updates
+-----------------------
+
+The updates are of the form:
+
+   x' = x + red(w * y)
+   y' = x - red(w * y)
+
+where 1 <= w <= q-1.
+
+We get the following bounds on x' and y'
+
+             x - ky <= x' <= x - ky + q - k
+ - (q - k) + x + ky <= y' <= x + ky
+
+If we have |x| <= B and |y| <= B then
+this implies  |x'| <= B' and |y'| <= B' where
+
+   B' = (k+1) B + (q - k).
+
+For Q=12289, k=3, starting with B0 = 12288, we
+get the following sequence of bounds:
+
+  B0 = 12288
+  B1 = 61438
+  B2 = 258038
+  B3 = 1044438
+  B4 = 4190038
+  B5 = 16772438
+  B6 = 67102038
+  B7 = 268420438
+  B8 = 1073694038
+
+  B9 = 4294788438
+  B10 = 17179166038
+  B11 = 68716676438
+  B12 = 274866718038
+  B13 = 1099466884438
+  B14 = 4397867550038
+  B15 = 17591470212438
+  B16 = 70365880862038
+  B17 = 281463523460438
+  B18 = 1125854093854038
+  B19 = 4503416375428438
+
+We have B8 < 2^31, B9 > 2^31. So there's a risk of overflow
+after 8 iterations.
+
+If we apply a reduction round before overflow,  we get the
+following sequence:
+
+  B0 = 12288
+  B1 = 61438
+  B2 = 258038
+  B3 = 1044438
+  B4 = 4190038
+  B5 = 16772438
+  B6 = 67102038
+  B7 = 268420438
+  B8 = 1073694038
+  Reduction to 274418
+  B9 = 1109958
+  B10 = 4452118
+  B11 = 17820758
+  B12 = 71295318
+  B13 = 285193558
+  B14 = 1140786518
+  Reduction to 290798
+  B15 = 1175478
+  B16 = 4714198
+  B17 = 18869078
+  B18 = 75488598
+  B19 = 301966678
+
+
+
+Bounds after GS updates
+-----------------------
+
+The updates are of the form:
+
+   x' = x + y
+   y' = red((x - y) * w)
+
+where 1 <= w <= q-1.
+
+Bounds on y':
+
+  -k (x - y) <= y' <= -k (x - y) + (q - k)
+
+If we assume |x| <= B and |y| <= B, we get
+
+   |x'| <= 2B
+   |y'| <= 2k B + (q - k)
+
+So B' is 2kB + (q - k) in this case.
+
+For Q=12289, k=3, this gives the sequence
+
+  B0 = 12288
+  B1 = 86014
+  B2 = 528370
+  B3 = 3182506
+  B4 = 19107322
+  B5 = 114656218
+  B6 = 687949594
+
+  B7 = 4127709850
+  B8 = 24766271386
+  B9 = 148597640602
+  B10 = 891585855898
+  B11 = 5349515147674
+  B12 = 32097090898330
+  B13 = 192582545402266
+  B14 = 1155495272425882
+  B15 = 6932971634567578
+  B16 = 41597829807417754
+  B17 = 249586978844518810
+  B18 = 1497521873067125146
+  B19 = 8985131238402763162
+
+We have B6 < 2^31, B7 > 2^31. Risk overflow after 6 iterations.
+
+If we apply reductions before overflows, we get
+
+  B0 = 12288
+  B1 = 86014
+  B2 = 528370
+  B3 = 3182506
+  B4 = 19107322
+  B5 = 114656218
+  B6 = 687949594
+  Reduction to 180242
+  B7 = 1093738
+  B8 = 6574714
+  B9 = 39460570
+  B10 = 236775706
+  B11 = 1420666522
+  Reduction to 359128
+  B12 = 2167054
+  B13 = 13014610
+  B14 = 78099946
+  B15 = 468611962
+  Reduction to 126693
+  B16 = 772444
+  B17 = 4646950
+  B18 = 27893986
+  B19 = 167376202
+
+
+
+Tighter Bounds
+--------------
+
+To compute red(w * x), we write 
+  
+     w * x = a * 2^m + r  
+
+with 0 <= r <= 2^m - 1, and then red(w * x) = k r - a.
+
+The upper bound on red(w * x) is reached when r is maximal
+and a is minimal. To make a as large as possible, we have
+to increase w, i.e., take w = q-1.
+
+But the set of possible values for r depends on w. We
+have 
+
+    r = w * x - a * 2^m
+
+so r is a multiple of gcd(w, 2^m).  In particular, when
+w = q - 1 = k*2^m, r must be zero.
+
+To get a tight bound on  | red(w * x) |, we must take this
+into account.
+
+1) For w = q - 1 = k*2^m,  red(w * x) is equal to - k*x.
+
+   IF we assume |x| <= B, we get
+
+        - k * B <= red(w * x) <= k * B
+   
+
+2) For w = q- 2  = k*2^m - 1, we have gcd(w, 2^m) = 1 so 
+   r can take any value in [0 ... 2^m-1]. Then
+
+                        0 <=  k r  <=  k * (2^m - 1)
+
+      (w*x)/2^m - 1 + 1/2^m  <=  a  <=  (w*x)/2^m
+
+    If we assume |x| <= B, we get:
+
+    - (w*B)/2^m - 1 + 1/2^m  <=  a <=  (w*B)/2^m
+
+    and then red(w * x) = k*r - a is bounded as follows:
+
+     - (w*B)/2^m  <= red(w * x) <= k * (2^m - 1) + (w*B)/2^m + 1 - 1/2^m
+
+     - (w*B)/2^m  <= red(w * x) <= k * 2^m - k + (w*B)/2^m + 1 - 1/2^m
+ 
+     - (w*B)/2^m  <= red(w * x) <= q - 1 - k + (w*B)/2^m + 1 - 1/2^m
+
+     - (w*B)/2^m  <= red(w * x) <= (q - k) + (w*B)/2^m - 1/2^m
+
+    For w = (q - 2) = k*2^m - 1, the expression (w*B)/2^m can
+    be rewritten to
+
+        B * (k*2^m - 1)/2^m = kB - B/2^m.
+
+    The upper bound on red(w * x)  is then 
+
+         k * B - B/2^m + (q - k) - 1/2^m
+
+       = k * B + (q - k) - (B+1)/2^m
+
+    This is larger than k * B if  B+1 < 2^m (q - k).
+
+Putting all this together, we have:
+
+1) if B + 1 >= 2^m * (q - k) then 
+
+     - k * B <= red(w * x) <= k * B
+
+2) if B + 1 < 2^m * (q - k) then
+
+     - k * B <= red(w * x) <= k * B + (q - k) - (B+1)/2^m 
+
+This gives a more precise upper bound on red(w * x) than
+the  (k * B + q - k).
+
+If we use this formula, we get the following sequence for CT:
+
+  B0 = 12288
+  B1 = 61435
+  B2 = 258012
+  B3 = 1044272
+  B4 = 4189120
+  B5 = 16767744
+  B6 = 67079169
+  B7 = 268316676
+  B8 = 1073266704
+  Reduction to 274314
+  B9 = 1109476
+  B10 = 4449920
+  B11 = 17810880
+  B12 = 71251458
+  B13 = 285005832
+  B14 = 1140023328
+  Reduction to 290612
+  B15 = 1174664
+  B16 = 4710656
+  B17 = 18853760
+  B18 = 75422724
+  B19 = 301690896
+
+For GS, we get 
+
+  B0 = 12288
+  B1 = 86008
+  B2 = 528293
+  B3 = 3181787
+  B4 = 19101455
+  B5 = 114611690
+  B6 = 687670140
+  Reduction to 180174
+  B7 = 1093243
+  B8 = 6571211
+  B9 = 39436344
+  B10 = 236618064
+  B11 = 1419708384
+  Reduction to 358894
+  B12 = 2165475
+  B13 = 13004079
+  B14 = 78030411
+  B15 = 468182466
+  Reduction to 126588
+  B16 = 771753
+  B17 = 4642428
+  B18 = 27864588
+  B19 = 167187528
+
+
+It may help to use coefficients in the range [ -(q-1)/2, (q-1)/2 ]
+instead of [0, q-1]. That would reduce the absolute value of w, and
+maybe allow us to have a CT algorithm without risk of numerical
+overflow (even for n=1024). Even better, maybe, we could take the
+actual coefficients (in the p tables) into accout, and specialize the
+implementation to our choice of psi?
+
+
+
+More precise bounds (cf. red_bounds.c)
+--------------------------------------
+
+Two options:
+
+1) Use positive input and positive coefficients in the p tables.
+   The p[i]s are in the interval [0, 12288].
+
+2) Use coefficients p[i]s in the interval [-6144,+6144].
+
+
+For option 1, here are the new bound sequences when starting with 
+B0 = 12288. The bounds are a bit smaller than before but we still
+need a reduction step after 8 iterations for CT and after 6
+iterations for GS.
+
+CT bounds
+
+  B0 = 12288
+  B1 = 61432
+  B2 = 257978
+  B3 = 1043928
+  B4 = 4186097
+  B5 = 16755610
+  B6 = 67027260
+  B7 = 268109040
+  B8 = 1072436160
+  Reduction to 274111
+  B9 = 1107843
+  B10 = 4442370
+  B11 = 17778817
+  B12 = 71118480
+  B13 = 284473920
+  B14 = 1137895680
+  Reduction to 290092
+  B15 = 1172003
+  B16 = 4698368
+  B17 = 18803840
+  B18 = 75220370
+  B19 = 300881480
+
+
+GS bounds
+
+  B0 = 12288
+  B1 = 86005
+  B2 = 528211
+  B3 = 3180259
+  B4 = 19090580
+  B5 = 114543480
+  B6 = 687260880
+  Reduction to 180074
+  B7 = 1091745
+  B8 = 6561254
+  B9 = 39373381
+  B10 = 236240286
+  B11 = 1417441716
+  Reduction to 358341
+  B12 = 2161806
+  B13 = 12980153
+  B14 = 77886443
+  B15 = 467318658
+  Reduction to 126377
+  B16 = 769856
+  B17 = 4629897
+  B18 = 27785624
+  B19 = 166713744
+
+
+With option 2, starting with B0 = 12288, we get better sequences.
+There's no need for reduction. No overflow is possible in 10 rounds.
+
+CT bounds
+
+  B0 = 12288
+  B1 = 42997
+  B2 = 119738
+  B3 = 311299
+  B4 = 790447
+  B5 = 1987966
+  B6 = 4980673
+  B7 = 12462562
+  B8 = 31164924
+  B9 = 77918453
+  B10 = 194802277
+  B11 = 487011837
+  B12 = 1217535737
+  Reduction to 309535
+  B13 = 785616
+  B14 = 1975626
+  B15 = 4949887
+  B16 = 12385411
+  B17 = 30971056
+  B18 = 77433783
+  B19 = 193590602
+
+
+GS bounds
+
+  B0 = 12288
+  B1 = 49138
+  B2 = 159595
+  B3 = 490509
+  B4 = 1483533
+  B5 = 4460701
+  B6 = 13391734
+  B7 = 40181345
+  B8 = 120550178
+  B9 = 361656677
+  B10 = 1084976174
+  Reduction to 277172
+  B11 = 843357
+  B12 = 2541250
+  B13 = 7632968
+  B14 = 22907241
+  B15 = 68727866
+  B16 = 206189741
+  B17 = 618575366
+  B18 = 1855732241
+  Reduction to 465345
+  B19 = 1407302
+
+
+
+The bound B0 = 12288 is OK for some ntt functions, but we also
+want to support product by powers of psi followed by ntt.
+If |x| <= B0, and we multiply by a y:
+
+  x' = red(x * y)
+
+when |x'| can be larger than B0. 
+
+As before, we can distinguish two cases:
+
+Option 1:  0 <= x <= 12288, 0 <= y <= 12288
+--------
+
+The bounds on red(x * y) are:
+
+   min red(x * y) = -36864 (for x=12288, y=12288)
+   max red(x * y) = 12285 (for x=1, y=4095)
+
+So the max absolute value is now 36864.
+
+Starting from this, and assuming the coefficients p[i]
+are in the interval [0, 12288]:
+
+CT bounds
+
+  B0 = 36864
+  B1 = 159730
+  B2 = 651128
+  B3 = 2616234
+  B4 = 10474535
+  B5 = 41904677
+  B6 = 167618708
+  B7 = 670474832
+  Reduction to 175976
+  B8 = 715694
+  B9 = 2873755
+  B10 = 11504664
+  B11 = 46025136
+  B12 = 184100544
+  B13 = 736402176
+  Reduction to 192071
+  B14 = 780082
+  B15 = 3131047
+  B16 = 12533167
+  B17 = 50140118
+  B18 = 200560472
+  B19 = 802241888
+  Reduction to 208145
+
+
+GS bounds
+
+  B0 = 36864
+  B1 = 233449
+  B2 = 1412731
+  B3 = 8485651
+  B4 = 50917324
+  B5 = 305503944
+  B6 = 1833023664
+  Reduction to 459801
+  B7 = 2770487
+  B8 = 16631116
+  B9 = 99786712
+  B10 = 598720272
+  Reduction to 158457
+  B11 = 962325
+  B12 = 5784359
+  B13 = 34710771
+  B14 = 208264626
+  B15 = 1249587756
+  Reduction to 317361
+  B16 = 1915826
+  B17 = 11504438
+  B18 = 69028362
+  B19 = 414170172
+  Reduction to 113401
+
+
+ 
+Option 2: -6144 <= x <= 6144, -6144 <= y <= 6144:
+--------
+
+   min red(x * y) = -9216 (for x=-6144, y=-6144)
+   max red(x * y) = 21499 (for x=6143, y=-6143)
+
+So the max absolute value after this is 21499.
+
+
+CT bounds
+
+  B0 = 21499
+  B1 = 65996
+  B2 = 177113
+  B3 = 454751
+  B4 = 1148904
+  B5 = 2884192
+  B6 = 7221144
+  B7 = 18063074
+  B8 = 45164706
+  B9 = 112917908
+  B10 = 282300913
+  B11 = 705758427
+  B12 = 1764402212
+  Reduction to 443048
+  B13 = 1119550
+  B14 = 2810134
+  B15 = 7036512
+  B16 = 17600603
+  B17 = 44009354
+  B18 = 110029528
+  B19 = 275079963
+
+
+GS bounds
+
+  B0 = 21499
+  B1 = 76741
+  B2 = 242116
+  B3 = 737933
+  B4 = 2224937
+  B5 = 6684719
+  B6 = 20063032
+  B7 = 60195239
+  B8 = 180591860
+  B9 = 541781723
+  B10 = 1625351312
+  Reduction to 409100
+  B11 = 1239146
+  B12 = 3728795
+  B13 = 11195616
+  B14 = 33592994
+  B15 = 100785125
+  B16 = 302361518
+  B17 = 907090697
+  Reduction to 233743
+  B18 = 713003
+  B19 = 2150044
+
+
+Conclusion: we should normalize the coefficients p[i]
+to be between -6144 and +6144, rather than 0, 12288.

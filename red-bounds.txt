@@ -1,0 +1,2566 @@
+
+Bounds after repeated reductions
+
+bounds: a <= x <= b,  a = -2147483648, b = 2147483647
+  min red(x) = -524287 (for x=2147479552)
+  max red(x) = 536573 (for x=-2147479553)
+
+bounds: a <= x <= b,  a = -524287, b = 536573
+  min red(x) = -130 (for x=532480)
+  max red(x) = 12413 (for x=-520193)
+
+bounds: a <= x <= b,  a = -130, b = 12413
+  min red(x) = -3 (for x=12288)
+  max red(x) = 12286 (for x=-1)
+
+bounds: a <= x <= b,  a = -3, b = 12286
+  min red(x) = -2 (for x=8192)
+  max red(x) = 12286 (for x=-1)
+
+bounds: a <= x <= b,  a = -2, b = 12286
+  min red(x) = -2 (for x=8192)
+  max red(x) = 12286 (for x=-1)
+
+
+Bounds on absolute value after repeated reductions
+
+bounds: a <= x <= b,  a = -2147483648, b = 2147483647
+  min red(x) = -524287 (for x=2147479552)
+  max red(x) = 536573 (for x=-2147479553)
+
+bounds: a <= x <= b,  a = -536573, b = 536573
+  min red(x) = -130 (for x=532480)
+  max red(x) = 12416 (for x=-532481)
+
+bounds: a <= x <= b,  a = -12416, b = 12416
+  min red(x) = -3 (for x=12288)
+  max red(x) = 12289 (for x=-12289)
+
+bounds: a <= x <= b,  a = -12289, b = 12289
+  min red(x) = -3 (for x=12288)
+  max red(x) = 12289 (for x=-12289)
+
+
+Bounds on reduced product
+
+After one reduction:
+  -524287 <= x <= 536573, -524287 <= y <= 536573
+  -70290643 <= red(x * y) <= 68693493
+
+After two reductions:
+  -130 <= x <= 12413, -130 <= y <= 12413
+  -37509 <= red(x * y) <= 12671
+
+
+Base CT iterations
+
+Option 1: B0 = 12288, 0 <= w <= 12288
+
+CT bounds
+  B0 = 12288
+  B1 = 61432
+  B2 = 257978
+  B3 = 1043928
+  B4 = 4186097
+  B5 = 16755610
+  B6 = 67027260
+  B7 = 268109040
+  B8 = 1072436160
+  Reduction to 274111
+  B9 = 1107843
+  B10 = 4442370
+  B11 = 17778817
+  B12 = 71118480
+  B13 = 284473920
+  B14 = 1137895680
+  Reduction to 290092
+  B15 = 1172003
+  B16 = 4698368
+  B17 = 18803840
+  B18 = 75220370
+  B19 = 300881480
+
+
+Option 2: B0 = 6144, -6144 <= w <= 6144
+
+CT bounds
+  B0 = 12288
+  B1 = 42997
+  B2 = 119738
+  B3 = 311299
+  B4 = 790447
+  B5 = 1987966
+  B6 = 4980673
+  B7 = 12462562
+  B8 = 31164924
+  B9 = 77918453
+  B10 = 194802277
+  B11 = 487011837
+  B12 = 1217535737
+  Reduction to 309535
+  B13 = 785616
+  B14 = 1975626
+  B15 = 4949887
+  B16 = 12385411
+  B17 = 30971056
+  B18 = 77433783
+  B19 = 193590602
+
+
+
+Base GS iterations
+
+Option 1: B0 = 12288, 0 <= w <= 12288
+
+GS bounds
+  B0 = 12288
+  B1 = 86005
+  B2 = 528211
+  B3 = 3180259
+  B4 = 19090580
+  B5 = 114543480
+  B6 = 687260880
+  Reduction to 180074
+  B7 = 1091745
+  B8 = 6561254
+  B9 = 39373381
+  B10 = 236240286
+  B11 = 1417441716
+  Reduction to 358341
+  B12 = 2161806
+  B13 = 12980153
+  B14 = 77886443
+  B15 = 467318658
+  Reduction to 126377
+  B16 = 769856
+  B17 = 4629897
+  B18 = 27785624
+  B19 = 166713744
+
+
+Option 2: B0 = 6144, -6144 <= w <= 6144
+
+GS bounds
+  B0 = 12288
+  B1 = 49138
+  B2 = 159595
+  B3 = 490509
+  B4 = 1483533
+  B5 = 4460701
+  B6 = 13391734
+  B7 = 40181345
+  B8 = 120550178
+  B9 = 361656677
+  B10 = 1084976174
+  Reduction to 277172
+  B11 = 843357
+  B12 = 2541250
+  B13 = 7632968
+  B14 = 22907241
+  B15 = 68727866
+  B16 = 206189741
+  B17 = 618575366
+  B18 = 1855732241
+  Reduction to 465345
+  B19 = 1407302
+
+
+
+Bounds on red of products
+
+Option 1:
+  0 <= x <= 12288, 0 <= y <= 12288:
+  min red(x * y) = -36864 (for x=12288, y=12288)
+  max red(x * y) = 12285 (for x=1, y=4095)
+
+CT bounds
+  B0 = 36864
+  B1 = 159730
+  B2 = 651128
+  B3 = 2616234
+  B4 = 10474535
+  B5 = 41904677
+  B6 = 167618708
+  B7 = 670474832
+  Reduction to 175976
+  B8 = 715694
+  B9 = 2873755
+  B10 = 11504664
+  B11 = 46025136
+  B12 = 184100544
+  B13 = 736402176
+  Reduction to 192071
+  B14 = 780082
+  B15 = 3131047
+  B16 = 12533167
+  B17 = 50140118
+  B18 = 200560472
+  B19 = 802241888
+  Reduction to 208145
+
+GS bounds
+  B0 = 36864
+  B1 = 233449
+  B2 = 1412731
+  B3 = 8485651
+  B4 = 50917324
+  B5 = 305503944
+  B6 = 1833023664
+  Reduction to 459801
+  B7 = 2770487
+  B8 = 16631116
+  B9 = 99786712
+  B10 = 598720272
+  Reduction to 158457
+  B11 = 962325
+  B12 = 5784359
+  B13 = 34710771
+  B14 = 208264626
+  B15 = 1249587756
+  Reduction to 317361
+  B16 = 1915826
+  B17 = 11504438
+  B18 = 69028362
+  B19 = 414170172
+  Reduction to 113401
+
+Option 2:
+  -6144 <= x <= 6144, -6144 <= y <= 6144:
+  min red(x * y) = -9216 (for x=-6144, y=-6144)
+  max red(x * y) = 21499 (for x=6143, y=-6143)
+
+CT bounds
+  B0 = 21499
+  B1 = 65996
+  B2 = 177113
+  B3 = 454751
+  B4 = 1148904
+  B5 = 2884192
+  B6 = 7221144
+  B7 = 18063074
+  B8 = 45164706
+  B9 = 112917908
+  B10 = 282300913
+  B11 = 705758427
+  B12 = 1764402212
+  Reduction to 443048
+  B13 = 1119550
+  B14 = 2810134
+  B15 = 7036512
+  B16 = 17600603
+  B17 = 44009354
+  B18 = 110029528
+  B19 = 275079963
+
+GS bounds
+  B0 = 21499
+  B1 = 76741
+  B2 = 242116
+  B3 = 737933
+  B4 = 2224937
+  B5 = 6684719
+  B6 = 20063032
+  B7 = 60195239
+  B8 = 180591860
+  B9 = 541781723
+  B10 = 1625351312
+  Reduction to 409100
+  B11 = 1239146
+  B12 = 3728795
+  B13 = 11195616
+  B14 = 33592994
+  B15 = 100785125
+  B16 = 302361518
+  B17 = 907090697
+  Reduction to 233743
+  B18 = 713003
+  B19 = 2150044
+
+Bounds for function ntt16_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+bound on output = 181573
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 28504
+  GS: B[2] = 87920
+  GS: B[3] = 175840
+  GS: B[4] = 351680
+bound on output = 351680
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+bound on output = 307120
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 44836
+  GS: B[2] = 131355
+  GS: B[3] = 262710
+  GS: B[4] = 525420
+bound on output = 525420
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+bound on output = 507050
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 69334
+  GS: B[2] = 196449
+  GS: B[3] = 392898
+  GS: B[4] = 785796
+bound on output = 785796
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+bound on output = 840359
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 110164
+  GS: B[2] = 304978
+  GS: B[3] = 609956
+  GS: B[4] = 1219912
+bound on output = 1219912
+
+Bounds for function ntt16_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+bound on output = 181573
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 28504
+  GS: B[2] = 87920
+  GS: B[3] = 175840
+  GS: B[4] = 351680
+bound on output = 351680
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+bound on output = 307120
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 44836
+  GS: B[2] = 131355
+  GS: B[3] = 262710
+  GS: B[4] = 525420
+bound on output = 525420
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+bound on output = 507050
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 69334
+  GS: B[2] = 196449
+  GS: B[3] = 392898
+  GS: B[4] = 785796
+bound on output = 785796
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+bound on output = 840359
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 110164
+  GS: B[2] = 304978
+  GS: B[3] = 609956
+  GS: B[4] = 1219912
+bound on output = 1219912
+
+Bounds for function mulntt16_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+bound on output = 306640
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 27969
+  GS: B[2] = 71040
+  GS: B[3] = 201000
+  GS: B[4] = 402000
+bound on output = 402000
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+bound on output = 381880
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 43800
+  GS: B[2] = 104761
+  GS: B[3] = 290592
+  GS: B[4] = 581184
+bound on output = 581184
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+bound on output = 495402
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 67622
+  GS: B[2] = 155470
+  GS: B[3] = 425448
+  GS: B[4] = 850896
+bound on output = 850896
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+bound on output = 684765
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 107124
+  GS: B[2] = 238908
+  GS: B[3] = 647291
+  GS: B[4] = 1294582
+bound on output = 1294582
+
+Bounds for function mulntt16_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+bound on output = 306640
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 27969
+  GS: B[2] = 71040
+  GS: B[3] = 201000
+  GS: B[4] = 402000
+bound on output = 402000
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+bound on output = 381880
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 43800
+  GS: B[2] = 104761
+  GS: B[3] = 290592
+  GS: B[4] = 581184
+bound on output = 581184
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+bound on output = 495402
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 67622
+  GS: B[2] = 155470
+  GS: B[3] = 425448
+  GS: B[4] = 850896
+bound on output = 850896
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+bound on output = 684765
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 107124
+  GS: B[2] = 238908
+  GS: B[3] = 647291
+  GS: B[4] = 1294582
+bound on output = 1294582
+
+Bounds for function ntt128_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+  CT: B[5] = 435067
+  CT: B[6] = 1088689
+  CT: B[7] = 2705913
+bound on output = 2705913
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30252
+  GS: B[2] = 101326
+  GS: B[3] = 281533
+  GS: B[4] = 760605
+  GS: B[5] = 2034033
+  GS: B[6] = 4068066
+  GS: B[7] = 8136132
+bound on output = 8136132
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+  CT: B[5] = 727475
+  CT: B[6] = 1812286
+  CT: B[7] = 4496320
+bound on output = 4496320
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 48318
+  GS: B[2] = 154696
+  GS: B[3] = 423268
+  GS: B[4] = 1137368
+  GS: B[5] = 3035495
+  GS: B[6] = 6070990
+  GS: B[7] = 12141980
+bound on output = 12141980
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+  CT: B[5] = 1193108
+  CT: B[6] = 2964381
+  CT: B[7] = 7347140
+bound on output = 7347140
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 75513
+  GS: B[2] = 234838
+  GS: B[3] = 636403
+  GS: B[4] = 1703895
+  GS: B[5] = 4541463
+  GS: B[6] = 9082926
+  GS: B[7] = 18165852
+bound on output = 18165852
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+  CT: B[5] = 1969444
+  CT: B[6] = 4885271
+  CT: B[7] = 12100103
+bound on output = 12100103
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 120751
+  GS: B[2] = 368132
+  GS: B[3] = 990731
+  GS: B[4] = 2645707
+  GS: B[5] = 7045001
+  GS: B[6] = 14090002
+  GS: B[7] = 28180004
+bound on output = 28180004
+
+Bounds for function ntt128_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+  CT: B[5] = 435067
+  CT: B[6] = 1088689
+  CT: B[7] = 2705913
+bound on output = 2705913
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30252
+  GS: B[2] = 101326
+  GS: B[3] = 281533
+  GS: B[4] = 760605
+  GS: B[5] = 2034033
+  GS: B[6] = 4068066
+  GS: B[7] = 8136132
+bound on output = 8136132
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+  CT: B[5] = 727475
+  CT: B[6] = 1812286
+  CT: B[7] = 4496320
+bound on output = 4496320
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 48318
+  GS: B[2] = 154696
+  GS: B[3] = 423268
+  GS: B[4] = 1137368
+  GS: B[5] = 3035495
+  GS: B[6] = 6070990
+  GS: B[7] = 12141980
+bound on output = 12141980
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+  CT: B[5] = 1193108
+  CT: B[6] = 2964381
+  CT: B[7] = 7347140
+bound on output = 7347140
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 75513
+  GS: B[2] = 234838
+  GS: B[3] = 636403
+  GS: B[4] = 1703895
+  GS: B[5] = 4541463
+  GS: B[6] = 9082926
+  GS: B[7] = 18165852
+bound on output = 18165852
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+  CT: B[5] = 1969444
+  CT: B[6] = 4885271
+  CT: B[7] = 12100103
+bound on output = 12100103
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 120751
+  GS: B[2] = 368132
+  GS: B[3] = 990731
+  GS: B[4] = 2645707
+  GS: B[5] = 7045001
+  GS: B[6] = 14090002
+  GS: B[7] = 28180004
+bound on output = 28180004
+
+Bounds for function mulntt128_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+  CT: B[5] = 770851
+  CT: B[6] = 1855285
+  CT: B[7] = 4384731
+bound on output = 4384731
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 28132
+  GS: B[2] = 90440
+  GS: B[3] = 278877
+  GS: B[4] = 730693
+  GS: B[5] = 1559081
+  GS: B[6] = 4156491
+  GS: B[7] = 8312982
+bound on output = 8312982
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+  CT: B[5] = 957104
+  CT: B[6] = 2300797
+  CT: B[7] = 5435290
+bound on output = 5435290
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 44755
+  GS: B[2] = 136638
+  GS: B[3] = 415027
+  GS: B[4] = 1081603
+  GS: B[5] = 2302675
+  GS: B[6] = 6133131
+  GS: B[7] = 12266262
+bound on output = 12266262
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+  CT: B[5] = 1237952
+  CT: B[6] = 2972265
+  CT: B[7] = 7018174
+bound on output = 7018174
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 69764
+  GS: B[2] = 206328
+  GS: B[3] = 620571
+  GS: B[4] = 1611069
+  GS: B[5] = 3423526
+  GS: B[6] = 9112594
+  GS: B[7] = 18225188
+bound on output = 18225188
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+  CT: B[5] = 1706548
+  CT: B[6] = 4092668
+  CT: B[7] = 9659100
+bound on output = 9659100
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 111463
+  GS: B[2] = 322179
+  GS: B[3] = 962156
+  GS: B[4] = 2491294
+  GS: B[5] = 5287701
+  GS: B[6] = 14067995
+  GS: B[7] = 28135990
+bound on output = 28135990
+
+Bounds for function mulntt128_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+  CT: B[5] = 770851
+  CT: B[6] = 1855285
+  CT: B[7] = 4384731
+bound on output = 4384731
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 28132
+  GS: B[2] = 90440
+  GS: B[3] = 278877
+  GS: B[4] = 730693
+  GS: B[5] = 1559081
+  GS: B[6] = 4156491
+  GS: B[7] = 8312982
+bound on output = 8312982
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+  CT: B[5] = 957104
+  CT: B[6] = 2300797
+  CT: B[7] = 5435290
+bound on output = 5435290
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 44755
+  GS: B[2] = 136638
+  GS: B[3] = 415027
+  GS: B[4] = 1081603
+  GS: B[5] = 2302675
+  GS: B[6] = 6133131
+  GS: B[7] = 12266262
+bound on output = 12266262
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+  CT: B[5] = 1237952
+  CT: B[6] = 2972265
+  CT: B[7] = 7018174
+bound on output = 7018174
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 69764
+  GS: B[2] = 206328
+  GS: B[3] = 620571
+  GS: B[4] = 1611069
+  GS: B[5] = 3423526
+  GS: B[6] = 9112594
+  GS: B[7] = 18225188
+bound on output = 18225188
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+  CT: B[5] = 1706548
+  CT: B[6] = 4092668
+  CT: B[7] = 9659100
+bound on output = 9659100
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 111463
+  GS: B[2] = 322179
+  GS: B[3] = 962156
+  GS: B[4] = 2491294
+  GS: B[5] = 5287701
+  GS: B[6] = 14067995
+  GS: B[7] = 28135990
+bound on output = 28135990
+
+Bounds for function ntt256_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+  CT: B[5] = 435067
+  CT: B[6] = 1088689
+  CT: B[7] = 2705913
+  CT: B[8] = 6707561
+bound on output = 6707561
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30252
+  GS: B[2] = 101326
+  GS: B[3] = 310816
+  GS: B[4] = 838299
+  GS: B[5] = 2240437
+  GS: B[6] = 5967791
+  GS: B[7] = 11935582
+  GS: B[8] = 23871164
+bound on output = 23871164
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+  CT: B[5] = 727475
+  CT: B[6] = 1812286
+  CT: B[7] = 4496320
+  CT: B[8] = 11137665
+bound on output = 11137665
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 48318
+  GS: B[2] = 154696
+  GS: B[3] = 468397
+  GS: B[4] = 1257253
+  GS: B[5] = 3354203
+  GS: B[6] = 8928274
+  GS: B[7] = 17856548
+  GS: B[8] = 35713096
+bound on output = 35713096
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+  CT: B[5] = 1193108
+  CT: B[6] = 2964381
+  CT: B[7] = 7347140
+  CT: B[8] = 18191629
+bound on output = 18191629
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 75513
+  GS: B[2] = 234838
+  GS: B[3] = 704681
+  GS: B[4] = 1885333
+  GS: B[5] = 5023682
+  GS: B[6] = 13366187
+  GS: B[7] = 26732374
+  GS: B[8] = 53464748
+bound on output = 53464748
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+  CT: B[5] = 1969444
+  CT: B[6] = 4885271
+  CT: B[7] = 12100103
+  CT: B[8] = 29952252
+bound on output = 29952252
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 120751
+  GS: B[2] = 368132
+  GS: B[3] = 1097652
+  GS: B[4] = 2930039
+  GS: B[5] = 7800824
+  GS: B[6] = 20748368
+  GS: B[7] = 41496736
+  GS: B[8] = 82993472
+bound on output = 82993472
+
+Bounds for function ntt256_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+  CT: B[5] = 435067
+  CT: B[6] = 1088689
+  CT: B[7] = 2705913
+  CT: B[8] = 6707561
+bound on output = 6707561
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30252
+  GS: B[2] = 101326
+  GS: B[3] = 310816
+  GS: B[4] = 838299
+  GS: B[5] = 2240437
+  GS: B[6] = 5967791
+  GS: B[7] = 11935582
+  GS: B[8] = 23871164
+bound on output = 23871164
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+  CT: B[5] = 727475
+  CT: B[6] = 1812286
+  CT: B[7] = 4496320
+  CT: B[8] = 11137665
+bound on output = 11137665
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 48318
+  GS: B[2] = 154696
+  GS: B[3] = 468397
+  GS: B[4] = 1257253
+  GS: B[5] = 3354203
+  GS: B[6] = 8928274
+  GS: B[7] = 17856548
+  GS: B[8] = 35713096
+bound on output = 35713096
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+  CT: B[5] = 1193108
+  CT: B[6] = 2964381
+  CT: B[7] = 7347140
+  CT: B[8] = 18191629
+bound on output = 18191629
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 75513
+  GS: B[2] = 234838
+  GS: B[3] = 704681
+  GS: B[4] = 1885333
+  GS: B[5] = 5023682
+  GS: B[6] = 13366187
+  GS: B[7] = 26732374
+  GS: B[8] = 53464748
+bound on output = 53464748
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+  CT: B[5] = 1969444
+  CT: B[6] = 4885271
+  CT: B[7] = 12100103
+  CT: B[8] = 29952252
+bound on output = 29952252
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 120751
+  GS: B[2] = 368132
+  GS: B[3] = 1097652
+  GS: B[4] = 2930039
+  GS: B[5] = 7800824
+  GS: B[6] = 20748368
+  GS: B[7] = 41496736
+  GS: B[8] = 82993472
+bound on output = 82993472
+
+Bounds for function mulntt256_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+  CT: B[5] = 770851
+  CT: B[6] = 1855285
+  CT: B[7] = 4384731
+  CT: B[8] = 10724646
+bound on output = 10724646
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 29862
+  GS: B[2] = 93200
+  GS: B[3] = 271462
+  GS: B[4] = 812729
+  GS: B[5] = 2106224
+  GS: B[6] = 4472270
+  GS: B[7] = 11900390
+  GS: B[8] = 23800780
+bound on output = 23800780
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+  CT: B[5] = 957104
+  CT: B[6] = 2300797
+  CT: B[7] = 5435290
+  CT: B[8] = 13291078
+bound on output = 13291078
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 47595
+  GS: B[2] = 141056
+  GS: B[3] = 404579
+  GS: B[4] = 1205264
+  GS: B[5] = 3117728
+  GS: B[6] = 6614388
+  GS: B[7] = 17594580
+  GS: B[8] = 35189160
+bound on output = 35189160
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+  CT: B[5] = 1237952
+  CT: B[6] = 2972265
+  CT: B[7] = 7018174
+  CT: B[8] = 17158386
+bound on output = 17158386
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 74255
+  GS: B[2] = 213388
+  GS: B[3] = 605802
+  GS: B[4] = 1798503
+  GS: B[5] = 4646378
+  GS: B[6] = 9851275
+  GS: B[7] = 26198939
+  GS: B[8] = 52397878
+bound on output = 52397878
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+  CT: B[5] = 1706548
+  CT: B[6] = 4092668
+  CT: B[7] = 9659100
+  CT: B[8] = 23610479
+bound on output = 23610479
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 118527
+  GS: B[2] = 333355
+  GS: B[3] = 939663
+  GS: B[4] = 2782969
+  GS: B[5] = 7182935
+  GS: B[6] = 15223198
+  GS: B[7] = 40478551
+  GS: B[8] = 80957102
+bound on output = 80957102
+
+Bounds for function mulntt256_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+  CT: B[5] = 770851
+  CT: B[6] = 1855285
+  CT: B[7] = 4384731
+  CT: B[8] = 10724646
+bound on output = 10724646
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 29862
+  GS: B[2] = 93200
+  GS: B[3] = 271462
+  GS: B[4] = 812729
+  GS: B[5] = 2106224
+  GS: B[6] = 4472270
+  GS: B[7] = 11900390
+  GS: B[8] = 23800780
+bound on output = 23800780
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+  CT: B[5] = 957104
+  CT: B[6] = 2300797
+  CT: B[7] = 5435290
+  CT: B[8] = 13291078
+bound on output = 13291078
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 47595
+  GS: B[2] = 141056
+  GS: B[3] = 404579
+  GS: B[4] = 1205264
+  GS: B[5] = 3117728
+  GS: B[6] = 6614388
+  GS: B[7] = 17594580
+  GS: B[8] = 35189160
+bound on output = 35189160
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+  CT: B[5] = 1237952
+  CT: B[6] = 2972265
+  CT: B[7] = 7018174
+  CT: B[8] = 17158386
+bound on output = 17158386
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 74255
+  GS: B[2] = 213388
+  GS: B[3] = 605802
+  GS: B[4] = 1798503
+  GS: B[5] = 4646378
+  GS: B[6] = 9851275
+  GS: B[7] = 26198939
+  GS: B[8] = 52397878
+bound on output = 52397878
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+  CT: B[5] = 1706548
+  CT: B[6] = 4092668
+  CT: B[7] = 9659100
+  CT: B[8] = 23610479
+bound on output = 23610479
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 118527
+  GS: B[2] = 333355
+  GS: B[3] = 939663
+  GS: B[4] = 2782969
+  GS: B[5] = 7182935
+  GS: B[6] = 15223198
+  GS: B[7] = 40478551
+  GS: B[8] = 80957102
+bound on output = 80957102
+
+Bounds for function ntt512_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+  CT: B[5] = 435067
+  CT: B[6] = 1088689
+  CT: B[7] = 2705913
+  CT: B[8] = 6707561
+  CT: B[9] = 16609203
+bound on output = 16609203
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30252
+  GS: B[2] = 101326
+  GS: B[3] = 310816
+  GS: B[4] = 928669
+  GS: B[5] = 2480792
+  GS: B[6] = 6606525
+  GS: B[7] = 17573580
+  GS: B[8] = 35147160
+  GS: B[9] = 70294320
+bound on output = 70294320
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+  CT: B[5] = 727475
+  CT: B[6] = 1812286
+  CT: B[7] = 4496320
+  CT: B[8] = 11137665
+  CT: B[9] = 27570867
+bound on output = 27570867
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 48318
+  GS: B[2] = 154696
+  GS: B[3] = 468397
+  GS: B[4] = 1393345
+  GS: B[5] = 3715878
+  GS: B[6] = 9889725
+  GS: B[7] = 26301131
+  GS: B[8] = 52602262
+  GS: B[9] = 105204524
+bound on output = 105204524
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+  CT: B[5] = 1193108
+  CT: B[6] = 2964381
+  CT: B[7] = 7347140
+  CT: B[8] = 18191629
+  CT: B[9] = 45024861
+bound on output = 45024861
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 75513
+  GS: B[2] = 234838
+  GS: B[3] = 704681
+  GS: B[4] = 2090141
+  GS: B[5] = 5568199
+  GS: B[6] = 14813589
+  GS: B[7] = 39389751
+  GS: B[8] = 78779502
+  GS: B[9] = 157559004
+bound on output = 157559004
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+  CT: B[5] = 1969444
+  CT: B[6] = 4885271
+  CT: B[7] = 12100103
+  CT: B[8] = 29952252
+  CT: B[9] = 74125001
+bound on output = 74125001
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 120751
+  GS: B[2] = 368132
+  GS: B[3] = 1097652
+  GS: B[4] = 3248735
+  GS: B[5] = 8647908
+  GS: B[6] = 23000004
+  GS: B[7] = 61150897
+  GS: B[8] = 122301794
+  GS: B[9] = 244603588
+bound on output = 244603588
+
+Bounds for function ntt512_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+  CT: B[5] = 435067
+  CT: B[6] = 1088689
+  CT: B[7] = 2705913
+  CT: B[8] = 6707561
+  CT: B[9] = 16609203
+bound on output = 16609203
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30252
+  GS: B[2] = 101326
+  GS: B[3] = 310816
+  GS: B[4] = 928669
+  GS: B[5] = 2480792
+  GS: B[6] = 6606525
+  GS: B[7] = 17573580
+  GS: B[8] = 35147160
+  GS: B[9] = 70294320
+bound on output = 70294320
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+  CT: B[5] = 727475
+  CT: B[6] = 1812286
+  CT: B[7] = 4496320
+  CT: B[8] = 11137665
+  CT: B[9] = 27570867
+bound on output = 27570867
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 48318
+  GS: B[2] = 154696
+  GS: B[3] = 468397
+  GS: B[4] = 1393345
+  GS: B[5] = 3715878
+  GS: B[6] = 9889725
+  GS: B[7] = 26301131
+  GS: B[8] = 52602262
+  GS: B[9] = 105204524
+bound on output = 105204524
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+  CT: B[5] = 1193108
+  CT: B[6] = 2964381
+  CT: B[7] = 7347140
+  CT: B[8] = 18191629
+  CT: B[9] = 45024861
+bound on output = 45024861
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 75513
+  GS: B[2] = 234838
+  GS: B[3] = 704681
+  GS: B[4] = 2090141
+  GS: B[5] = 5568199
+  GS: B[6] = 14813589
+  GS: B[7] = 39389751
+  GS: B[8] = 78779502
+  GS: B[9] = 157559004
+bound on output = 157559004
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+  CT: B[5] = 1969444
+  CT: B[6] = 4885271
+  CT: B[7] = 12100103
+  CT: B[8] = 29952252
+  CT: B[9] = 74125001
+bound on output = 74125001
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 120751
+  GS: B[2] = 368132
+  GS: B[3] = 1097652
+  GS: B[4] = 3248735
+  GS: B[5] = 8647908
+  GS: B[6] = 23000004
+  GS: B[7] = 61150897
+  GS: B[8] = 122301794
+  GS: B[9] = 244603588
+bound on output = 244603588
+
+Bounds for function mulntt512_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+  CT: B[5] = 770851
+  CT: B[6] = 1855285
+  CT: B[7] = 4384731
+  CT: B[8] = 10724646
+  CT: B[9] = 26818219
+bound on output = 26818219
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30700
+  GS: B[2] = 100755
+  GS: B[3] = 285421
+  GS: B[4] = 806153
+  GS: B[5] = 2389344
+  GS: B[6] = 6168717
+  GS: B[7] = 13075573
+  GS: B[8] = 34769698
+  GS: B[9] = 69539396
+bound on output = 69539396
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+  CT: B[5] = 957104
+  CT: B[6] = 2300797
+  CT: B[7] = 5435290
+  CT: B[8] = 13291078
+  CT: B[9] = 33232614
+bound on output = 33232614
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 49126
+  GS: B[2] = 153954
+  GS: B[3] = 429864
+  GS: B[4] = 1208169
+  GS: B[5] = 3574623
+  GS: B[6] = 9222743
+  GS: B[7] = 19542850
+  GS: B[8] = 51961074
+  GS: B[9] = 103922148
+bound on output = 103922148
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+  CT: B[5] = 1237952
+  CT: B[6] = 2972265
+  CT: B[7] = 7018174
+  CT: B[8] = 17158386
+  CT: B[9] = 42899498
+bound on output = 42899498
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 76705
+  GS: B[2] = 233614
+  GS: B[3] = 646275
+  GS: B[4] = 1810315
+  GS: B[5] = 5350198
+  GS: B[6] = 13797816
+  GS: B[7] = 29231423
+  GS: B[8] = 77715277
+  GS: B[9] = 155430554
+bound on output = 155430554
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+  CT: B[5] = 1706548
+  CT: B[6] = 4092668
+  CT: B[7] = 9659100
+  CT: B[8] = 23610479
+  CT: B[9] = 59026784
+bound on output = 59026784
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 122830
+  GS: B[2] = 366551
+  GS: B[3] = 1006384
+  GS: B[4] = 2812156
+  GS: B[5] = 8304490
+  GS: B[6] = 21410050
+  GS: B[7] = 45351737
+  GS: B[8] = 120566245
+  GS: B[9] = 241132490
+bound on output = 241132490
+
+Bounds for function mulntt512_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+  CT: B[5] = 770851
+  CT: B[6] = 1855285
+  CT: B[7] = 4384731
+  CT: B[8] = 10724646
+  CT: B[9] = 26818219
+bound on output = 26818219
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30700
+  GS: B[2] = 100755
+  GS: B[3] = 285421
+  GS: B[4] = 806153
+  GS: B[5] = 2389344
+  GS: B[6] = 6168717
+  GS: B[7] = 13075573
+  GS: B[8] = 34769698
+  GS: B[9] = 69539396
+bound on output = 69539396
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+  CT: B[5] = 957104
+  CT: B[6] = 2300797
+  CT: B[7] = 5435290
+  CT: B[8] = 13291078
+  CT: B[9] = 33232614
+bound on output = 33232614
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 49126
+  GS: B[2] = 153954
+  GS: B[3] = 429864
+  GS: B[4] = 1208169
+  GS: B[5] = 3574623
+  GS: B[6] = 9222743
+  GS: B[7] = 19542850
+  GS: B[8] = 51961074
+  GS: B[9] = 103922148
+bound on output = 103922148
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+  CT: B[5] = 1237952
+  CT: B[6] = 2972265
+  CT: B[7] = 7018174
+  CT: B[8] = 17158386
+  CT: B[9] = 42899498
+bound on output = 42899498
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 76705
+  GS: B[2] = 233614
+  GS: B[3] = 646275
+  GS: B[4] = 1810315
+  GS: B[5] = 5350198
+  GS: B[6] = 13797816
+  GS: B[7] = 29231423
+  GS: B[8] = 77715277
+  GS: B[9] = 155430554
+bound on output = 155430554
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+  CT: B[5] = 1706548
+  CT: B[6] = 4092668
+  CT: B[7] = 9659100
+  CT: B[8] = 23610479
+  CT: B[9] = 59026784
+bound on output = 59026784
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 122830
+  GS: B[2] = 366551
+  GS: B[3] = 1006384
+  GS: B[4] = 2812156
+  GS: B[5] = 8304490
+  GS: B[6] = 21410050
+  GS: B[7] = 45351737
+  GS: B[8] = 120566245
+  GS: B[9] = 241132490
+bound on output = 241132490
+
+Bounds for function ntt1024_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+  CT: B[5] = 435067
+  CT: B[6] = 1088689
+  CT: B[7] = 2705913
+  CT: B[8] = 6707561
+  CT: B[9] = 16609203
+  CT: B[10] = 41526717
+bound on output = 41526717
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30700
+  GS: B[2] = 102634
+  GS: B[3] = 314893
+  GS: B[4] = 940638
+  GS: B[5] = 2785825
+  GS: B[6] = 7417373
+  GS: B[7] = 19728979
+  GS: B[8] = 52455776
+  GS: B[9] = 104911552
+  GS: B[10] = 209823104
+bound on output = 209823104
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+  CT: B[5] = 727475
+  CT: B[6] = 1812286
+  CT: B[7] = 4496320
+  CT: B[8] = 11137665
+  CT: B[9] = 27570867
+  CT: B[10] = 68924943
+bound on output = 68924943
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 49126
+  GS: B[2] = 156985
+  GS: B[3] = 475090
+  GS: B[4] = 1412988
+  GS: B[5] = 4178632
+  GS: B[6] = 11119835
+  GS: B[7] = 29570912
+  GS: B[8] = 78617620
+  GS: B[9] = 157235240
+  GS: B[10] = 314470480
+bound on output = 314470480
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+  CT: B[5] = 1193108
+  CT: B[6] = 2964381
+  CT: B[7] = 7347140
+  CT: B[8] = 18191629
+  CT: B[9] = 45024861
+  CT: B[10] = 112551542
+bound on output = 112551542
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 76705
+  GS: B[2] = 238239
+  GS: B[3] = 714666
+  GS: B[4] = 2119442
+  GS: B[5] = 6261760
+  GS: B[6] = 16657202
+  GS: B[7] = 44290361
+  GS: B[8] = 117744892
+  GS: B[9] = 235489784
+  GS: B[10] = 470979568
+bound on output = 470979568
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+  CT: B[5] = 1969444
+  CT: B[6] = 4885271
+  CT: B[7] = 12100103
+  CT: B[8] = 29952252
+  CT: B[9] = 74125001
+  CT: B[10] = 185287521
+bound on output = 185287521
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 122830
+  GS: B[2] = 374280
+  GS: B[3] = 1115769
+  GS: B[4] = 3302214
+  GS: B[5] = 9749446
+  GS: B[6] = 25928217
+  GS: B[7] = 68934573
+  GS: B[8] = 183254256
+  GS: B[9] = 366508512
+  GS: B[10] = 733017024
+bound on output = 733017024
+
+Bounds for function ntt1024_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+  CT: B[5] = 435067
+  CT: B[6] = 1088689
+  CT: B[7] = 2705913
+  CT: B[8] = 6707561
+  CT: B[9] = 16609203
+  CT: B[10] = 41526717
+bound on output = 41526717
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30700
+  GS: B[2] = 102634
+  GS: B[3] = 314893
+  GS: B[4] = 940638
+  GS: B[5] = 2785825
+  GS: B[6] = 7417373
+  GS: B[7] = 19728979
+  GS: B[8] = 52455776
+  GS: B[9] = 104911552
+  GS: B[10] = 209823104
+bound on output = 209823104
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+  CT: B[5] = 727475
+  CT: B[6] = 1812286
+  CT: B[7] = 4496320
+  CT: B[8] = 11137665
+  CT: B[9] = 27570867
+  CT: B[10] = 68924943
+bound on output = 68924943
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 49126
+  GS: B[2] = 156985
+  GS: B[3] = 475090
+  GS: B[4] = 1412988
+  GS: B[5] = 4178632
+  GS: B[6] = 11119835
+  GS: B[7] = 29570912
+  GS: B[8] = 78617620
+  GS: B[9] = 157235240
+  GS: B[10] = 314470480
+bound on output = 314470480
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+  CT: B[5] = 1193108
+  CT: B[6] = 2964381
+  CT: B[7] = 7347140
+  CT: B[8] = 18191629
+  CT: B[9] = 45024861
+  CT: B[10] = 112551542
+bound on output = 112551542
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 76705
+  GS: B[2] = 238239
+  GS: B[3] = 714666
+  GS: B[4] = 2119442
+  GS: B[5] = 6261760
+  GS: B[6] = 16657202
+  GS: B[7] = 44290361
+  GS: B[8] = 117744892
+  GS: B[9] = 235489784
+  GS: B[10] = 470979568
+bound on output = 470979568
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+  CT: B[5] = 1969444
+  CT: B[6] = 4885271
+  CT: B[7] = 12100103
+  CT: B[8] = 29952252
+  CT: B[9] = 74125001
+  CT: B[10] = 185287521
+bound on output = 185287521
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 122830
+  GS: B[2] = 374280
+  GS: B[3] = 1115769
+  GS: B[4] = 3302214
+  GS: B[5] = 9749446
+  GS: B[6] = 25928217
+  GS: B[7] = 68934573
+  GS: B[8] = 183254256
+  GS: B[9] = 366508512
+  GS: B[10] = 733017024
+bound on output = 733017024
+
+Bounds for function mulntt1024_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+  CT: B[5] = 770851
+  CT: B[6] = 1855285
+  CT: B[7] = 4384731
+  CT: B[8] = 10724646
+  CT: B[9] = 26818219
+  CT: B[10] = 67018519
+bound on output = 67018519
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30664
+  GS: B[2] = 103920
+  GS: B[3] = 312123
+  GS: B[4] = 858791
+  GS: B[5] = 2401593
+  GS: B[6] = 7093834
+  GS: B[7] = 18290546
+  GS: B[8] = 38745059
+  GS: B[9] = 103004486
+  GS: B[10] = 206008972
+bound on output = 206008972
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+  CT: B[5] = 957104
+  CT: B[6] = 2300797
+  CT: B[7] = 5435290
+  CT: B[8] = 13291078
+  CT: B[9] = 33232614
+  CT: B[10] = 83045022
+bound on output = 83045022
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 49078
+  GS: B[2] = 159144
+  GS: B[3] = 471482
+  GS: B[4] = 1291678
+  GS: B[5] = 3605799
+  GS: B[6] = 10644766
+  GS: B[7] = 27440067
+  GS: B[8] = 58121110
+  GS: B[9] = 154509936
+  GS: B[10] = 309019872
+bound on output = 309019872
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+  CT: B[5] = 1237952
+  CT: B[6] = 2972265
+  CT: B[7] = 7018174
+  CT: B[8] = 17158386
+  CT: B[9] = 42899498
+  CT: B[10] = 107198091
+bound on output = 107198091
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 76543
+  GS: B[2] = 241571
+  GS: B[3] = 709350
+  GS: B[4] = 1937081
+  GS: B[5] = 5401590
+  GS: B[6] = 15939966
+  GS: B[7] = 41084063
+  GS: B[8] = 87014594
+  GS: B[9] = 231314547
+  GS: B[10] = 462629094
+bound on output = 462629094
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+  CT: B[5] = 1706548
+  CT: B[6] = 4092668
+  CT: B[7] = 9659100
+  CT: B[8] = 23610479
+  CT: B[9] = 59026784
+  CT: B[10] = 147492742
+bound on output = 147492742
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 122734
+  GS: B[2] = 380061
+  GS: B[3] = 1109156
+  GS: B[4] = 3022780
+  GS: B[5] = 8422144
+  GS: B[6] = 24846728
+  GS: B[7] = 64033736
+  GS: B[8] = 135614626
+  GS: B[9] = 360503389
+  GS: B[10] = 721006778
+bound on output = 721006778
+
+Bounds for function mulntt1024_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+  CT: B[5] = 770851
+  CT: B[6] = 1855285
+  CT: B[7] = 4384731
+  CT: B[8] = 10724646
+  CT: B[9] = 26818219
+  CT: B[10] = 67018519
+bound on output = 67018519
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30664
+  GS: B[2] = 103920
+  GS: B[3] = 312123
+  GS: B[4] = 858791
+  GS: B[5] = 2401593
+  GS: B[6] = 7093834
+  GS: B[7] = 18290546
+  GS: B[8] = 38745059
+  GS: B[9] = 103004486
+  GS: B[10] = 206008972
+bound on output = 206008972
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+  CT: B[5] = 957104
+  CT: B[6] = 2300797
+  CT: B[7] = 5435290
+  CT: B[8] = 13291078
+  CT: B[9] = 33232614
+  CT: B[10] = 83045022
+bound on output = 83045022
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 49078
+  GS: B[2] = 159144
+  GS: B[3] = 471482
+  GS: B[4] = 1291678
+  GS: B[5] = 3605799
+  GS: B[6] = 10644766
+  GS: B[7] = 27440067
+  GS: B[8] = 58121110
+  GS: B[9] = 154509936
+  GS: B[10] = 309019872
+bound on output = 309019872
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+  CT: B[5] = 1237952
+  CT: B[6] = 2972265
+  CT: B[7] = 7018174
+  CT: B[8] = 17158386
+  CT: B[9] = 42899498
+  CT: B[10] = 107198091
+bound on output = 107198091
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 76543
+  GS: B[2] = 241571
+  GS: B[3] = 709350
+  GS: B[4] = 1937081
+  GS: B[5] = 5401590
+  GS: B[6] = 15939966
+  GS: B[7] = 41084063
+  GS: B[8] = 87014594
+  GS: B[9] = 231314547
+  GS: B[10] = 462629094
+bound on output = 462629094
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+  CT: B[5] = 1706548
+  CT: B[6] = 4092668
+  CT: B[7] = 9659100
+  CT: B[8] = 23610479
+  CT: B[9] = 59026784
+  CT: B[10] = 147492742
+bound on output = 147492742
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 122734
+  GS: B[2] = 380061
+  GS: B[3] = 1109156
+  GS: B[4] = 3022780
+  GS: B[5] = 8422144
+  GS: B[6] = 24846728
+  GS: B[7] = 64033736
+  GS: B[8] = 135614626
+  GS: B[9] = 360503389
+  GS: B[10] = 721006778
+bound on output = 721006778
+
+Bounds for function ntt2048_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+  CT: B[5] = 435067
+  CT: B[6] = 1088689
+  CT: B[7] = 2705913
+  CT: B[8] = 6707561
+  CT: B[9] = 16609203
+  CT: B[10] = 41526717
+  CT: B[11] = 103808130
+bound on output = 103808130
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30700
+  GS: B[2] = 104119
+  GS: B[3] = 319166
+  GS: B[4] = 953261
+  GS: B[5] = 2823040
+  GS: B[6] = 8336429
+  GS: B[7] = 22172048
+  GS: B[8] = 58950043
+  GS: B[9] = 156713395
+  GS: B[10] = 313426790
+  GS: B[11] = 626853580
+bound on output = 626853580
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+  CT: B[5] = 727475
+  CT: B[6] = 1812286
+  CT: B[7] = 4496320
+  CT: B[8] = 11137665
+  CT: B[9] = 27570867
+  CT: B[10] = 68924943
+  CT: B[11] = 172290194
+bound on output = 172290194
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 49126
+  GS: B[2] = 159307
+  GS: B[3] = 481892
+  GS: B[4] = 1433089
+  GS: B[5] = 4237932
+  GS: B[6] = 12508615
+  GS: B[7] = 33262646
+  GS: B[8] = 88430972
+  GS: B[9] = 235079658
+  GS: B[10] = 470159316
+  GS: B[11] = 940318632
+bound on output = 940318632
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+  CT: B[5] = 1193108
+  CT: B[6] = 2964381
+  CT: B[7] = 7347140
+  CT: B[8] = 18191629
+  CT: B[9] = 45024861
+  CT: B[10] = 112551542
+  CT: B[11] = 281335235
+bound on output = 281335235
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 76705
+  GS: B[2] = 241980
+  GS: B[3] = 725763
+  GS: B[4] = 2152166
+  GS: B[5] = 6358275
+  GS: B[6] = 18761073
+  GS: B[7] = 49882944
+  GS: B[8] = 132611212
+  GS: B[9] = 352519646
+  GS: B[10] = 705039292
+  GS: B[11] = 1410078584
+bound on output = 1410078584
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+  CT: B[5] = 1969444
+  CT: B[6] = 4885271
+  CT: B[7] = 12100103
+  CT: B[8] = 29952252
+  CT: B[9] = 74125001
+  CT: B[10] = 185287521
+  CT: B[11] = 463139665
+bound on output = 463139665
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 122830
+  GS: B[2] = 380061
+  GS: B[3] = 1132905
+  GS: B[4] = 3352837
+  GS: B[5] = 9898786
+  GS: B[6] = 29200956
+  GS: B[7] = 77634159
+  GS: B[8] = 206379432
+  GS: B[9] = 548610623
+  GS: B[10] = 1097221246
+  GS: B[11] = 2194442492
+bound on output = 2194442492
+
+Bounds for function ntt2048_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 12288
+  CT: B[2] = 26031
+  CT: B[3] = 72770
+  CT: B[4] = 181573
+  CT: B[5] = 435067
+  CT: B[6] = 1088689
+  CT: B[7] = 2705913
+  CT: B[8] = 6707561
+  CT: B[9] = 16609203
+  CT: B[10] = 41526717
+  CT: B[11] = 103808130
+bound on output = 103808130
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30700
+  GS: B[2] = 104119
+  GS: B[3] = 319166
+  GS: B[4] = 953261
+  GS: B[5] = 2823040
+  GS: B[6] = 8336429
+  GS: B[7] = 22172048
+  GS: B[8] = 58950043
+  GS: B[9] = 156713395
+  GS: B[10] = 313426790
+  GS: B[11] = 626853580
+bound on output = 626853580
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 24576
+  CT: B[2] = 49152
+  CT: B[3] = 126652
+  CT: B[4] = 307120
+  CT: B[5] = 727475
+  CT: B[6] = 1812286
+  CT: B[7] = 4496320
+  CT: B[8] = 11137665
+  CT: B[9] = 27570867
+  CT: B[10] = 68924943
+  CT: B[11] = 172290194
+bound on output = 172290194
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 49126
+  GS: B[2] = 159307
+  GS: B[3] = 481892
+  GS: B[4] = 1433089
+  GS: B[5] = 4237932
+  GS: B[6] = 12508615
+  GS: B[7] = 33262646
+  GS: B[8] = 88430972
+  GS: B[9] = 235079658
+  GS: B[10] = 470159316
+  GS: B[11] = 940318632
+bound on output = 940318632
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 42998
+  CT: B[2] = 85996
+  CT: B[3] = 212492
+  CT: B[4] = 507050
+  CT: B[5] = 1193108
+  CT: B[6] = 2964381
+  CT: B[7] = 7347140
+  CT: B[8] = 18191629
+  CT: B[9] = 45024861
+  CT: B[10] = 112551542
+  CT: B[11] = 281335235
+bound on output = 281335235
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 76705
+  GS: B[2] = 241980
+  GS: B[3] = 725763
+  GS: B[4] = 2152166
+  GS: B[5] = 6358275
+  GS: B[6] = 18761073
+  GS: B[7] = 49882944
+  GS: B[8] = 132611212
+  GS: B[9] = 352519646
+  GS: B[10] = 705039292
+  GS: B[11] = 1410078584
+bound on output = 1410078584
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 73728
+  CT: B[2] = 147456
+  CT: B[3] = 355612
+  CT: B[4] = 840359
+  CT: B[5] = 1969444
+  CT: B[6] = 4885271
+  CT: B[7] = 12100103
+  CT: B[8] = 29952252
+  CT: B[9] = 74125001
+  CT: B[10] = 185287521
+  CT: B[11] = 463139665
+bound on output = 463139665
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 122830
+  GS: B[2] = 380061
+  GS: B[3] = 1132905
+  GS: B[4] = 3352837
+  GS: B[5] = 9898786
+  GS: B[6] = 29200956
+  GS: B[7] = 77634159
+  GS: B[8] = 206379432
+  GS: B[9] = 548610623
+  GS: B[10] = 1097221246
+  GS: B[11] = 2194442492
+bound on output = 2194442492
+
+Bounds for function mulntt2048_red_ct_rev2std
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+  CT: B[5] = 770851
+  CT: B[6] = 1855285
+  CT: B[7] = 4384731
+  CT: B[8] = 10724646
+  CT: B[9] = 26818219
+  CT: B[10] = 67018519
+  CT: B[11] = 167476489
+bound on output = 167476489
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30673
+  GS: B[2] = 103986
+  GS: B[3] = 323988
+  GS: B[4] = 947218
+  GS: B[5] = 2583359
+  GS: B[6] = 7199616
+  GS: B[7] = 21241772
+  GS: B[8] = 54744945
+  GS: B[9] = 115943659
+  GS: B[10] = 308213886
+  GS: B[11] = 616427772
+bound on output = 616427772
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+  CT: B[5] = 957104
+  CT: B[6] = 2300797
+  CT: B[7] = 5435290
+  CT: B[8] = 13291078
+  CT: B[9] = 33232614
+  CT: B[10] = 83045022
+  CT: B[11] = 207523054
+bound on output = 207523054
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 49090
+  GS: B[2] = 159057
+  GS: B[3] = 488780
+  GS: B[4] = 1422915
+  GS: B[5] = 3874087
+  GS: B[6] = 10790670
+  GS: B[7] = 31830886
+  GS: B[8] = 82029512
+  GS: B[9] = 173723845
+  GS: B[10] = 461805458
+  GS: B[11] = 923610916
+bound on output = 923610916
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+  CT: B[5] = 1237952
+  CT: B[6] = 2972265
+  CT: B[7] = 7018174
+  CT: B[8] = 17158386
+  CT: B[9] = 42899498
+  CT: B[10] = 107198091
+  CT: B[11] = 267876598
+bound on output = 267876598
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 76567
+  GS: B[2] = 241415
+  GS: B[3] = 735559
+  GS: B[4] = 2135091
+  GS: B[5] = 5807631
+  GS: B[6] = 16170196
+  GS: B[7] = 47693704
+  GS: B[8] = 122902591
+  GS: B[9] = 260280101
+  GS: B[10] = 691889547
+  GS: B[11] = 1383779094
+bound on output = 1383779094
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+  CT: B[5] = 1706548
+  CT: B[6] = 4092668
+  CT: B[7] = 9659100
+  CT: B[8] = 23610479
+  CT: B[9] = 59026784
+  CT: B[10] = 147492742
+  CT: B[11] = 368563645
+bound on output = 368563645
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 122758
+  GS: B[2] = 380025
+  GS: B[3] = 1151615
+  GS: B[4] = 3335976
+  GS: B[5] = 9066609
+  GS: B[6] = 25237642
+  GS: B[7] = 74431213
+  GS: B[8] = 191796066
+  GS: B[9] = 406173854
+  GS: B[10] = 1079704785
+  GS: B[11] = 2159409570
+bound on output = 2159409570
+
+Bounds for function mulntt2048_red_ct_std2rev
+
+bound on input = 6144
+  CT: B[0] = 6144
+  CT: B[1] = 19160
+  CT: B[2] = 56840
+  CT: B[3] = 128675
+  CT: B[4] = 306640
+  CT: B[5] = 770851
+  CT: B[6] = 1855285
+  CT: B[7] = 4384731
+  CT: B[8] = 10724646
+  CT: B[9] = 26818219
+  CT: B[10] = 67018519
+  CT: B[11] = 167476489
+bound on output = 167476489
+bound on input = 6144
+  GS: B[0] = 6144
+  GS: B[1] = 30673
+  GS: B[2] = 103986
+  GS: B[3] = 323988
+  GS: B[4] = 947218
+  GS: B[5] = 2583359
+  GS: B[6] = 7199616
+  GS: B[7] = 21241772
+  GS: B[8] = 54744945
+  GS: B[9] = 115943659
+  GS: B[10] = 308213886
+  GS: B[11] = 616427772
+bound on output = 616427772
+
+bound on input = 12288
+  CT: B[0] = 12288
+  CT: B[1] = 26031
+  CT: B[2] = 72770
+  CT: B[3] = 161548
+  CT: B[4] = 381880
+  CT: B[5] = 957104
+  CT: B[6] = 2300797
+  CT: B[7] = 5435290
+  CT: B[8] = 13291078
+  CT: B[9] = 33232614
+  CT: B[10] = 83045022
+  CT: B[11] = 207523054
+bound on output = 207523054
+bound on input = 12288
+  GS: B[0] = 12288
+  GS: B[1] = 49090
+  GS: B[2] = 159057
+  GS: B[3] = 488780
+  GS: B[4] = 1422915
+  GS: B[5] = 3874087
+  GS: B[6] = 10790670
+  GS: B[7] = 31830886
+  GS: B[8] = 82029512
+  GS: B[9] = 173723845
+  GS: B[10] = 461805458
+  GS: B[11] = 923610916
+bound on output = 923610916
+
+bound on input = 21499
+  CT: B[0] = 21499
+  CT: B[1] = 36370
+  CT: B[2] = 96836
+  CT: B[3] = 211186
+  CT: B[4] = 495402
+  CT: B[5] = 1237952
+  CT: B[6] = 2972265
+  CT: B[7] = 7018174
+  CT: B[8] = 17158386
+  CT: B[9] = 42899498
+  CT: B[10] = 107198091
+  CT: B[11] = 267876598
+bound on output = 267876598
+bound on input = 21499
+  GS: B[0] = 21499
+  GS: B[1] = 76567
+  GS: B[2] = 241415
+  GS: B[3] = 735559
+  GS: B[4] = 2135091
+  GS: B[5] = 5807631
+  GS: B[6] = 16170196
+  GS: B[7] = 47693704
+  GS: B[8] = 122902591
+  GS: B[9] = 260280101
+  GS: B[10] = 691889547
+  GS: B[11] = 1383779094
+bound on output = 1383779094
+
+bound on input = 36864
+  CT: B[0] = 36864
+  CT: B[1] = 53565
+  CT: B[2] = 136934
+  CT: B[3] = 293889
+  CT: B[4] = 684765
+  CT: B[5] = 1706548
+  CT: B[6] = 4092668
+  CT: B[7] = 9659100
+  CT: B[8] = 23610479
+  CT: B[9] = 59026784
+  CT: B[10] = 147492742
+  CT: B[11] = 368563645
+bound on output = 368563645
+bound on input = 36864
+  GS: B[0] = 36864
+  GS: B[1] = 122758
+  GS: B[2] = 380025
+  GS: B[3] = 1151615
+  GS: B[4] = 3335976
+  GS: B[5] = 9066609
+  GS: B[6] = 25237642
+  GS: B[7] = 74431213
+  GS: B[8] = 191796066
+  GS: B[9] = 406173854
+  GS: B[10] = 1079704785
+  GS: B[11] = 2159409570
+bound on output = 2159409570
+
