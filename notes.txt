@@ -340,7 +340,7 @@ It may help to use coefficients in the range [ -(q-1)/2, (q-1)/2 ]
 instead of [0, q-1]. That would reduce the absolute value of w, and
 maybe allow us to have a CT algorithm without risk of numerical
 overflow (even for n=1024). Even better, maybe, we could take the
-actual coefficients (in the p tables) into accout, and specialize the
+actual coefficients (in the p tables) into account, and specialize the
 implementation to our choice of psi?
 
 

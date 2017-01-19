@@ -152,7 +152,7 @@ void correct(int32_t *a, uint32_t n) {
 
   for (i=0; i<n; i++) {
     x = a[i];
-#if 0
+#if 1
     x += ((x >> 16) & Q);
     x -= Q;
     x += ((x >> 16) & Q);
@@ -190,7 +190,7 @@ void correct(int32_t *a, uint32_t n) {
  * mul_array builds the reduced product in array c from two 32bit arrays a and b.
  * - a[i] * b[i] is computed using 64bit arithmetic but the reduced value is
  *   converted to 32bits.
- * - to avoid oveflow, we must have 
+ * - to avoid overflow, we must have
  *     -8796042698752 <= a[i] * b[i] <= 8796093026303
  */
 void mul_reduce_array16(int32_t *a, uint32_t n, const int16_t *p) {
@@ -260,7 +260,7 @@ void ntt_red_ct_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
     for (j=1; j<t; j++) {
       w = p[t+j];   // w_t^j/3
       for (s=j; s<n; s += t + t) {
-	x = mul_red(a[s + t], w);
+        x = mul_red(a[s + t], w);
         a[s + t] = a[s] - x;
         a[s] = a[s] + x;
       }
@@ -346,11 +346,11 @@ void ntt_red_ct_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
       u += 2 * d;   // u = 2 * d * j
       for (s=u; s<u+d; s++) {
         // x = modq(a[s + d] * w);
-	// a[s + d] = sub_mod(a[s], x);
-	// a[s] = add_mod(a[s], x);
-	x = mul_red(a[s + d], w);
-	a[s + d] = a[s] - x;
-	a[s] = a[s] + x;
+        // a[s + d] = sub_mod(a[s], x);
+        // a[s] = add_mod(a[s], x);
+        x = mul_red(a[s + d], w);
+        a[s + d] = a[s] - x;
+        a[s] = a[s] + x;
       }
     }
   }
@@ -390,12 +390,12 @@ void mulntt_red_ct_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
     for (j=0, u=0; j<t; j++, u+=2*d) { // u = j * 2d
       w = p[t + j]; // psi_t * w_t^bitrev(j) * inverse(3)
       for (s=u; s<u+d; s++) {
-	// x = modq(a[s + d] * w);
-	// a[s + d] = sub_mod(a[s], x);
-	// a[s] = add_mod(a[s], x);
-	x = mul_red(a[s + d], w);
-	a[s + d] = a[s] - x;
-	a[s] = a[s] + x;
+        // x = modq(a[s + d] * w);
+        // a[s + d] = sub_mod(a[s], x);
+        // a[s] = add_mod(a[s], x);
+        x = mul_red(a[s + d], w);
+        a[s + d] = a[s] - x;
+        a[s] = a[s] + x;
       }
     }
   }
@@ -442,10 +442,10 @@ void ntt_red_gs_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
       w = p[t + j];  // w_t^bitrev(j)
       for (s=u; s<u+d; s++) {
         x = a[s + d];
-	// a[s + d] = modq(sub_mod(a[s], x) * w);
-	// a[s] = add_mod(a[s], x);
-	a[s + d] = mul_red(a[s] - x, w);
-	a[s] = a[s] + x;
+        // a[s + d] = modq(sub_mod(a[s], x) * w);
+        // a[s] = add_mod(a[s], x);
+        a[s + d] = mul_red(a[s] - x, w);
+        a[s] = a[s] + x;
       }
     }
   }
@@ -459,7 +459,7 @@ void ntt_red_gs_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
  *   for t=1, 2, ...., n/2
  *       j=0 ... t-1
  *
- * - output: NTT(a) multipied by powers of psi, in standard order
+ * - output: NTT(a) multiplied by powers of psi, in standard order
  *   (i.e., array a' such that a'[i] = NTT(a)[i] * psi^i).
  */
 void nttmul_red_gs_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
@@ -480,10 +480,10 @@ void nttmul_red_gs_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
       w = p[t + j];  // psi_t * w_t ^ bitrev(j)
       for (s=u; s<u+d; s++) {
         x = a[s + d];
-	// a[s + d] = modq(sub_mod(a[s], x) * w);
-	// a[s] = add_mod(a[s], x);
-	a[s + d] = mul_red(a[s] - x, w);
-	a[s] = a[s] + x;
+        // a[s + d] = modq(sub_mod(a[s], x) * w);
+        // a[s] = add_mod(a[s], x);
+        a[s + d] = mul_red(a[s] - x, w);
+        a[s] = a[s] + x;
       }
     }
   }
@@ -524,10 +524,10 @@ void ntt_red_gs_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
       w = p[t + j]; // w_t^j
       for (s=j; s<n; s += t + t) {
         x = a[s + t];
-	// a[s + t] = modq(sub_mod(a[s], x) * w);
-	// a[s] = add_mod(a[s], x);
-	a[s + t] = mul_red(a[s] - x, w);
-	a[s] = a[s] + x;
+        // a[s + t] = modq(sub_mod(a[s], x) * w);
+        // a[s] = add_mod(a[s], x);
+        a[s + t] = mul_red(a[s] - x, w);
+        a[s] = a[s] + x;
       }
     }
   }
@@ -541,7 +541,7 @@ void ntt_red_gs_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
  *   for t=1, 2, ...., n/2
  *       j=0 ... t-1
  *
- * - output: NTT(a) multipied by powers of psi, in reverse order
+ * - output: NTT(a) multiplied by powers of psi, in reverse order
  *   (i.e., array a' such that a'[i] = NTT(a)[i] * psi^i).
  */
 void nttmul_red_gs_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
@@ -559,10 +559,10 @@ void nttmul_red_gs_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
       w = p[t + j]; // psi_t * w_t^j
       for (s=j; s<n; s += t + t) {
         x = a[s + t];
-	// a[s + t] = modq(sub_mod(a[s], x) * w);
-	// a[s] = add_mod(a[s], x);
-	a[s + t] = mul_red(a[s] - x, w);
-	a[s] = a[s] + x;
+        // a[s + t] = modq(sub_mod(a[s], x) * w);
+        // a[s] = add_mod(a[s], x);
+        a[s + t] = mul_red(a[s] - x, w);
+        a[s] = a[s] + x;
       }
     }
   }

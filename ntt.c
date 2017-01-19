@@ -422,7 +422,7 @@ void ntt_gs_rev2std(int32_t *a, uint32_t n, const uint16_t *p) {
  *   for t=1, 2, ...., n/2
  *       j=0 ... t-1
  *
- * - output: NTT(a) multipied by powers of psi, in standard order
+ * - output: NTT(a) multiplied by powers of psi, in standard order
  *   (i.e., array a' such that a'[i] = NTT(a)[i] * psi^i).
  */
 void nttmul_gs_rev2std(int32_t *a, uint32_t n, const uint16_t *p) {
@@ -499,7 +499,7 @@ void ntt_gs_std2rev(int32_t *a, uint32_t n, const uint16_t *p) {
  *   for t=1, 2, ...., n/2
  *       j=0 ... t-1
  *
- * - output: NTT(a) multipied by powers of psi, in reverse order
+ * - output: NTT(a) multiplied by powers of psi, in reverse order
  *   (i.e., array a' such that a'[i] = NTT(a)[i] * psi^i).
  */
 void nttmul_gs_std2rev(int32_t *a, uint32_t n, const uint16_t *p) {
