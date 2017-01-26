@@ -173,7 +173,7 @@ static void gs_iteration(int64_t b, int64_t low, int64_t high) {
        printf("  max red(w * x) = %"PRId64" (for x=%"PRId64", w=%"PRId64")\n", max, max_x, max_w);
 
        if (double_check) {
-	 a = (w<1000) ? -a : a - 1000;
+	 a = (w<1000) ? -w : w - 1000;
 	 while (a <= w) {
 	   x = (b<30000) ? -b : b-30000;
 	   while (x <= b) {
