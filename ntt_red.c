@@ -387,7 +387,7 @@ void mulntt_red_ct_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
      * For a given j between 0 and t-1
      *   w_t,j = psi_t * w_t^bitrev(j)
      */
-    for (j=0, u=0; j<t; j++, u+=2*d) { // u = j * 2d
+    for (j=0, u=0; j<t; j++, u += 2*d) { // u = j * 2d
       w = p[t + j]; // psi_t * w_t^bitrev(j) * inverse(3)
       for (s=u; s<u+d; s++) {
         // x = modq(a[s + d] * w);

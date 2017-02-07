@@ -36,19 +36,19 @@ _G(avx2_supported):
 	push rbx		// rax/rbx/rcx/rdx are modified by CPUID
 	mov eax, 1
 	cpuid
-	and ecx, 018000000H
-	cmp ecx, 018000000H
+	and ecx, 0x18000000
+	cmp ecx, 0x18000000
 	jne not_supported
 	mov eax, 7
 	mov ecx, 0
 	cpuid
-	and ebx, 20H
-	cmp ebx, 20H
+	and ebx, 0x20
+	cmp ebx, 0x20
 	jne not_supported
 	mov ecx, 0
 	xgetbv
-	and eax, 06H
-	cmp eax, 06H
+	and eax, 0x06
+	cmp eax, 0x06
 	jne not_supported
 	mov eax, 1           	// all good: supported
 	jmp done
