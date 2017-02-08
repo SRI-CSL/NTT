@@ -11,7 +11,7 @@ CFLAGS=-Wall -std=c99 -O3
 all: test_ntt test_ntt16 test_ntt256 test_ntt512 test_ntt1024 \
 	kat_mul1024 speed_mul1024 kat_mul1024_red speed_mul1024_red \
 	test_ntt_red16 test_ntt_red256 test_ntt_red512 test_ntt_red1024 \
-	test_ntt_red test_red_bounds
+	test_ntt_red test_red_bounds test_avx
 
 #
 # Utility to generate tables
@@ -83,6 +83,8 @@ all_tables: ntt16_tables.h ntt16_tables.c ntt256_tables.h ntt256_tables.c \
 %.o: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
+%o: %.S
+	$(CC) $(CPPFLAGS) -c $<
 
 #
 # Main modules
@@ -90,6 +92,8 @@ all_tables: ntt16_tables.h ntt16_tables.c ntt256_tables.h ntt256_tables.c \
 ntt.o: ntt.c ntt.h
 
 ntt_red.o: ntt_red.c ntt_red.h
+
+ntt_asm.o: ntt_asm.S
 
 red_bounds.o: red_bounds.c red_bounds.h
 
@@ -119,6 +123,9 @@ test_ntt: test_ntt.o ntt.o test_ntt_tables.o test_bitrev_tables.o sort.o
 
 test_ntt_red: test_ntt_red.o ntt_red.o ntt.o test_ntt_red_tables.o \
 	  test_bitrev_tables.o sort.o
+	$(CC) $^ -o $@
+
+test_avx: test_avx.o ntt_red.o ntt_asm.o sort.o
 	$(CC) $^ -o $@
 
 test_ntt16: test_ntt16.o ntt16.o ntt16_tables.o bitrev16_table.o ntt.o sort.o
@@ -207,6 +214,7 @@ data_poly1024.o: data_poly1024.c data_poly1024.h
 
 test_red_bounds.o: test_red_bounds.c red_bounds.h test_ntt_red_tables.h
 
+test_avx.o: test_avx.c ntt_red.h ntt_asm.h sort.h
 
 #
 # Cleanup
@@ -217,7 +225,8 @@ clean:
 	  test_ntt16 test_ntt256 test_ntt512 test_ntt1024 \
 	  test_ntt_red16 test_ntt_red256 test_ntt_red512 test_ntt_red1024 \
 	  make_tables make_red_tables make_bitrev_table \
-          kat_mul1024 speed_mul1024 kat_mul1024_red speed_mul1024_red test_red_bounds
+          kat_mul1024 speed_mul1024 kat_mul1024_red speed_mul1024_red \
+	  test_red_bounds test_avx
 	rm -f ntt16_tables.h ntt16_tables.c
 	rm -f ntt256_tables.h ntt256_tables.c
 	rm -f ntt512_tables.h ntt512_tables.c

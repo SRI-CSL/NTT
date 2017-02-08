@@ -59,7 +59,7 @@ static uint64_t median_time(void) {
 /*
  * Print array of size n
  */
-static void print_array(FILE *f, int32_t *a, int32_t n) {
+static void print_array(FILE *f, const int32_t *a, int32_t n) {
   uint32_t i, k;
 
   k = 0;

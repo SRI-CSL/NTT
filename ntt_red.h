@@ -105,7 +105,7 @@ extern void mul_reduce_array(int32_t *c, uint32_t n, const int32_t *a, const int
  * Product by a scalar + reduction
  * - a[i] = red(a[i] * c).
  * (So the result is equal to 3 * a[i] * c modulo Q).
- * To avoid ovreflow, we must have 
+ * To avoid overflow, we must have 
  *     -8796042698752 <= a[i] * c <= 8796093026303
  */
 extern void scalar_mul_reduce_array(int32_t *a, uint32_t n, int32_t c);
