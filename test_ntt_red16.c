@@ -122,7 +122,7 @@ static int32_t random_coeff(void) {
   int32_t x;
 
   x = random() % Q;
-  assert(0 <= x && x < Q-1);
+  assert(0 <= x && x <= Q-1);
   return x;
 }
 
