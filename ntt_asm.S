@@ -93,8 +93,8 @@ _G(reduce_array_asm):
 	lea rsi, [rdi+4*rsi]
 	.balign 16
 loop0:	
-	vmovdqu ymm0, YMMWORD PTR [rax]            // load 8 elements
-	vmovdqu ymm1, YMMWORD PTR [rax+32]         // load 8 elements
+	vmovdqu ymm0, [rax]                        // load 8 elements
+	vmovdqu ymm1, [rax+32]                     // load 8 elements
 
 	vpsrad  ymm2, ymm0, 12                     // ymm2[i] = ymm0[i] >> 12 (arithmetic shift)	
 	vpand   ymm0, ymm0, ymm3	           // ymm3[i] = ymm0[i] & 4095
@@ -102,7 +102,7 @@ loop0:
 	vpaddd  ymm0, ymm0, ymm4                   // ymm0[i] = 3*ymm0[i]
 	vpsubd  ymm0, ymm0, ymm2
 
-	vmovdqu YMMWORD PTR [rax], ymm0            // store 8 elements
+	vmovdqu [rax], ymm0                        // store 8 elements
 
 	vpsrad  ymm2, ymm1, 12                     // ymm2[i] = ymm1[i] >> 12	
 	vpand   ymm1, ymm1, ymm3	           // ymm3[i] = ymm1[i] & 4095
@@ -110,7 +110,7 @@ loop0:
 	vpaddd  ymm1, ymm1, ymm4                   // ymm1[i] = 3*ymm1[i]
 	vpsubd  ymm1, ymm1, ymm2
 
-	vmovdqu YMMWORD PTR [rax+32], ymm1         // store 8 elements
+	vmovdqu [rax+32], ymm1                     // store 8 elements
 
 	add rax, 64
 	cmp rax, rsi
@@ -134,8 +134,8 @@ _G(reduce_array_twice_asm):
 	lea rsi, [rdi+4*rsi]
 	.balign 16
 loop1:	
-	vmovdqu ymm0, YMMWORD PTR [rax]            // load 8 elements
-	vmovdqu ymm1, YMMWORD PTR [rax+32]         // load 8 elements
+	vmovdqu ymm0, [rax]                        // load 8 elements
+	vmovdqu ymm1, [rax+32]                     // load 8 elements
 
 	// first reduction: all 8 elements of ymm0 in parallel
 	vpsrad  ymm2, ymm0, 12 
@@ -150,7 +150,7 @@ loop1:
 	vpaddd  ymm0, ymm0, ymm4
 	vpsubd  ymm0, ymm0, ymm2
 
-	vmovdqu YMMWORD PTR [rax], ymm0            // store 8 elements
+	vmovdqu [rax], ymm0                        // store 8 elements
 
 	// same thing for vector ymm1
 	vpsrad  ymm2, ymm1, 12
@@ -165,7 +165,7 @@ loop1:
 	vpaddd  ymm1, ymm1, ymm4
 	vpsubd  ymm1, ymm1, ymm2
 	
-	vmovdqu YMMWORD PTR [rax+32], ymm1         // store 8 elements
+	vmovdqu [rax+32], ymm1                     // store 8 elements
 
 	add rax, 64
 	cmp rax, rsi
@@ -193,8 +193,8 @@ _G(correct_asm):
 	lea rsi, [rdi+4*rsi]
 	.balign 16
 loop2:
-	vmovdqu ymm0, YMMWORD PTR [rax]            // load 8 elements
-	vmovdqu ymm1, YMMWORD PTR [rax+32]         // load 8 elements
+	vmovdqu ymm0, [rax]                        // load 8 elements
+	vmovdqu ymm1, [rax+32]                     // load 8 elements
 
 	vpsrad  ymm2, ymm0, 31                     // ymm2[i] = -1 if ymm0[i] < 0
 	vpcmpgtd ymm5, ymm0, ymm4                  // ymm5[i] = -1 if ymm0[i] >= Q
@@ -203,7 +203,7 @@ loop2:
 	vpaddd  ymm0, ymm0, ymm2
 	vpsubd  ymm0, ymm0, ymm5
 	
-	vmovdqu YMMWORD PTR [rax], ymm0            // store 8 elements
+	vmovdqu [rax], ymm0                        // store 8 elements
 	
 	vpsrad  ymm2, ymm1, 31                     // ymm2[i] = all ones if ymm1[i] < 0
 	vpcmpgtd ymm5, ymm1, ymm4                  // ymm5[i] = all ones if ymm1[i] >= Q
@@ -212,7 +212,7 @@ loop2:
 	vpaddd  ymm1, ymm1, ymm2
 	vpsubd  ymm1, ymm1, ymm5
 	
-	vmovdqu YMMWORD PTR [rax+32], ymm1         // store 8 elements
+	vmovdqu [rax+32], ymm1                     // store 8 elements
 
 	add rax, 64
 	cmp rax, rsi
@@ -240,8 +240,8 @@ _G(mul_reduce_array16_asm):
 	lea rsi, [rdi+4*rsi]
 	.balign 16
 loop3:
-	vmovdqu    ymm0, YMMWORD PTR [rax]          // ymm0 = 8 elements of array a
-	vpmovsxwd  ymm1, XMMWORD PTR [rdx]          // ymm1 = 8 elements of array p, sign-extended to 32bits
+	vmovdqu    ymm0, [rax]                      // ymm0 = 8 elements of array a
+	vpmovsxwd  ymm1, [rdx]                      // ymm1 = 8 elements of array p, sign-extended to 32bits
 
 	vpmuldq    ymm2, ymm0, ymm1                 // ymm2 = a[0] * p[0], a[2] * p[2], a[4] * p[4], a[6] * p[6]
 	vpshufd    ymm0, ymm0, 0x31
@@ -261,7 +261,7 @@ loop3:
 	vpaddd     ymm0, ymm0, ymm2                 // 3 * c0
 	vpsubd     ymm0, ymm0, ymm1                 // 3 * c0 - c1
 	
-	vmovdqu    YMMWORD PTR [rax], ymm0          // store the result
+	vmovdqu    [rax], ymm0                     // store the result
 
 	add        rax, 32
 	add        rdx, 16
@@ -282,8 +282,8 @@ _G(mul_reduce_array16_asm2):
 
 	.balign 16
 loop4:
-	vpmovsxdq  ymm0, XMMWORD PTR [rax]        // ymm0 = 4 elements of a, sign-extended to 64 bits
-	vpmovsxwq  ymm1, QWORD PTR [rdx]          // ymm1 = 4 elements of p, sign-extended to 64 bits
+	vpmovsxdq  ymm0, [rax]                    // ymm0 = 4 elements of a, sign-extended to 64 bits
+	vpmovsxwq  ymm1, [rdx]                    // ymm1 = 4 elements of p, sign-extended to 64 bits
 	vpmuldq    ymm0, ymm1, ymm0               // product
 
 	vmovdqu    ymm3, ymm0
@@ -294,7 +294,7 @@ loop4:
 	vpaddd     ymm0, ymm3, ymm4               // 3*c0-c1 
 
 	vpermd     ymm0, ymm5, ymm0 
-	vmovdqu    XMMWORD PTR [rax], xmm0
+	vmovdqu    [rax], xmm0
 
 	add        rax, 16
 	add        rdx, 8
@@ -324,8 +324,8 @@ _G(mul_reduce_array_asm):
 
 	.balign 16
 loop5:
-	vmovdqu    ymm0, YMMWORD PTR [rdx]          // ymm0 = 8 elements of array b
-	vmovdqu    ymm1, YMMWORD PTR [rcx]          // ymm1 = 8 elements of array c
+	vmovdqu    ymm0, [rdx]                      // ymm0 = 8 elements of array b
+	vmovdqu    ymm1, [rcx]                      // ymm1 = 8 elements of array c
 	
 	vpmuldq    ymm2, ymm0, ymm1                 // ymm2 = b[0] * c[0], b[2] * c[2], b[4] * c[4], b[6] * c[6]
 	vpshufd    ymm0, ymm0, 0x31
@@ -345,7 +345,7 @@ loop5:
 	vpaddd     ymm0, ymm0, ymm2                 // 3 * c0
 	vpsubd     ymm0, ymm0, ymm1                 // 3 * c0 - c1
 	
-	vmovdqu    YMMWORD PTR [rax], ymm0          // store the result into a
+	vmovdqu    [rax], ymm0                      // store the result (8 elements) into a
 
 	add        rax, 32
 	add        rdx, 32
