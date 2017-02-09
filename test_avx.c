@@ -187,10 +187,16 @@ static void cross_check(const char *name, uint32_t n, void (*f)(int32_t *, uint3
  * Speed test: function f(a, n)
  * - proper alignment of array a makes a difference
  */
+
+// global buffers used for speed tests.
+static int32_t a[2048] __attribute__ ((aligned(32)));
+static int32_t b[2048] __attribute__ ((aligned(32)));
+static int32_t d[2048] __attribute__ ((aligned(32)));
+static int16_t p[2048] __attribute__ ((aligned(32)));
+
 static void speed_test(const char *name, uint32_t n, void (*f)(int32_t *, uint32_t)) {
   uint32_t i;
   uint64_t avg, med, c;
-  int32_t a[2048] __attribute__ ((aligned(32)));
 
   random_array(a, n);
 
@@ -213,8 +219,6 @@ static void speed_test(const char *name, uint32_t n, void (*f)(int32_t *, uint32
 static void speed_test2(const char *name, uint32_t n, void (*f)(int32_t *, uint32_t, const int16_t *)) {
   uint32_t i;
   uint64_t avg, med, c;
-  int32_t a[2048] __attribute__ ((aligned(32)));
-  int16_t p[2048] __attribute__ ((aligned(32)));
 
   random_array(a, n);
   random_array16(p, n);
@@ -222,6 +226,29 @@ static void speed_test2(const char *name, uint32_t n, void (*f)(int32_t *, uint3
   for (i=0; i<NTESTS; i++) {
     t[i] = cpucycles();
     f(a, n, p);
+  }
+  c = cpucycles();
+  for (i=0; i<NTESTS-1; i++) {
+    t[i] = t[i+1] - t[i]; 
+  }
+  t[i] = c - t[i];
+
+  avg = average_time();
+  med = median_time();
+  printf("speed test %s (n=%"PRIu32"): median = %"PRIu64", average = %"PRIu64"\n", name, n, med, avg);
+}
+
+// variant for f(a, n, b, c) where b and c are input, a is output
+static void speed_test3(const char *name, uint32_t n, void (*f)(int32_t *, uint32_t, const int32_t *, const int32_t *)) {
+  uint32_t i;
+  uint64_t avg, med, c;
+
+  random_array(b, n);
+  random_array(d, n);
+
+  for (i=0; i<NTESTS; i++) {
+    t[i] = cpucycles();
+    f(a, n, b, d);
   }
   c = cpucycles();
   for (i=0; i<NTESTS-1; i++) {
@@ -305,6 +332,27 @@ static void random_arrays_for_mul_reduce16(int32_t *a, int16_t *p, uint32_t n) {
   }
 }
 
+static void random_arrays_for_mul_reduce(int32_t *a, int32_t *b, uint32_t n) {
+  uint32_t i;
+  int32_t x, y;
+  int64_t z;
+
+  i = 0;
+  while (i < n) {
+    x = random_coeff(0x40000000);
+    y = random_coeff(0x40000000);
+    z = (int64_t) x * (int64_t) y;
+    while (z < -8796042698752 || z > 8796093026303) {
+      // reduce |y| until we get a value within bounds
+      y >>= 1;
+      z = (int64_t) x * (int64_t) y;
+    }
+    a[i] = x;
+    b[i] = y;
+    i ++;
+  }
+}
+
 static void test_mul_reduce_array16(uint32_t n) {
   int32_t a[n], b[n], c[n];
   int16_t p[n];
@@ -317,19 +365,6 @@ static void test_mul_reduce_array16(uint32_t n) {
     copy_array(c, a, n);  // keep a copy of the input
     mul_reduce_array16_asm(a, n, p);
     mul_reduce_array16(b, n, p);
-
-#if 0
-    printf("--> input:\n");
-    print_array(stdout, c, n);
-    printf("--> multipliers:\n");
-    print_array16(stdout, p, n);
-    printf("--> result from mul_reduce_array16_asm:\n");
-    print_array(stdout, a, n);
-    printf("--> result from mul_reduce_array16:\n");
-    print_array(stdout, b, n);
-    printf("\n");
-#endif
-
     if (! equal_arrays(a, b, n)) {
       printf("failed on test %"PRIu32"\n", i);
       printf("--> input:\n");
@@ -346,6 +381,35 @@ static void test_mul_reduce_array16(uint32_t n) {
   printf("all tests passed\n");
 }
 
+static void test_mul_reduce_array(uint32_t n) {
+  int32_t a[n], b[n], c[n], d[n];
+  uint32_t i;
+
+  printf("Testing mul_reduce_array_asm: n = %"PRIu32"\n", n);
+  for (i=0; i<10000; i++) {
+    // b and c are input
+    // a = result from asm
+    // d = result from C implementation
+    random_arrays_for_mul_reduce(b, c, n);
+    mul_reduce_array_asm(a, n, b, c);
+    mul_reduce_array(d, n, b, c);
+    if (! equal_arrays(a, d, n)) {
+      printf("failed on test %"PRIu32"\n", i);
+      printf("--> input1:\n");
+      print_array(stdout, b, n);
+      printf("--> input2:\n");
+      print_array(stdout, c, n);
+      printf("--> result from mul_reduce_array_asm:\n");
+      print_array(stdout, a, n);
+      printf("--> correct result:\n");
+      print_array(stdout, d, n);
+      exit(1);
+    }
+  }
+  printf("all tests passed\n");
+}
+
+
 /*
  * Tests
  */
@@ -357,6 +421,7 @@ static void run_tests(void) {
     cross_check("reduce_array_twice_asm", n, reduce_array_twice_asm, reduce_array_twice);
     test_correction(n);
     test_mul_reduce_array16(n);
+    test_mul_reduce_array(n);
     printf("\n");
   }
 
@@ -365,12 +430,14 @@ static void run_tests(void) {
     speed_test("reduce_array_twice", n, reduce_array_twice);
     speed_test("correct", n, correct);
     speed_test2("mul_reduce_array16", n, mul_reduce_array16);
+    speed_test3("mul_reduce_array", n, mul_reduce_array);
     printf("\n");
     speed_test("reduce_array_asm", n, reduce_array_asm);
     speed_test("reduce_array_twice_asm", n, reduce_array_twice_asm);
     speed_test("correct_asm", n, correct_asm);
     speed_test2("mul_reduce_array16_asm", n, mul_reduce_array16_asm);
     speed_test2("mul_reduce_array16_asm2", n, mul_reduce_array16_asm2);
+    speed_test3("mul_reduce_array_asm", n, mul_reduce_array_asm);
     printf("\n\n");
   }
 }

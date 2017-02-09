@@ -16,6 +16,8 @@ test_ntt_red512
 test_ntt_red1024
 test_ntt_red
 test_red_bounds
+test_avx
+test_avx_support
 make_tables
 make_red_tables
 make_bitrev_table
