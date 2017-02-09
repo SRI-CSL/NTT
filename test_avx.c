@@ -261,6 +261,26 @@ static void speed_test3(const char *name, uint32_t n, void (*f)(int32_t *, uint3
   printf("speed test %s (n=%"PRIu32"): median = %"PRIu64", average = %"PRIu64"\n", name, n, med, avg);
 }
 
+// variant for f(a, n, c) where a is an array, c is a scalar
+static void speed_test4(const char *name, uint32_t n, void (*f)(int32_t *, uint32_t, int32_t)) {
+  uint32_t i;
+  uint64_t avg, med, c;
+
+  random_array(a, n);
+  for (i=0; i<NTESTS; i++) {
+    t[i] = cpucycles();
+    f(a, n, 0x111);
+  }
+  c = cpucycles();
+  for (i=0; i<NTESTS-1; i++) {
+    t[i] = t[i+1] - t[i]; 
+  }
+  t[i] = c - t[i];
+
+  avg = average_time();
+  med = median_time();
+  printf("speed test %s (n=%"PRIu32"): median = %"PRIu64", average = %"PRIu64"\n", name, n, med, avg);
+}
 
 /*
  * Test of the correct/correct_asm functions
@@ -411,6 +431,60 @@ static void test_mul_reduce_array(uint32_t n) {
 
 
 /*
+ * Product by a scalar
+ */
+// fill in array a, and return a scalar in *c
+static void random_array_for_scalar_mul(int32_t *a, uint32_t n, int32_t *c) {
+  uint32_t i;
+  int32_t min, max, x;
+
+  min = INT32_MAX;
+  max = INT32_MIN;
+  for (i=0; i<n; i++) {
+    x = random_coeff(0x40000000);
+    if (x < min) min = x;
+    if (x > max) max = x;
+    a[i] = x;
+  }
+
+  x = random_coeff(0x40000000);
+  while ((int64_t) x * min < -8796042698752 || (int64_t) x * max  > 8796093026303) {
+    x >>= 1;
+  }
+  *c = x;
+}
+
+static void test_scalar_mul_reduce_array(uint32_t n) {
+  int32_t a[n], b[n], d[n];
+  int32_t c;
+  uint32_t i;
+
+  printf("Testing scalar_mul_reduce_array_asm: n = %"PRIu32"\n", n);
+  for (i=0; i<10000; i++) {
+    random_array_for_scalar_mul(a, n, &c);
+    copy_array(b, a, n);
+    copy_array(d, a, n);
+    scalar_mul_reduce_array_asm(a, n, c);
+    scalar_mul_reduce_array(b, n, c);
+    // d = input array, c = scalar
+    // a = result from asm
+    // b = result from C code
+    if (! equal_arrays(a, b, n)) {
+      printf("failed on test %"PRIu32"\n", i);
+      printf("--> input:\n");
+      print_array(stdout, d, n);
+      printf("--> multiplier: %"PRId32"\n", c);
+      printf("--> result from scalar_mul_reduce_array_asm:\n");
+      print_array(stdout, a, n);
+      printf("--> result from scalar_mul_reduce_array:\n");
+      print_array(stdout, b, n);
+      exit(1);
+    }
+  }
+  printf("all tests passed\n");
+}
+
+/*
  * Tests
  */
 static void run_tests(void) {
@@ -422,6 +496,7 @@ static void run_tests(void) {
     test_correction(n);
     test_mul_reduce_array16(n);
     test_mul_reduce_array(n);
+    test_scalar_mul_reduce_array(n);
     printf("\n");
   }
 
@@ -431,6 +506,7 @@ static void run_tests(void) {
     speed_test("correct", n, correct);
     speed_test2("mul_reduce_array16", n, mul_reduce_array16);
     speed_test3("mul_reduce_array", n, mul_reduce_array);
+    speed_test4("scalar_mul_reduce_array", n, scalar_mul_reduce_array);
     printf("\n");
     speed_test("reduce_array_asm", n, reduce_array_asm);
     speed_test("reduce_array_twice_asm", n, reduce_array_twice_asm);
@@ -438,6 +514,7 @@ static void run_tests(void) {
     speed_test2("mul_reduce_array16_asm", n, mul_reduce_array16_asm);
     speed_test2("mul_reduce_array16_asm2", n, mul_reduce_array16_asm2);
     speed_test3("mul_reduce_array_asm", n, mul_reduce_array_asm);
+    speed_test4("scalar_mul_reduce_array_asm", n, scalar_mul_reduce_array_asm);
     printf("\n\n");
   }
 }

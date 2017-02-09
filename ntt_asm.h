@@ -21,6 +21,10 @@
  */
 extern bool avx2_supported(void);
 
+/****************
+ *  REDUCTIONS  *
+ ***************/
+
 /*
  * Reduce all elements of array a: (i.e., a'[i] = red(a[i]))
  * - n = array size must be positive and a multiple of 16
@@ -58,11 +62,57 @@ extern void correct_asm(int32_t *a, uint32_t n);
 extern void mul_reduce_array16_asm(int32_t *a, uint32_t n, const int16_t *p);
 extern void mul_reduce_array16_asm2(int32_t *a, uint32_t n, const int16_t *p);
 
-
 /*
  * Multiply b[i] by c[i] then reduce and store the result in a[i]
  * - n = size of the arrays. It must be positive and a multiple of 16.
  */
 extern void mul_reduce_array_asm(int32_t *a, uint32_t n, const int32_t *b, const int32_t *c);
+
+/*
+ * Multiply a[i] by scalar c then reduce
+ * - n = array size. It must be positive and a multiple of 16.
+ * - the result is stored in place
+ */
+extern void scalar_mul_reduce_array_asm(int32_t *a, uint32_t n, int32_t c);
+
+
+
+/******************
+ *  NTT VARIANTS  *
+ *****************/
+/*
+ * COOLEY-TUKEY: BIT-REVERSE TO STANDARD ORDER
+ */
+
+/*
+ * Version 1:
+ * - input: a[0 ... n-1] in bit-reverse order
+ * - p: array of powers of omega such that 
+ *   p[t + j] = omega^(n/2t)^j * inverse(3)
+ *   for t=1, 2, 4, .., n/2
+ *   and j=0, ..., t-1.
+ *
+ * - output: a contains NTT(a) in standard order
+ *
+ * To get the right result (i.e., make sure there's no numerical overflow),
+ * this function is intended to be called with
+ *   -21499 <= a[i] <= 21499
+ *    -6144 <= p[i] <= 6144
+ */
+extern void ntt_red_ct_rev2std_asm(int32_t *a, uint32_t n, const int16_t *p);
+
+/*
+ * Version 2: combined product by powers of psi and NTT
+ * - input: a[0 ... n-1] in bit-reverse order
+ * - p: constant array such that 
+ *   p[t+j] = psi^(n/2t) * omega^(n/2t)^j * inverse(3)
+ *
+ * - output: NTT(a') in standard order
+ *   where a'[i] = a[i] * psi^i
+ *
+ * Same conditions as above to ensure no overflow.
+ */
+extern void mulntt_red_ct_rev2std_asm(int32_t *a, uint32_t n, const int16_t *p);
+
 
 #endif
