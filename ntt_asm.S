@@ -401,3 +401,53 @@ loop6:
 	cmp 	   rax, rsi
 	jb         loop6
 	ret
+
+/*
+ * Cooley-tukey: bit-reverse to standard order
+ *
+ * Input:
+ * - rdi = start of array a
+ * - rsi = size of array a (must be a positive multiple of 16)
+ * - rdx = start of array p
+ *
+ * a is an array of 32bit integers.
+ * NTT a is stored in place. 
+ * p is a constant array of powers of omega (signed 16bit constants).
+ */
+	.balign 16
+	.global _G(ntt_red_ct_rev2std_asm)
+_G(ntt_red_ct_rev2std_asm):
+	mov     rax, rdi                     // rax = start of array a
+	lea     rsi, [rdi+4*rsi]             // rsi = end of array a
+
+// The first loop does
+//    a'[2i] = a[2i] + a[2i+1]
+//    a'[2i+1] = a[2i] - a[2i+1]
+// Each iteration updates 16 elements
+size1_loop:
+	vmovdqu ymm0, [rax]                 // ymm0 = a0  a1  a2  a3  a4  a5  a6  a7
+	vmovdqu ymm1, [rax+32]              // ymm1 = a8  a9  a10 a11 a12 a13 a14 a15
+
+	vpsrldq ymm2, ymm0, 4               // ymm2 = a1  a2  a3  --- a5  a6  a7  ---
+	vpslldq ymm3, ymm1, 4               // ymm3 = --- a8  a9  a10 --- a12 a13 a14
+	vpblendd ymm0, ymm0, ymm3, 0xaa     // ymm0 = a0  a8  a2  a10  a4 a12 a6  a14
+	vpblendd ymm1, ymm1, ymm2, 0x55     // ymm1 = a1  a9  a3  a11  a5 a13 a7  a15
+
+        vpaddd   ymm2, ymm0, ymm1
+	vpsubd   ymm3, ymm0, ymm1
+	vpslldq  ymm0, ymm3, 4
+	vpsrldq  ymm1, ymm2, 4
+	vpblendd ymm0, ymm0, ymm2, 0x55
+	vpblendd ymm1, ymm1, ymm3, 0xaa
+
+	vmovdqu [rax], ymm0
+	vmovdqu [rax+32], ymm1
+
+	add     rax, 64
+	cmp     rax, rsi
+	jb      size1_loop
+//
+// TBD
+//
+	mov     rax, rdi
+	ret
