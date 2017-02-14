@@ -11,7 +11,7 @@ CFLAGS=-Wall -std=c99 -O3
 all: test_ntt test_ntt16 test_ntt256 test_ntt512 test_ntt1024 \
 	kat_mul1024 speed_mul1024 kat_mul1024_red speed_mul1024_red \
 	test_ntt_red16 test_ntt_red256 test_ntt_red512 test_ntt_red1024 \
-	test_ntt_red test_red_bounds test_avx
+	test_ntt_red test_red_bounds test_avx test_ntt_avx
 
 #
 # Utility to generate tables
@@ -125,6 +125,9 @@ test_ntt_red: test_ntt_red.o ntt_red.o ntt.o test_ntt_red_tables.o \
 	  test_bitrev_tables.o sort.o
 	$(CC) $^ -o $@
 
+test_ntt_avx: test_ntt_avx.o ntt_asm.o ntt_red.o test_ntt_red_tables.o sort.o
+	$(CC) $^ -o $@
+
 test_avx: test_avx.o ntt_red.o ntt_asm.o sort.o
 	$(CC) $^ -o $@
 
@@ -216,6 +219,8 @@ test_red_bounds.o: test_red_bounds.c red_bounds.h test_ntt_red_tables.h
 
 test_avx.o: test_avx.c ntt_red.h ntt_asm.h sort.h
 
+test_ntt_avx.o: test_ntt_avx.c ntt_asm.h test_ntt_red_tables.h sort.h
+
 #
 # Cleanup
 #
@@ -226,7 +231,7 @@ clean:
 	  test_ntt_red16 test_ntt_red256 test_ntt_red512 test_ntt_red1024 \
 	  make_tables make_red_tables make_bitrev_table \
           kat_mul1024 speed_mul1024 kat_mul1024_red speed_mul1024_red \
-	  test_red_bounds test_avx
+	  test_red_bounds test_avx test_ntt_avx
 	rm -f ntt16_tables.h ntt16_tables.c
 	rm -f ntt256_tables.h ntt256_tables.c
 	rm -f ntt512_tables.h ntt512_tables.c
