@@ -219,7 +219,7 @@ test_red_bounds.o: test_red_bounds.c red_bounds.h test_ntt_red_tables.h
 
 test_avx.o: test_avx.c ntt_red.h ntt_asm.h sort.h
 
-test_ntt_avx.o: test_ntt_avx.c ntt_asm.h test_ntt_red_tables.h sort.h
+test_ntt_avx.o: test_ntt_avx.c ntt_asm.h ntt_red.h test_ntt_red_tables.h sort.h
 
 #
 # Cleanup
