@@ -244,7 +244,6 @@ static void speed_test2(const char *name, uint32_t n, void (*f)(int32_t *, uint3
   printf("speed test %s (n=%"PRIu32"): median = %"PRIu64", average = %"PRIu64"\n", name, n, med, avg);
 }
 
-
 /*
  * ntt_ct_rev2std:
  */
@@ -296,6 +295,57 @@ static void ntt_ct_rev2std2048_base(int32_t *a) {
   ntt_red_ct_rev2std(a, 2048, shoup_sred_ntt2048_12289);
 }
 
+/*
+ * mulntt_ct_rev2std:
+ */
+static void mulntt_ct_rev2std16_asm(int32_t *a) {
+  mulntt_red_ct_rev2std_asm(a, 16, shoup_sred_ntt16_12289);
+}
+
+static void mulntt_ct_rev2std16_base(int32_t *a) {
+  mulntt_red_ct_rev2std(a, 16, shoup_sred_ntt16_12289);
+}
+
+static void mulntt_ct_rev2std128_asm(int32_t *a) {
+  mulntt_red_ct_rev2std_asm(a, 128, shoup_sred_ntt128_12289);
+}
+
+static void mulntt_ct_rev2std128_base(int32_t *a) {
+  mulntt_red_ct_rev2std(a, 128, shoup_sred_ntt128_12289);
+}
+
+static void mulntt_ct_rev2std256_asm(int32_t *a) {
+  mulntt_red_ct_rev2std_asm(a, 256, shoup_sred_ntt256_12289);
+}
+
+static void mulntt_ct_rev2std256_base(int32_t *a) {
+  mulntt_red_ct_rev2std(a, 256, shoup_sred_ntt256_12289);
+}
+
+static void mulntt_ct_rev2std512_asm(int32_t *a) {
+  mulntt_red_ct_rev2std_asm(a, 512, shoup_sred_ntt512_12289);
+}
+
+static void mulntt_ct_rev2std512_base(int32_t *a) {
+  mulntt_red_ct_rev2std(a, 512, shoup_sred_ntt512_12289);
+}
+
+static void mulntt_ct_rev2std1024_asm(int32_t *a) {
+  mulntt_red_ct_rev2std_asm(a, 1024, shoup_sred_ntt1024_12289);
+}
+
+static void mulntt_ct_rev2std1024_base(int32_t *a) {
+  mulntt_red_ct_rev2std(a, 1024, shoup_sred_ntt1024_12289);
+}
+
+static void mulntt_ct_rev2std2048_asm(int32_t *a) {
+  mulntt_red_ct_rev2std_asm(a, 2048, shoup_sred_ntt2048_12289);
+}
+
+static void mulntt_ct_rev2std2048_base(int32_t *a) {
+  mulntt_red_ct_rev2std(a, 2048, shoup_sred_ntt2048_12289);
+}
+
 #if 0
 static void test_ntt_ct_rev2std16(void) {
   int32_t a[16];
@@ -329,25 +379,49 @@ static void run_tests(void) {
   speed_test2("ntt_red_ct_rev2std", 16, ntt_red_ct_rev2std);
   speed_test2("ntt_red_ct_rev2std_asm", 16, ntt_red_ct_rev2std_asm);
   printf("\n");
+  cross_check("mulntt_red_ct_rev2std_asm", 16, mulntt_ct_rev2std16_asm, mulntt_ct_rev2std16_base);
+  speed_test2("mulntt_red_ct_rev2std", 16, mulntt_red_ct_rev2std);
+  speed_test2("mulntt_red_ct_rev2std_asm", 16, mulntt_red_ct_rev2std_asm);
+  printf("\n");
   cross_check("ntt_red_ct_rev2std_asm", 128, ntt_ct_rev2std128_asm, ntt_ct_rev2std128_base);
   speed_test2("ntt_red_ct_rev2std", 128, ntt_red_ct_rev2std);
   speed_test2("ntt_red_ct_rev2std_asm", 128, ntt_red_ct_rev2std_asm);
+  printf("\n");
+  cross_check("mulntt_red_ct_rev2std_asm", 128, mulntt_ct_rev2std128_asm, mulntt_ct_rev2std128_base);
+  speed_test2("mulntt_red_ct_rev2std", 128, mulntt_red_ct_rev2std);
+  speed_test2("mulntt_red_ct_rev2std_asm", 128, mulntt_red_ct_rev2std_asm);
   printf("\n");
   cross_check("ntt_red_ct_rev2std_asm", 256, ntt_ct_rev2std256_asm, ntt_ct_rev2std256_base);
   speed_test2("ntt_red_ct_rev2std", 256, ntt_red_ct_rev2std);
   speed_test2("ntt_red_ct_rev2std_asm", 256, ntt_red_ct_rev2std_asm);
   printf("\n");
+  cross_check("mulntt_red_ct_rev2std_asm", 256, mulntt_ct_rev2std256_asm, mulntt_ct_rev2std256_base);
+  speed_test2("mulntt_red_ct_rev2std", 256, mulntt_red_ct_rev2std);
+  speed_test2("mulntt_red_ct_rev2std_asm", 256, mulntt_red_ct_rev2std_asm);
+  printf("\n");
   cross_check("ntt_red_ct_rev2std_asm", 512, ntt_ct_rev2std512_asm, ntt_ct_rev2std512_base);
   speed_test2("ntt_red_ct_rev2std", 512, ntt_red_ct_rev2std);
   speed_test2("ntt_red_ct_rev2std_asm", 512, ntt_red_ct_rev2std_asm);
+  printf("\n");
+  cross_check("mulntt_red_ct_rev2std_asm", 512, mulntt_ct_rev2std512_asm, mulntt_ct_rev2std512_base);
+  speed_test2("mulntt_red_ct_rev2std", 512, mulntt_red_ct_rev2std);
+  speed_test2("mulntt_red_ct_rev2std_asm", 512, mulntt_red_ct_rev2std_asm);
   printf("\n");
   cross_check("ntt_red_ct_rev2std_asm", 1024, ntt_ct_rev2std1024_asm, ntt_ct_rev2std1024_base);
   speed_test2("ntt_red_ct_rev2std", 1024, ntt_red_ct_rev2std);
   speed_test2("ntt_red_ct_rev2std_asm", 1024, ntt_red_ct_rev2std_asm);
   printf("\n");
+  cross_check("mulntt_red_ct_rev2std_asm", 1024, mulntt_ct_rev2std1024_asm, mulntt_ct_rev2std1024_base);
+  speed_test2("mulntt_red_ct_rev2std", 1024, mulntt_red_ct_rev2std);
+  speed_test2("mulntt_red_ct_rev2std_asm", 1024, mulntt_red_ct_rev2std_asm);
+  printf("\n");
   cross_check("ntt_red_ct_rev2std_asm", 2048, ntt_ct_rev2std2048_asm, ntt_ct_rev2std2048_base);
   speed_test2("ntt_red_ct_rev2std", 2048, ntt_red_ct_rev2std);
   speed_test2("ntt_red_ct_rev2std_asm", 2048, ntt_red_ct_rev2std_asm);
+  printf("\n");
+  cross_check("mulntt_red_ct_rev2std_asm", 2048, mulntt_ct_rev2std2048_asm, mulntt_ct_rev2std2048_base);
+  speed_test2("mulntt_red_ct_rev2std", 2048, mulntt_red_ct_rev2std);
+  speed_test2("mulntt_red_ct_rev2std_asm", 2048, mulntt_red_ct_rev2std_asm);
   printf("\n");
 }
 

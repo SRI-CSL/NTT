@@ -34,6 +34,7 @@ extern bool avx2_supported(void);
  *  -524287 <= a'[i] <= 536573
  */
 extern void reduce_array_asm(int32_t *a, uint32_t n);
+extern void reduce_array_asm2(int32_t *a, uint32_t n);
 
 /*
  * Reduce all elements of array a twice: a[i] = red(red(a[i]))
@@ -46,6 +47,7 @@ extern void reduce_array_asm(int32_t *a, uint32_t n);
  *   -130 <= a'[i] <= 12413
  */
 extern void reduce_array_twice_asm(int32_t *a, uint32_t n);
+extern void reduce_array_twice_asm2(int32_t *a, uint32_t n);
 
 /*
  * Convert to integers in the range [0, Q-1] after double reduction.

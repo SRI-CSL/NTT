@@ -492,7 +492,9 @@ static void run_tests(void) {
 
   for (n=16; n<=2048; n += n) {
     cross_check("reduce_array_asm", n, reduce_array_asm, reduce_array);
+    cross_check("reduce_array_asm2", n, reduce_array_asm2, reduce_array);
     cross_check("reduce_array_twice_asm", n, reduce_array_twice_asm, reduce_array_twice);
+    cross_check("reduce_array_twice_asm2", n, reduce_array_twice_asm2, reduce_array_twice);
     test_correction(n);
     test_mul_reduce_array16(n);
     test_mul_reduce_array(n);
@@ -509,7 +511,9 @@ static void run_tests(void) {
     speed_test4("scalar_mul_reduce_array", n, scalar_mul_reduce_array);
     printf("\n");
     speed_test("reduce_array_asm", n, reduce_array_asm);
+    speed_test("reduce_array_asm2", n, reduce_array_asm2);
     speed_test("reduce_array_twice_asm", n, reduce_array_twice_asm);
+    speed_test("reduce_array_twice_asm2", n, reduce_array_twice_asm2);
     speed_test("correct_asm", n, correct_asm);
     speed_test2("mul_reduce_array16_asm", n, mul_reduce_array16_asm);
     speed_test2("mul_reduce_array16_asm2", n, mul_reduce_array16_asm2);
