@@ -347,6 +347,8 @@ static void print_tables(FILE *f, parameters_t *p) {
   // powers of psi * inverse(k)
   build_power_table(table, n, q, p->inv_k, p->psi);
   print_table(f, "psi_powers", table, n, q);
+  build_rev_table(table, n, q, 1, p->psi, p->inv_k);
+  print_table(f, "psi_powers_rev", table, n, q);
   build_power_table(table, n, q, p->inv_k, p->inv_psi);
   print_table(f, "inv_psi_powers", table, n, q);
 

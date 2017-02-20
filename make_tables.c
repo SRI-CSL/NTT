@@ -309,6 +309,8 @@ static void print_tables(FILE *f, parameters_t *p) {
   print_table(f, "psi_powers", table, n);
   build_power_table(table, n, q, 1, p->inv_psi);
   print_table(f, "inv_psi_powers", table, n);
+  build_rev_table(table, n, q, 1, p->inv_psi);
+  print_table(f, "inv_psi_powers_rev", table, n);
   build_power_table(table, n, q, p->inv_n, p->inv_psi);
   print_table(f, "scaled_inv_psi_powers", table, n);
 
