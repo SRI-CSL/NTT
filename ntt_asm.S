@@ -17,36 +17,44 @@
 #define _G(s) s
 #endif
 
-	.intel_syntax noprefix
+        .intel_syntax noprefix
 
-	.data
-	.balign 32
+        .data
+        .balign 32
 // mask = array of 8 integers, all equal to 4095 = 2^12 -1
 mask:
-	.long  0xfff, 0xfff, 0xfff, 0xfff, 0xfff, 0xfff, 0xfff, 0xfff
-	
+        .long  0xfff, 0xfff, 0xfff, 0xfff, 0xfff, 0xfff, 0xfff, 0xfff
+        
 // q_x8 = array of 8 integers, all equal to 12289
 q_x8:
-	.long  12289, 12289, 12289, 12289, 12289, 12289, 12289, 12289
-	
+        .long  12289, 12289, 12289, 12289, 12289, 12289, 12289, 12289
+        
 // q_x8 = array of 8 integers, all equal to 12288
 q_minus1_x8:
-	.long  12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288
+        .long  12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288
 
 // for testing ntt_x86_asm (from Microsoft)
 perm0246:
-	.long 0, 2, 4, 6, 0, 0, 0, 0
+        .long 0, 2, 4, 6, 0, 0, 0, 0
 
 // for ntt_red_ct_rev2std and mulntt_red_ct_rev2std
 perm5:
-	.long 4, 0, 5, 0, 6, 0, 7, 0
+        .long 4, 0, 5, 0, 6, 0, 7, 0
 perm4:
-	.long 2, 0, 3, 0, 2, 0, 3, 0
+        .long 2, 0, 3, 0, 2, 0, 3, 0
 perm3:
-	.long 1, 0, 1, 0, 1, 0, 1, 0
+        .long 1, 0, 1, 0, 1, 0, 1, 0
 
-	.text
-/*
+// for ntt_rec_ct_std2rev
+perm2020:
+        .long 0, 0, 0, 0, 2, 0, 2, 0
+
+perm0426:
+        .long 0, 0, 4, 0, 2, 0, 6, 0
+
+        .text
+
+/***********************************************************
  * Check whether the processor + OS support AVX and AVX2
  *
  * This follows the intel manual.
@@ -54,37 +62,37 @@ perm3:
  * No input parameters.
  * - return with rax = 1 if AVX2 is supported
  * - return with rax = 0 otherwise
- */
-	.balign 16
-	.global _G(avx2_supported)
+ ***********************************************************/
+        .balign 16
+        .global _G(avx2_supported)
 _G(avx2_supported):
-	push rbx		// rax/rbx/rcx/rdx are modified by CPUID
-	mov eax, 1
-	cpuid
-	and ecx, 0x18000000
-	cmp ecx, 0x18000000
-	jne not_supported
-	mov eax, 7
-	xor ecx, ecx
-	cpuid
-	and ebx, 0x20
-	cmp ebx, 0x20
-	jne not_supported
-	xor ecx, ecx
-	xgetbv
-	and eax, 0x06
-	cmp eax, 0x06
-	jne not_supported
-	mov eax, 1           	// all good: supported
-	pop rbx
-	ret
+        push rbx                // rax/rbx/rcx/rdx are modified by CPUID
+        mov eax, 1
+        cpuid
+        and ecx, 0x18000000
+        cmp ecx, 0x18000000
+        jne not_supported
+        mov eax, 7
+        xor ecx, ecx
+        cpuid
+        and ebx, 0x20
+        cmp ebx, 0x20
+        jne not_supported
+        xor ecx, ecx
+        xgetbv
+        and eax, 0x06
+        cmp eax, 0x06
+        jne not_supported
+        mov eax, 1              // all good: supported
+        pop rbx
+        ret
 not_supported:
-	xor eax, eax
-	pop rbx
-	ret
+        xor eax, eax
+        pop rbx
+        ret
 
 
-/*
+/*************************************************************************
  * Reduce all elements of an array of signed 32bit integers
  *
  * Input:
@@ -92,68 +100,68 @@ not_supported:
  * - rsi = number of elements (must be positive and a multiple of 16)
  *
  * The array is updated in place
- */
-	.balign 16
-	.global _G(reduce_array_asm)
+ *************************************************************************/
+        .balign 16
+        .global _G(reduce_array_asm)
 _G(reduce_array_asm):
-	vmovdqa ymm3, [mask+rip]
-	mov rax, rdi
-	lea rsi, [rdi+4*rsi]
+        vmovdqa ymm3, [mask+rip]
+        mov rax, rdi
+        lea rsi, [rdi+4*rsi]
 
-loop0:	
-	vmovdqu ymm0, [rax]                        // load 8 elements
-	vmovdqu ymm1, [rax+32]                     // load 8 elements
+loop0:  
+        vmovdqu ymm0, [rax]                        // load 8 elements
+        vmovdqu ymm1, [rax+32]                     // load 8 elements
 
-	vpsrad  ymm2, ymm0, 12                     // ymm2[i] = ymm0[i] >> 12 (arithmetic shift)	
-	vpand   ymm0, ymm0, ymm3	           // ymm3[i] = ymm0[i] & 4095
-	vpslld  ymm4, ymm0, 1                      // ymm4[i] = 2*ymm0[i]
-	vpaddd  ymm0, ymm0, ymm4                   // ymm0[i] = 3*ymm0[i]
-	vpsubd  ymm0, ymm0, ymm2
+        vpsrad  ymm2, ymm0, 12                     // ymm2[i] = ymm0[i] >> 12 (arithmetic shift)        
+        vpand   ymm0, ymm0, ymm3                   // ymm3[i] = ymm0[i] & 4095
+        vpslld  ymm4, ymm0, 1                      // ymm4[i] = 2*ymm0[i]
+        vpaddd  ymm0, ymm0, ymm4                   // ymm0[i] = 3*ymm0[i]
+        vpsubd  ymm0, ymm0, ymm2
 
-	vmovdqu [rax], ymm0                        // store 8 elements
+        vmovdqu [rax], ymm0                        // store 8 elements
 
-	vpsrad  ymm2, ymm1, 12                     // ymm2[i] = ymm1[i] >> 12	
-	vpand   ymm1, ymm1, ymm3	           // ymm3[i] = ymm1[i] & 4095
-	vpslld  ymm4, ymm1, 1                      // ymm4[i] = 2*ymm1[i]
-	vpaddd  ymm1, ymm1, ymm4                   // ymm1[i] = 3*ymm1[i]
-	vpsubd  ymm1, ymm1, ymm2
+        vpsrad  ymm2, ymm1, 12                     // ymm2[i] = ymm1[i] >> 12   
+        vpand   ymm1, ymm1, ymm3                   // ymm3[i] = ymm1[i] & 4095
+        vpslld  ymm4, ymm1, 1                      // ymm4[i] = 2*ymm1[i]
+        vpaddd  ymm1, ymm1, ymm4                   // ymm1[i] = 3*ymm1[i]
+        vpsubd  ymm1, ymm1, ymm2
 
-	vmovdqu [rax+32], ymm1                     // store 8 elements
+        vmovdqu [rax+32], ymm1                     // store 8 elements
 
-	add rax, 64
-	cmp rax, rsi
-	jb loop0
-	ret
+        add rax, 64
+        cmp rax, rsi
+        jb loop0
+        ret
 
 /*
  * Variant implementation: don't unroll the loop.
  * Process 8 elements at a time.
  */
-	.balign 16
-	.global _G(reduce_array_asm2)
+        .balign 16
+        .global _G(reduce_array_asm2)
 _G(reduce_array_asm2):
-	vmovdqa ymm3, [mask+rip]
-	mov rax, rdi
-	lea rsi, [rdi+4*rsi]
+        vmovdqa ymm3, [mask+rip]
+        mov rax, rdi
+        lea rsi, [rdi+4*rsi]
 
 loop0b:
-	vmovdqu ymm0, [rax]                        // load 8 elements
+        vmovdqu ymm0, [rax]                        // load 8 elements
 
-	vpsrad  ymm2, ymm0, 12                     // ymm2[i] = ymm0[i] >> 12 (arithmetic shift)	
-	vpand   ymm0, ymm0, ymm3	           // ymm3[i] = ymm0[i] & 4095
-	vpslld  ymm4, ymm0, 1                      // ymm4[i] = 2*ymm0[i]
-	vpaddd  ymm0, ymm0, ymm4                   // ymm0[i] = 3*ymm0[i]
-	vpsubd  ymm0, ymm0, ymm2
+        vpsrad  ymm2, ymm0, 12                     // ymm2[i] = ymm0[i] >> 12 (arithmetic shift)
+        vpand   ymm0, ymm0, ymm3                   // ymm3[i] = ymm0[i] & 4095
+        vpslld  ymm4, ymm0, 1                      // ymm4[i] = 2*ymm0[i]
+        vpaddd  ymm0, ymm0, ymm4                   // ymm0[i] = 3*ymm0[i]
+        vpsubd  ymm0, ymm0, ymm2
 
-	vmovdqu [rax], ymm0                        // store 8 elements
+        vmovdqu [rax], ymm0                        // store 8 elements
 
-	add rax, 32
-	cmp rax, rsi
-	jb loop0b
-	ret
+        add rax, 32
+        cmp rax, rsi
+        jb loop0b
+        ret
 
 
-/*
+/**************************************************************************
  * Reduce all elements of an array twice
  *
  * Input:
@@ -161,88 +169,89 @@ loop0b:
  * - rsi = number of elements (must be positive and a multiple of 16)
  *
  * The array is updated in place
- */
-	.balign 16
-	.global _G(reduce_array_twice_asm)
+ **************************************************************************/
+        .balign 16
+        .global _G(reduce_array_twice_asm)
 _G(reduce_array_twice_asm):
-	vmovdqa ymm3, [mask+rip]
-	mov rax, rdi
-	lea rsi, [rdi+4*rsi]
+        vmovdqa ymm3, [mask+rip]
+        mov rax, rdi
+        lea rsi, [rdi+4*rsi]
 
-loop1:	
-	vmovdqu ymm0, [rax]                        // load 8 elements
-	vmovdqu ymm1, [rax+32]                     // load 8 elements
+loop1:  
+        vmovdqu ymm0, [rax]                        // load 8 elements
+        vmovdqu ymm1, [rax+32]                     // load 8 elements
 
-	// first reduction: all 8 elements of ymm0 in parallel
-	vpsrad  ymm2, ymm0, 12 
-	vpand   ymm0, ymm0, ymm3
-	vpslld  ymm4, ymm0, 1
-	vpaddd  ymm0, ymm0, ymm4
-	vpsubd  ymm0, ymm0, ymm2
-	// second reduction
-	vpsrad  ymm2, ymm0, 12
-	vpand   ymm0, ymm0, ymm3
-	vpslld  ymm4, ymm0, 1
-	vpaddd  ymm0, ymm0, ymm4
-	vpsubd  ymm0, ymm0, ymm2
+        // first reduction: all 8 elements of ymm0 in parallel
+        vpsrad  ymm2, ymm0, 12 
+        vpand   ymm0, ymm0, ymm3
+        vpslld  ymm4, ymm0, 1
+        vpaddd  ymm0, ymm0, ymm4
+        vpsubd  ymm0, ymm0, ymm2
+        // second reduction
+        vpsrad  ymm2, ymm0, 12
+        vpand   ymm0, ymm0, ymm3
+        vpslld  ymm4, ymm0, 1
+        vpaddd  ymm0, ymm0, ymm4
+        vpsubd  ymm0, ymm0, ymm2
 
-	vmovdqu [rax], ymm0                        // store 8 elements
+        vmovdqu [rax], ymm0                        // store 8 elements
 
-	// same thing for vector ymm1
-	vpsrad  ymm2, ymm1, 12
-	vpand   ymm1, ymm1, ymm3
-	vpslld  ymm4, ymm1, 1
-	vpaddd  ymm1, ymm1, ymm4
-	vpsubd  ymm1, ymm1, ymm2
-	// second reduction
-	vpsrad  ymm2, ymm1, 12
-	vpand   ymm1, ymm1, ymm3
-	vpslld  ymm4, ymm1, 1
-	vpaddd  ymm1, ymm1, ymm4
-	vpsubd  ymm1, ymm1, ymm2
-	
-	vmovdqu [rax+32], ymm1                     // store 8 elements
+        // same thing for vector ymm1
+        vpsrad  ymm2, ymm1, 12
+        vpand   ymm1, ymm1, ymm3
+        vpslld  ymm4, ymm1, 1
+        vpaddd  ymm1, ymm1, ymm4
+        vpsubd  ymm1, ymm1, ymm2
+        // second reduction
+        vpsrad  ymm2, ymm1, 12
+        vpand   ymm1, ymm1, ymm3
+        vpslld  ymm4, ymm1, 1
+        vpaddd  ymm1, ymm1, ymm4
+        vpsubd  ymm1, ymm1, ymm2
+        
+        vmovdqu [rax+32], ymm1                     // store 8 elements
 
-	add rax, 64
-	cmp rax, rsi
-	jb loop1
-	ret
+        add rax, 64
+        cmp rax, rsi
+        jb loop1
+        ret
 
 
 /*
  * Variant: process eight elements at a time. Don't unroll the loop.
  */
-	.balign 16
-	.global _G(reduce_array_twice_asm2)
+        .balign 16
+        .global _G(reduce_array_twice_asm2)
 _G(reduce_array_twice_asm2):
-	vmovdqa ymm3, [mask+rip]
-	mov rax, rdi
-	lea rsi, [rdi+4*rsi]
+        vmovdqa ymm3, [mask+rip]
+        mov rax, rdi
+        lea rsi, [rdi+4*rsi]
 
-loop1b:	
-	vmovdqu ymm0, [rax]                        // load 8 elements
+loop1b: 
+        vmovdqu ymm0, [rax]                        // load 8 elements
 
-	// first reduction: all 8 elements of ymm0 in parallel
-	vpsrad  ymm2, ymm0, 12 
-	vpand   ymm0, ymm0, ymm3
-	vpslld  ymm4, ymm0, 1
-	vpaddd  ymm0, ymm0, ymm4
-	vpsubd  ymm0, ymm0, ymm2
-	// second reduction
-	vpsrad  ymm2, ymm0, 12
-	vpand   ymm0, ymm0, ymm3
-	vpslld  ymm4, ymm0, 1
-	vpaddd  ymm0, ymm0, ymm4
-	vpsubd  ymm0, ymm0, ymm2
+        // first reduction: all 8 elements of ymm0 in parallel
+        vpsrad  ymm2, ymm0, 12 
+        vpand   ymm0, ymm0, ymm3
+        vpslld  ymm4, ymm0, 1
+        vpaddd  ymm0, ymm0, ymm4
+        vpsubd  ymm0, ymm0, ymm2
+        // second reduction
+        vpsrad  ymm2, ymm0, 12
+        vpand   ymm0, ymm0, ymm3
+        vpslld  ymm4, ymm0, 1
+        vpaddd  ymm0, ymm0, ymm4
+        vpsubd  ymm0, ymm0, ymm2
 
-	vmovdqu [rax], ymm0                        // store 8 elements
+        vmovdqu [rax], ymm0                        // store 8 elements
 
-	add rax, 32
-	cmp rax, rsi
-	jb loop1b
-	ret
+        add rax, 32
+        cmp rax, rsi
+        jb loop1b
+        ret
 
-/*
+
+/**************************************************************************
  * Correction: convert all elements to integers between
  * 0 and 12288. This assumes that the input integers satisfy
  * -Q <= a[i] <= 2*Q -1 (where Q=12289).
@@ -252,43 +261,43 @@ loop1b:
  * - rsi = number of elements (must be positive and a multiple of 16).
  *
  * The array is updated in place.
- */
-	.balign 16
-	.global _G(correct_asm)
+ **************************************************************************/
+        .balign 16
+        .global _G(correct_asm)
 _G(correct_asm):
-	vmovdqa ymm3, [q_x8+rip]
-	vmovdqa ymm4, [q_minus1_x8+rip]
-	mov rax, rdi
-	lea rsi, [rdi+4*rsi]
+        vmovdqa ymm3, [q_x8+rip]
+        vmovdqa ymm4, [q_minus1_x8+rip]
+        mov rax, rdi
+        lea rsi, [rdi+4*rsi]
 
 loop2:
-	vmovdqu ymm0, [rax]                        // load 8 elements
-	vmovdqu ymm1, [rax+32]                     // load 8 elements
+        vmovdqu ymm0, [rax]                        // load 8 elements
+        vmovdqu ymm1, [rax+32]                     // load 8 elements
 
-	vpsrad  ymm2, ymm0, 31                     // ymm2[i] = -1 if ymm0[i] < 0
-	vpcmpgtd ymm5, ymm0, ymm4                  // ymm5[i] = -1 if ymm0[i] >= Q
-	vpand   ymm2, ymm2, ymm3
-	vpand   ymm5, ymm5, ymm3
-	vpaddd  ymm0, ymm0, ymm2
-	vpsubd  ymm0, ymm0, ymm5
-	
-	vmovdqu [rax], ymm0                        // store 8 elements
-	
-	vpsrad  ymm2, ymm1, 31                     // ymm2[i] = all ones if ymm1[i] < 0
-	vpcmpgtd ymm5, ymm1, ymm4                  // ymm5[i] = all ones if ymm1[i] >= Q
-	vpand   ymm2, ymm2, ymm3
-	vpand   ymm5, ymm5, ymm3
-	vpaddd  ymm1, ymm1, ymm2
-	vpsubd  ymm1, ymm1, ymm5
-	
-	vmovdqu [rax+32], ymm1                     // store 8 elements
+        vpsrad  ymm2, ymm0, 31                     // ymm2[i] = -1 if ymm0[i] < 0
+        vpcmpgtd ymm5, ymm0, ymm4                  // ymm5[i] = -1 if ymm0[i] >= Q
+        vpand   ymm2, ymm2, ymm3
+        vpand   ymm5, ymm5, ymm3
+        vpaddd  ymm0, ymm0, ymm2
+        vpsubd  ymm0, ymm0, ymm5
+        
+        vmovdqu [rax], ymm0                        // store 8 elements
+        
+        vpsrad  ymm2, ymm1, 31                     // ymm2[i] = all ones if ymm1[i] < 0
+        vpcmpgtd ymm5, ymm1, ymm4                  // ymm5[i] = all ones if ymm1[i] >= Q
+        vpand   ymm2, ymm2, ymm3
+        vpand   ymm5, ymm5, ymm3
+        vpaddd  ymm1, ymm1, ymm2
+        vpsubd  ymm1, ymm1, ymm5
+        
+        vmovdqu [rax+32], ymm1                     // store 8 elements
 
-	add rax, 64
-	cmp rax, rsi
-	jb loop2
-	ret
+        add rax, 64
+        cmp rax, rsi
+        jb loop2
+        ret
 
-/*
+/**************************************************************************
  * Element-wise multiplication + reduction in place:
  *  a[i] = red(a[i] * p[i])
  *
@@ -300,7 +309,9 @@ loop2:
  * The number of elements must be positive and a multiple of 16.
  *
  * Output: array a is modified in place.
- *
+ *************************************************************************/
+
+/*      
  * For product + reduction, we use the same pattern in many places.
  * Assuming ymm0 and ymm1 contain eight integers to multiply:
  *     ymm0 = a[0] ... a[7]
@@ -310,97 +321,98 @@ loop2:
  * We do this:
  * 
  *      vpmuldq   ymm2, ymm0, ymm1    --> ymm2 = four products: a[0] * p[0], a[2] * p[2], a[4] * p[4], a[6] * p[6]
- *	vpshufd   ymm0, ymm0, 0x31
- *	vpshufd   ymm1, ymm1, 0x31
- *	vpmuldq   ymm3, ymm0, ymm1    --> ymm3 = four products: a[1] * p[1], a[3] * p[3], a[5] * p[5], a[7] * p[7]
+ *      vpshufd   ymm0, ymm0, 0x31
+ *      vpshufd   ymm1, ymm1, 0x31
+ *      vpmuldq   ymm3, ymm0, ymm1    --> ymm3 = four products: a[1] * p[1], a[3] * p[3], a[5] * p[5], a[7] * p[7]
  *
- * 	vpslldq   ymm0, ymm3, 4
- *	vpblendd  ymm0, ymm0, ymm2, 0x55 
- *	vpand     ymm0, ymm0, ymm4    --> ymm0 = c0 part = low-order bits of a[0] * p[0]  .... a[7] * p[7] 
+ *      vpslldq   ymm0, ymm3, 4
+ *      vpblendd  ymm0, ymm0, ymm2, 0x55 
+ *      vpand     ymm0, ymm0, ymm4    --> ymm0 = c0 part = low-order bits of a[0] * p[0]  .... a[7] * p[7] 
  *
- *	vpsrlq     ymm3, ymm3, 12
- *	vpsrlq     ymm2, ymm2, 12
- *	vpslldq    ymm3, ymm3, 4
- *	vpblendd   ymm1, ymm3, ymm2, 0x55   -->  ymm1 = c1 part = products shifted by 12 (and truncated to 32bits)
- *	                                         ymm1 = a[0] * p[0] >> 12, ...., a[7] * p[7] >> 12
+ *      vpsrlq     ymm3, ymm3, 12
+ *      vpsrlq     ymm2, ymm2, 12
+ *      vpslldq    ymm3, ymm3, 4
+ *      vpblendd   ymm1, ymm3, ymm2, 0x55   -->  ymm1 = c1 part = products shifted by 12 (and truncated to 32bits)
+ *                                               ymm1 = a[0] * p[0] >> 12, ...., a[7] * p[7] >> 12
  *
- *	vpslld     ymm2, ymm0, 1
- *	vpaddd     ymm0, ymm0, ymm2       --> ymm0 = eight 32bit integers (3 * c0)
- *	vpsubd     ymm0, ymm0, ymm1       --> ymm0 = eight 32bit integers = (3 * c0 - c1) = result
+ *      vpslld     ymm2, ymm0, 1
+ *      vpaddd     ymm0, ymm0, ymm2       --> ymm0 = eight 32bit integers (3 * c0)
+ *      vpsubd     ymm0, ymm0, ymm1       --> ymm0 = eight 32bit integers = (3 * c0 - c1) = result
  *      
  */
-	.balign 16
-	.global _G(mul_reduce_array16_asm)
+        .balign 16
+        .global _G(mul_reduce_array16_asm)
 _G(mul_reduce_array16_asm):
-	vmovdqa ymm4, [mask+rip]
-	mov rax, rdi
-	lea rsi, [rdi+4*rsi]
+        vmovdqa ymm4, [mask+rip]
+        mov rax, rdi
+        lea rsi, [rdi+4*rsi]
 
 loop3:
-	vmovdqu    ymm0, [rax]                      // ymm0 = 8 elements of array a
-	vpmovsxwd  ymm1, [rdx]                      // ymm1 = 8 elements of array p, sign-extended to 32bits
+        vmovdqu    ymm0, [rax]                      // ymm0 = 8 elements of array a
+        vpmovsxwd  ymm1, [rdx]                      // ymm1 = 8 elements of array p, sign-extended to 32bits
 
-	// mul-reduce
-	vpmuldq    ymm2, ymm0, ymm1
-	vpshufd    ymm0, ymm0, 0x31
-	vpshufd    ymm1, ymm1, 0x31
-	vpmuldq    ymm3, ymm0, ymm1
+        // mul-reduce
+        vpmuldq    ymm2, ymm0, ymm1
+        vpshufd    ymm0, ymm0, 0x31
+        vpshufd    ymm1, ymm1, 0x31
+        vpmuldq    ymm3, ymm0, ymm1
 
-	vpslldq    ymm0, ymm3, 4
-	vpblendd   ymm0, ymm0, ymm2, 0x55
-	vpand      ymm0, ymm0, ymm4
+        vpslldq    ymm0, ymm3, 4
+        vpblendd   ymm0, ymm0, ymm2, 0x55
+        vpand      ymm0, ymm0, ymm4
 
-	vpsrlq     ymm3, ymm3, 12
-	vpsrlq     ymm2, ymm2, 12
-	vpslldq    ymm3, ymm3, 4
-	vpblendd   ymm1, ymm3, ymm2, 0x55
+        vpsrlq     ymm3, ymm3, 12
+        vpsrlq     ymm2, ymm2, 12
+        vpslldq    ymm3, ymm3, 4
+        vpblendd   ymm1, ymm3, ymm2, 0x55
 
-	vpslld     ymm2, ymm0, 1
-	vpaddd     ymm0, ymm0, ymm2
-	vpsubd     ymm0, ymm0, ymm1
-	
-	vmovdqu    [rax], ymm0                      // store the result
+        vpslld     ymm2, ymm0, 1
+        vpaddd     ymm0, ymm0, ymm2
+        vpsubd     ymm0, ymm0, ymm1
+        
+        vmovdqu    [rax], ymm0                      // store the result
 
-	add        rax, 32
-	add        rdx, 16
-	cmp        rax, rsi
-	jb         loop3
-	ret
-	
+        add        rax, 32
+        add        rdx, 16
+        cmp        rax, rsi
+        jb         loop3
+        ret
+        
 /*
  * Another implementation (based on Microsoft's ntt_x64_asm.S)
  */
-	.balign 16
-	.global _G(mul_reduce_array16_asm2)
+        .balign 16
+        .global _G(mul_reduce_array16_asm2)
 _G(mul_reduce_array16_asm2):
-	vmovdqu    ymm5, [perm0246+rip]
-	vmovdqu    ymm6, [mask+rip]
-	mov        rax, rdi
-	lea        rsi, [rdi+4*rsi]
+        vmovdqu    ymm5, [perm0246+rip]
+        vmovdqu    ymm6, [mask+rip]
+        mov        rax, rdi
+        lea        rsi, [rdi+4*rsi]
 
 loop4:
-	vpmovsxdq  ymm0, [rax]                    // ymm0 = 4 elements of a, sign-extended to 64 bits
-	vpmovsxwq  ymm1, [rdx]                    // ymm1 = 4 elements of p, sign-extended to 64 bits
-	vpmuldq    ymm0, ymm1, ymm0               // product
+        vpmovsxdq  ymm0, [rax]                    // ymm0 = 4 elements of a, sign-extended to 64 bits
+        vpmovsxwq  ymm1, [rdx]                    // ymm1 = 4 elements of p, sign-extended to 64 bits
+        vpmuldq    ymm0, ymm1, ymm0               // product
 
-	vmovdqu    ymm3, ymm0
-	vpand      ymm0, ymm6, ymm0               // c0
-	vpsrlq     ymm3, ymm3, 12                 // c1
-	vpslld     ymm4, ymm0, 1                  // 2*c0
-	vpsubd     ymm3, ymm0, ymm3               // c0-c1
-	vpaddd     ymm0, ymm3, ymm4               // 3*c0-c1 
+        vmovdqu    ymm3, ymm0
+        vpand      ymm0, ymm6, ymm0               // c0
+        vpsrlq     ymm3, ymm3, 12                 // c1
+        vpslld     ymm4, ymm0, 1                  // 2*c0
+        vpsubd     ymm3, ymm0, ymm3               // c0-c1
+        vpaddd     ymm0, ymm3, ymm4               // 3*c0-c1 
 
-	vpermd     ymm0, ymm5, ymm0 
-	vmovdqu    [rax], xmm0
+        vpermd     ymm0, ymm5, ymm0 
+        vmovdqu    [rax], xmm0
 
-	add        rax, 16
-	add        rdx, 8
-	cmp        rax, rsi
-	jb         loop4
+        add        rax, 16
+        add        rdx, 8
+        cmp        rax, rsi
+        jb         loop4
 
-	ret
-	
-/*
+        ret
+        
+
+/**************************************************************************
  * Element-wise multiplication + reduction:
  *  a[i] = red(b[i] * c[i])
  *
@@ -411,47 +423,48 @@ loop4:
  * - rcx = start of array c (array of signed 32bit integers)
  *
  * The number of elements must be positive and a multiple of 16.
- */
-	.balign 16
-	.global _G(mul_reduce_array_asm)
+ **************************************************************************/
+
+        .balign 16
+        .global _G(mul_reduce_array_asm)
 _G(mul_reduce_array_asm):
-	vmovdqa ymm4, [mask+rip]
-	mov     rax, rdi
-	lea     rsi, [rdi+4*rsi]
+        vmovdqa ymm4, [mask+rip]
+        mov     rax, rdi
+        lea     rsi, [rdi+4*rsi]
 
 loop5:
-	vmovdqu    ymm0, [rdx]                      // ymm0 = 8 elements of array b
-	vmovdqu    ymm1, [rcx]                      // ymm1 = 8 elements of array c
+        vmovdqu    ymm0, [rdx]                      // ymm0 = 8 elements of array b
+        vmovdqu    ymm1, [rcx]                      // ymm1 = 8 elements of array c
 
-	// mul-reduce
-	vpmuldq    ymm2, ymm0, ymm1
-	vpshufd    ymm0, ymm0, 0x31
-	vpshufd    ymm1, ymm1, 0x31
-	vpmuldq    ymm3, ymm0, ymm1
+        // mul-reduce
+        vpmuldq    ymm2, ymm0, ymm1
+        vpshufd    ymm0, ymm0, 0x31
+        vpshufd    ymm1, ymm1, 0x31
+        vpmuldq    ymm3, ymm0, ymm1
 
-	vpslldq    ymm0, ymm3, 4
-	vpblendd   ymm0, ymm0, ymm2, 0x55
-	vpand      ymm0, ymm0, ymm4
+        vpslldq    ymm0, ymm3, 4
+        vpblendd   ymm0, ymm0, ymm2, 0x55
+        vpand      ymm0, ymm0, ymm4
 
-	vpsrlq     ymm3, ymm3, 12
-	vpsrlq     ymm2, ymm2, 12
-	vpslldq    ymm3, ymm3, 4
-	vpblendd   ymm1, ymm3, ymm2, 0x55
+        vpsrlq     ymm3, ymm3, 12
+        vpsrlq     ymm2, ymm2, 12
+        vpslldq    ymm3, ymm3, 4
+        vpblendd   ymm1, ymm3, ymm2, 0x55
 
-	vpslld     ymm2, ymm0, 1
-	vpaddd     ymm0, ymm0, ymm2
-	vpsubd     ymm0, ymm0, ymm1
-	
-	vmovdqu    [rax], ymm0                      // store the result (8 elements) into a
+        vpslld     ymm2, ymm0, 1
+        vpaddd     ymm0, ymm0, ymm2
+        vpsubd     ymm0, ymm0, ymm1
+        
+        vmovdqu    [rax], ymm0                      // store the result (8 elements) into a
 
-	add        rax, 32
-	add        rdx, 32
-	add        rcx, 32
-	cmp        rax, rsi
-	jb         loop5
-	ret
+        add        rax, 32
+        add        rdx, 32
+        add        rcx, 32
+        cmp        rax, rsi
+        jb         loop5
+        ret
 
-/*
+/**************************************************************************
  * Multiplication by a scalar + reduction:
  *  a[i] = red(a[i] * c)
  *
@@ -461,45 +474,46 @@ loop5:
  * - rdx = scalar c
  *
  * The number of elements must be positive and a multiple of 16.
- */
-	.balign 16
-	.global _G(scalar_mul_reduce_array_asm)
-_G(scalar_mul_reduce_array_asm):	
-	vmovdqa ymm4, [mask+rip]
-	mov     rax, rdi
-	lea     rsi, [rdi+4*rsi]
-	vmovd	xmm0, rdx
-	vpbroadcastd ymm1, xmm0                 // ymm1 = 8 copies of scalar c
+ **************************************************************************/
+        .balign 16
+        .global _G(scalar_mul_reduce_array_asm)
+_G(scalar_mul_reduce_array_asm):        
+        vmovdqa ymm4, [mask+rip]
+        mov     rax, rdi
+        lea     rsi, [rdi+4*rsi]
+        vmovd   xmm0, rdx
+        vpbroadcastd ymm1, xmm0                 // ymm1 = 8 copies of scalar c
 
 loop6:
-	vmovdqu    ymm0, [rax]                  // ymm0 = 8 elements of array a
+        vmovdqu    ymm0, [rax]                  // ymm0 = 8 elements of array a
 
-	// mul-reduce
-	vpmuldq    ymm2, ymm0, ymm1
-	vpshufd    ymm0, ymm0, 0x31
-	vpmuldq    ymm3, ymm0, ymm1
-	
-	vpslldq    ymm0, ymm3, 4
-	vpblendd   ymm0, ymm0, ymm2, 0x55
-	vpand      ymm0, ymm0, ymm4
+        // mul-reduce
+        vpmuldq    ymm2, ymm0, ymm1
+        vpshufd    ymm0, ymm0, 0x31
+        vpmuldq    ymm3, ymm0, ymm1
+        
+        vpslldq    ymm0, ymm3, 4
+        vpblendd   ymm0, ymm0, ymm2, 0x55
+        vpand      ymm0, ymm0, ymm4
 
-	vpsrlq     ymm3, ymm3, 12
-	vpsrlq     ymm2, ymm2, 12
-	vpslldq    ymm3, ymm3, 4
-	vpblendd   ymm3, ymm3, ymm2, 0x55
+        vpsrlq     ymm3, ymm3, 12
+        vpsrlq     ymm2, ymm2, 12
+        vpslldq    ymm3, ymm3, 4
+        vpblendd   ymm3, ymm3, ymm2, 0x55
 
-	vpslld     ymm2, ymm0, 1
-	vpaddd     ymm0, ymm0, ymm2
-	vpsubd     ymm0, ymm0, ymm3
-	
-	vmovdqu    [rax], ymm0                  // store the result (8 elements) into a
+        vpslld     ymm2, ymm0, 1
+        vpaddd     ymm0, ymm0, ymm2
+        vpsubd     ymm0, ymm0, ymm3
+        
+        vmovdqu    [rax], ymm0                  // store the result (8 elements) into a
 
-	add        rax, 32
-	cmp 	   rax, rsi
-	jb         loop6
-	ret
+        add        rax, 32
+        cmp        rax, rsi
+        jb         loop6
+        ret
 
-/*
+        
+/**************************************************************************
  * Basic NTT using Cooley-Tukey: bit-reverse to standard order
  *
  * Input:
@@ -510,7 +524,9 @@ loop6:
  * a is an array of 32bit integers.
  * NTT a is stored in place. 
  * p is a constant array of powers of omega (signed 16bit constants).
- *
+ **************************************************************************/
+
+/*
  * EXPLANATIONS FOR THE CODE
  * -------------------------
  * The first loop computes the NTT of blocks of 8 elements.
@@ -531,10 +547,10 @@ loop6:
  *      ymm5 = p[4] 0 p[5] 0 p[6] 0 p[7] 0
  *
  * Round1:
- * - input: ymm0 = a[0] a[1] .... a[7]  (read from memory)	
+ * - input: ymm0 = a[0] a[1] .... a[7]  (read from memory)      
  * - result stored in ymm2 and ymm3:
  *      ymm2[0] = a[0] + a[1]     ymm3[0] = a[0] - a[1]
- *      ymm2[2] = a[2] + a[3]     ymm3[2] = a[2] + a[3]
+ *      ymm2[2] = a[2] + a[3]     ymm3[2] = a[2] - a[3]
  *      ymm2[4] = a[4] + a[5]     ymm3[4] = a[4] - a[5]
  *      ymm2[6] = a[6] + a[7]     ymm3[6] = a[6] - a[7]
  *   the 32bit integers at index 1, 3, 5, 7 are not used.
@@ -543,7 +559,7 @@ loop6:
  * - input: in ymm0 and ymm1 obtained by shuffling ymm2 and ymm3
  *      ymm0[0] = b[0]           ymm1[0] = b[2]
  *      ymm0[2] = b[1]           ymm1[2] = b[3]
- *	ymm0[4] = b[4]           ymm1[4] = b[6]
+ *      ymm0[4] = b[4]           ymm1[4] = b[6]
  *      ymm0[6] = b[5]           ymm1[6] = b[7]
  *   (elements at odd indices are ignored).
  * - multiply ymm1 by constants stored in ymm6:
@@ -561,7 +577,7 @@ loop6:
  *
  * Round3:
  * - input in ymm0 and ymm1 obtained by shuffling ymm2 and ymm3:
- *      ymm0[0] = c[0]		  ymm1[0] = c[4]  
+ *      ymm0[0] = c[0]            ymm1[0] = c[4]  
  *      ymm0[2] = c[1]            ymm1[2] = c[5]
  *      ymm0[4] = c[2]            ymm1[4] = c[6]
  *      ymm0[6] = c[3]            ymm1[6] = c[7]
@@ -579,130 +595,130 @@ loop6:
  *      ymm2[6] = c[4] + red(c[7] * p[7])     ymm3[6] = c[3] - red(c[7] * p[7])
  *
  */ 
-	.balign 16
-	.global _G(ntt_red_ct_rev2std_asm)
+        .balign 16
+        .global _G(ntt_red_ct_rev2std_asm)
 _G(ntt_red_ct_rev2std_asm):
-	mov     rax, rdi                     // rax = start of array a
-	mov     r9, rsi                      // r9 = copy of the array size
-	lea     rsi, [rdi+4*rsi]             // rsi = end of array a
+        mov     rax, rdi                     // rax = start of array a
+        mov     r9, rsi                      // r9 = copy of the array size
+        lea     rsi, [rdi+4*rsi]             // rsi = end of array a
 
-	vpmovsxwd ymm4, [rdx]               // ymm4 = 8 first elements of array p
-	vmovdqa   ymm5, [perm5+rip]
-	vpermd    ymm5, ymm5, ymm4          // ymm5 = p[4] 0 p[5] 0 p[6] 0 p[7] 0
-	vmovdqa   ymm6, [perm4+rip]
-	vpermd    ymm6, ymm6, ymm4          // ymm6 = p[2] 0 p[3] 0 p[2] 0 p[3] 0
+        vpmovsxwd ymm4, [rdx]               // ymm4 = 8 first elements of array p
+        vmovdqa   ymm5, [perm5+rip]
+        vpermd    ymm5, ymm5, ymm4          // ymm5 = p[4] 0 p[5] 0 p[6] 0 p[7] 0
+        vmovdqa   ymm6, [perm4+rip]
+        vpermd    ymm6, ymm6, ymm4          // ymm6 = p[2] 0 p[3] 0 p[2] 0 p[3] 0
 
-	vmovdqa   ymm4, [mask+rip]          // ymm4 = 8 copies of 4095
+        vmovdqa   ymm4, [mask+rip]          // ymm4 = 8 copies of 4095
 
 /*
  * First loop: blocks of 8 integers.
  */
-size8_loop:
-	vmovdqu ymm0, [rax]                 // ymm0 = a0 a1 a2 a3 a4 a5 a6 a7
+ct_r2s_size8_loop:
+        vmovdqu ymm0, [rax]                 // ymm0 = a0 a1 a2 a3 a4 a5 a6 a7
 // Round1:
-	vpsrldq  ymm1, ymm0, 4              // ymm1 = a1 a2 a3  0 a5 a6 a7  0
+        vpsrldq  ymm1, ymm0, 4              // ymm1 = a1 a2 a3  0 a5 a6 a7  0
         vpaddd   ymm2, ymm0, ymm1           // ymm2 = (a0 + a1) -- (a2 + a3) -- (a4 + a5) -- (a6 + a7) --
-	vpsubd   ymm3, ymm0, ymm1           // ymm3 = (a0 - a1) -- (a2 - a3) -- (a4 - a5) -- (a6 - a7) --
+        vpsubd   ymm3, ymm0, ymm1           // ymm3 = (a0 - a1) -- (a2 - a3) -- (a4 - a5) -- (a6 - a7) --
 
 // Shuffle to prepare for Round2
-	vshufps  ymm0, ymm2, ymm3, 0x44     // ymm0 = b0  -- b1 -- b4 -- b5 --
-	vshufps  ymm1, ymm2, ymm3, 0xee     // ymm1 = b2  -- b3 -- b6 -- b7 --
+        vshufps  ymm0, ymm2, ymm3, 0x44     // ymm0 = b0  -- b1 -- b4 -- b5 --
+        vshufps  ymm1, ymm2, ymm3, 0xee     // ymm1 = b2  -- b3 -- b6 -- b7 --
 
 // Round2:
-	vpmuldq ymm1, ymm1, ymm6            // b2 * 1 -- b3 * w -- b6 * 1 -- b7 * w
-	vpand   ymm2, ymm1, ymm4            // mask high-order bits = the c0 part
-	vpsrlq  ymm1, ymm1, 12              // ymm1 = shift by 12 bits = the c1 part
-	vpslld  ymm3, ymm2, 1
-	vpaddd  ymm2, ymm2, ymm3            // ymm2 = 3 * c0
-	vpsubd  ymm1, ymm2, ymm1            // ymm1 = 3 * c0 - c1
-	vpaddd  ymm2, ymm0, ymm1            // ymm2 = b0 + red(1 * b2) -- b2 + red(w b3) -- b4 + red(1 * b6) -- b5 + red(w * b7)
-	vpsubd  ymm3, ymm0, ymm1            // ymm3 = b0 - red(1 * b2) -- b2 - red(w b3) -- b4 - red(1 * b6) -- b5 - red(w * b7)
+        vpmuldq ymm1, ymm1, ymm6            // b2 * 1 -- b3 * w -- b6 * 1 -- b7 * w
+        vpand   ymm2, ymm1, ymm4            // mask high-order bits = the c0 part
+        vpsrlq  ymm1, ymm1, 12              // ymm1 = shift by 12 bits = the c1 part
+        vpslld  ymm3, ymm2, 1
+        vpaddd  ymm2, ymm2, ymm3            // ymm2 = 3 * c0
+        vpsubd  ymm1, ymm2, ymm1            // ymm1 = 3 * c0 - c1
+        vpaddd  ymm2, ymm0, ymm1            // ymm2 = b0 + red(1 * b2) -- b2 + red(w b3) -- b4 + red(1 * b6) -- b5 + red(w * b7)
+        vpsubd  ymm3, ymm0, ymm1            // ymm3 = b0 - red(1 * b2) -- b2 - red(w b3) -- b4 - red(1 * b6) -- b5 - red(w * b7)
 
 // Shuffle to prepare for Round3
-	vperm2i128 ymm0, ymm2, ymm3, 0x20
-	vperm2i128 ymm1, ymm2, ymm3, 0x31
+        vperm2i128 ymm0, ymm2, ymm3, 0x20
+        vperm2i128 ymm1, ymm2, ymm3, 0x31
 
-// Round3:	
-	vpmuldq ymm1, ymm1, ymm5
-	vpand   ymm2, ymm1, ymm4            // mask high-order bits = the c0 part
-	vpsrlq  ymm1, ymm1, 12              // ymm1 = shift by 12 bits = the c1 part
-	vpslld  ymm3, ymm2, 1
-	vpaddd  ymm2, ymm2, ymm3            // ymm2 = 3 * c0
-	vpsubd  ymm1, ymm2, ymm1            // ymm1 = 3 * c0 - c1
-	vpaddd  ymm2, ymm0, ymm1
-	vpsubd  ymm3, ymm0, ymm1
+// Round3:      
+        vpmuldq ymm1, ymm1, ymm5
+        vpand   ymm2, ymm1, ymm4            // mask high-order bits = the c0 part
+        vpsrlq  ymm1, ymm1, 12              // ymm1 = shift by 12 bits = the c1 part
+        vpslld  ymm3, ymm2, 1
+        vpaddd  ymm2, ymm2, ymm3            // ymm2 = 3 * c0
+        vpsubd  ymm1, ymm2, ymm1            // ymm1 = 3 * c0 - c1
+        vpaddd  ymm2, ymm0, ymm1
+        vpsubd  ymm3, ymm0, ymm1
 
 // Shuffle and merge into ymm0
-	vperm2i128 ymm0, ymm2, ymm3, 0x20
-	vperm2i128 ymm1, ymm2, ymm3, 0x31
-	vshufps    ymm0, ymm0, ymm1, 0x88
+        vperm2i128 ymm0, ymm2, ymm3, 0x20
+        vperm2i128 ymm1, ymm2, ymm3, 0x31
+        vshufps    ymm0, ymm0, ymm1, 0x88
 
 // Save result
-	vmovdqu [rax], ymm0
+        vmovdqu [rax], ymm0
 
-	add     rax, 32
-	cmp     rax, rsi
-	jb      size8_loop
+        add     rax, 32
+        cmp     rax, rsi
+        jb      ct_r2s_size8_loop
 
 /*
  * Now deal with blocks of 16 integers
  */
-	mov        rax, rdi                // rax = start of array a
-	vpmovsxwd  ymm6, [rdx+16]          // ymm6 = p[8] ... p[15] = eight multipliers
-	vpshufd    ymm5, ymm6, 0x31        // ymm5 = p[9] p[10] p[11] 0 p[13] p[14] p[15] 0
+        mov        rax, rdi                // rax = start of array a
+        vpmovsxwd  ymm6, [rdx+16]          // ymm6 = p[8] ... p[15] = eight multipliers
+        vpshufd    ymm5, ymm6, 0x31        // ymm5 = p[9] p[10] p[11] 0 p[13] p[14] p[15] 0
 
-size16_loop:
-	vmovdqu    ymm0, [rax]             // ymm0 = lower half of a block = a[0 ... 7]
-	vmovdqu    ymm1, [rax+32]          // ymm1 = upper half = a[8 ... 15]
+ct_r2s_size16_loop:
+        vmovdqu    ymm0, [rax]             // ymm0 = lower half of a block = a[0 ... 7]
+        vmovdqu    ymm1, [rax+32]          // ymm1 = upper half = a[8 ... 15]
 
-	// mul-reduce of ymm1 and ymm6, result in ymm1
-	vpmuldq    ymm2, ymm1, ymm6
-	vpshufd    ymm1, ymm1, 0x31    
-	vpmuldq    ymm3, ymm1, ymm5
+        // mul-reduce of ymm1 and ymm6, result in ymm1
+        vpmuldq    ymm2, ymm1, ymm6
+        vpshufd    ymm1, ymm1, 0x31    
+        vpmuldq    ymm3, ymm1, ymm5
 
-	vpslldq    ymm1, ymm3, 4
-	vpblendd   ymm1, ymm1, ymm2, 0x55
-	vpand      ymm1, ymm1, ymm4
+        vpslldq    ymm1, ymm3, 4
+        vpblendd   ymm1, ymm1, ymm2, 0x55
+        vpand      ymm1, ymm1, ymm4
 
-	vpsrlq     ymm3, ymm3, 12
-	vpsrlq     ymm2, ymm2, 12
-	vpslldq    ymm3, ymm3, 4
-	vpblendd   ymm2, ymm3, ymm2, 0x55
+        vpsrlq     ymm3, ymm3, 12
+        vpsrlq     ymm2, ymm2, 12
+        vpslldq    ymm3, ymm3, 4
+        vpblendd   ymm2, ymm3, ymm2, 0x55
 
-       	vpslld     ymm3, ymm1, 1
-	vpaddd     ymm1, ymm1, ymm3
-	vpsubd     ymm1, ymm1, ymm2
+        vpslld     ymm3, ymm1, 1
+        vpaddd     ymm1, ymm1, ymm3
+        vpsubd     ymm1, ymm1, ymm2
 
-	// ymm2 = ymm0 + mul-reduce result
-	// ymm3 = ymm0 - mul-reduce result
-	vpaddd     ymm2, ymm0, ymm1
-	vpsubd     ymm3, ymm0, ymm1
-	
-	vmovdqu    [rax], ymm2             // store the result
-	vmovdqu    [rax+32], ymm3
+        // ymm2 = ymm0 + mul-reduce result
+        // ymm3 = ymm0 - mul-reduce result
+        vpaddd     ymm2, ymm0, ymm1
+        vpsubd     ymm3, ymm0, ymm1
+        
+        vmovdqu    [rax], ymm2             // store the result
+        vmovdqu    [rax+32], ymm3
 
-	add        rax, 64
-	cmp        rax, rsi
-	jb         size16_loop
+        add        rax, 64
+        cmp        rax, rsi
+        jb         ct_r2s_size16_loop
 
-	cmp        r9, 16
-	jbe        done
+        cmp        r9, 16
+        jbe        ct_r2s_done
 
 /*
  * Blocks of size 32 and larger
  * - a block of size k is constructed by combining two half blocks 
  * - the step size below is half the block size = k/2
  */
-	mov       r10, 32                  // r10 = 2 * step size
-	lea       r11, [rdx+32]            // r11 --> segment of array p for this step size
-	                                   //     = p + 2 * step-size (since each element of p is two bytes)
-size32_loop:
-	mov       rax, rdi
+        mov       r10, 32                  // r10 = 2 * step size
+        lea       r11, [rdx+32]            // r11 --> segment of array p for this step size
+                                           //     = p + 2 * step-size (since each element of p is two bytes)
+ct_r2s_size32_loop:
+        mov       rax, rdi
 
-loop_aux1:
-	lea       rcx, [rax+2*r10]
-	lea       r8, [rax+4*r10]
-	mov       rdx, r11
+ct_r2s_loop_aux1:
+        lea       rcx, [rax+2*r10]
+        lea       r8, [rax+4*r10]
+        mov       rdx, r11
 //
 // r10 = 2 * step size
 // rax --> first half of a block
@@ -710,56 +726,56 @@ loop_aux1:
 // r8  --> end of block/start of the next block
 // rdx --> start of the p table for the block
 //
-inner_loop:
-	vmovdqu  ymm0, [rax]
-	vmovdqu  ymm1, [rcx]
-	vpmovsxwd ymm6, [rdx]
+ct_r2s_inner_loop:
+        vmovdqu  ymm0, [rax]
+        vmovdqu  ymm1, [rcx]
+        vpmovsxwd ymm6, [rdx]
 
-	// mul-reduce of ymm1 and ymm6, result in ymm1
-	vpmuldq   ymm2, ymm1, ymm6
-	vpshufd   ymm1, ymm1, 0x31
-	vpshufd   ymm6, ymm6, 0x31
-	vpmuldq   ymm3, ymm1, ymm6
-	vpslldq   ymm1, ymm3, 4
-	vpblendd  ymm1, ymm1, ymm2, 0x55
-	vpand     ymm1, ymm1, ymm4
-	vpsrlq    ymm3, ymm3, 12
-	vpsrlq    ymm2, ymm2, 12
-	vpslldq   ymm3, ymm3, 4
-	vpblendd  ymm2, ymm3, ymm2, 0x55
-	vpslld    ymm3, ymm1, 1
-	vpaddd    ymm1, ymm1, ymm3
-	vpsubd    ymm1, ymm1, ymm2
+        // mul-reduce of ymm1 and ymm6, result in ymm1
+        vpmuldq   ymm2, ymm1, ymm6
+        vpshufd   ymm1, ymm1, 0x31
+        vpshufd   ymm6, ymm6, 0x31
+        vpmuldq   ymm3, ymm1, ymm6
+        vpslldq   ymm1, ymm3, 4
+        vpblendd  ymm1, ymm1, ymm2, 0x55
+        vpand     ymm1, ymm1, ymm4
+        vpsrlq    ymm3, ymm3, 12
+        vpsrlq    ymm2, ymm2, 12
+        vpslldq   ymm3, ymm3, 4
+        vpblendd  ymm2, ymm3, ymm2, 0x55
+        vpslld    ymm3, ymm1, 1
+        vpaddd    ymm1, ymm1, ymm3
+        vpsubd    ymm1, ymm1, ymm2
 
-	vpaddd    ymm2, ymm0, ymm1
-	vpsubd    ymm3, ymm0, ymm1
-	vmovdqu   [rax], ymm2
-	vmovdqu   [rcx], ymm3
+        vpaddd    ymm2, ymm0, ymm1
+        vpsubd    ymm3, ymm0, ymm1
+        vmovdqu   [rax], ymm2
+        vmovdqu   [rcx], ymm3
 
-	// prepare for the next slices of 8 integers
-	add       rdx, 16
-	add       rax, 32
-	add       rcx, 32
-	cmp       rcx, r8
-	jb        inner_loop
+        // prepare for the next slices of 8 integers
+        add       rdx, 16
+        add       rax, 32
+        add       rcx, 32
+        cmp       rcx, r8
+        jb        ct_r2s_inner_loop
 
-	// prepare for the next block
-	mov       rax, r8
-	cmp       rax, rsi
-	jb        loop_aux1
+        // prepare for the next block
+        mov       rax, r8
+        cmp       rax, rsi
+        jb        ct_r2s_loop_aux1
 
-	// next block size = double the current size
-	// we stop when 2 * step size > r9 (r9 = array size)
-	add       r11, r10
-	shl       r10, 1
-	cmp       r10, r9
-	jbe       size32_loop
+        // next block size = double the current size
+        // we stop when 2 * step size > r9 (r9 = array size)
+        add       r11, r10
+        shl       r10, 1
+        cmp       r10, r9
+        jbe       ct_r2s_size32_loop
 
-done:
-	ret
+ct_r2s_done:
+        ret
 
 
-/*
+/**************************************************************************
  * Combined product by power of psi and NTT
  * Based on Cooley-Tukey: bit-reverse to standard order
  *
@@ -771,90 +787,362 @@ done:
  * a is an array of 32bit integers.
  * NTT a is stored in place. 
  * p is a constant array of powers of omega (signed 16bit constants).
- *
+ **************************************************************************/
+
+/*
  * The code is the same as for ntt_red_ct_rev2std_asm, except for
  * Round 1 of the first loop. In this function, we can't assume that
  * p[1] is inverse(3).
  */
-	.balign 16
-	.global _G(mulntt_red_ct_rev2std_asm)
+        .balign 16
+        .global _G(mulntt_red_ct_rev2std_asm)
 _G(mulntt_red_ct_rev2std_asm):
-	mov     rax, rdi                     // rax = start of array a
-	mov     r9, rsi                      // r9 = copy of the array size
-	lea     rsi, [rdi+4*rsi]             // rsi = end of array a
+        mov     rax, rdi                     // rax = start of array a
+        mov     r9, rsi                      // r9 = copy of the array size
+        lea     rsi, [rdi+4*rsi]             // rsi = end of array a
 
-	vpmovsxwd ymm4, [rdx]               // ymm4 = 8 first elements of array p
-	vmovdqa   ymm5, [perm5+rip]
-	vpermd    ymm5, ymm5, ymm4          // ymm5 = p[4] 0 p[5] 0 p[6] 0 p[7] 0
-	vmovdqa   ymm6, [perm4+rip]
-	vpermd    ymm6, ymm6, ymm4          // ymm6 = p[2] 0 p[3] 0 p[2] 0 p[3] 0
-	vmovdqa   ymm7, [perm3+rip]
-	vpermd    ymm7, ymm7, ymm4          // ymm7 = p[1] 0 p[1] 0 p[1] 0 p[1] 0
+        vpmovsxwd ymm4, [rdx]               // ymm4 = 8 first elements of array p
+        vmovdqa   ymm5, [perm5+rip]
+        vpermd    ymm5, ymm5, ymm4          // ymm5 = p[4] 0 p[5] 0 p[6] 0 p[7] 0
+        vmovdqa   ymm6, [perm4+rip]
+        vpermd    ymm6, ymm6, ymm4          // ymm6 = p[2] 0 p[3] 0 p[2] 0 p[3] 0
+        vmovdqa   ymm7, [perm3+rip]
+        vpermd    ymm7, ymm7, ymm4          // ymm7 = p[1] 0 p[1] 0 p[1] 0 p[1] 0
 
-	vmovdqa   ymm4, [mask+rip]          // ymm4 = 8 copies of 4095
+        vmovdqa   ymm4, [mask+rip]          // ymm4 = 8 copies of 4095
 
 /*
  * First loop: blocks of 8 integers.
  */
-size8_loop2:
-	vmovdqu ymm0, [rax]                 // ymm0 = a0 a1 a2 a3 a4 a5 a6 a7
+ct_r2s_size8_loop2:
+        vmovdqu ymm0, [rax]                 // ymm0 = a0 a1 a2 a3 a4 a5 a6 a7
 
 // Round1:
-	vpsrldq  ymm1, ymm0, 4              // ymm1 = a1 a2 a3  0 a5 a6 a7 0
-	vpmuldq  ymm1, ymm1, ymm7           // ymm1 = a1 * p1,  a3 * p1, a5 * p1, a7 * p1 (four 64bit integers)
-	vpand    ymm2, ymm1, ymm4           // mask high-order bits = the c0 part
-	vpsrlq   ymm1, ymm1, 12             // ymm1 = shift by 12 bits = the c1 part
-	vpslld   ymm3, ymm2, 1
-	vpaddd   ymm2, ymm2, ymm3           // ymm2 = 3 * c0
-	vpsubd   ymm1, ymm2, ymm1           // ymm1 = 3 * c0 - c1
+        vpsrldq  ymm1, ymm0, 4              // ymm1 = a1 a2 a3  0 a5 a6 a7 0
+        vpmuldq  ymm1, ymm1, ymm7           // ymm1 = a1 * p1,  a3 * p1, a5 * p1, a7 * p1 (four 64bit integers)
+        vpand    ymm2, ymm1, ymm4           // mask high-order bits = the c0 part
+        vpsrlq   ymm1, ymm1, 12             // ymm1 = shift by 12 bits = the c1 part
+        vpslld   ymm3, ymm2, 1
+        vpaddd   ymm2, ymm2, ymm3           // ymm2 = 3 * c0
+        vpsubd   ymm1, ymm2, ymm1           // ymm1 = 3 * c0 - c1
         vpaddd   ymm2, ymm0, ymm1           // ymm2 = a0 + red(a1 * p1) -- a2 + red(a3 * p1) -- a4 + red(a5 * p1) -- a6 + red(a7 * p1) --
-	vpsubd   ymm3, ymm0, ymm1           // ymm3 = a0 - red(a1 * p1) -- a2 - red(a3 * p1) -- a4 - red(a5 * p1) -- a6 - red(a7 * p1) --
+        vpsubd   ymm3, ymm0, ymm1           // ymm3 = a0 - red(a1 * p1) -- a2 - red(a3 * p1) -- a4 - red(a5 * p1) -- a6 - red(a7 * p1) --
 
 // Shuffle to prepare for Round2
-	vshufps  ymm0, ymm2, ymm3, 0x44     // ymm0 = b0  -- b1 -- b4 -- b5 --
-	vshufps  ymm1, ymm2, ymm3, 0xee     // ymm1 = b2  -- b3 -- b6 -- b7 --
+        vshufps  ymm0, ymm2, ymm3, 0x44     // ymm0 = b0  -- b1 -- b4 -- b5 --
+        vshufps  ymm1, ymm2, ymm3, 0xee     // ymm1 = b2  -- b3 -- b6 -- b7 --
 
 // Round2:
-	vpmuldq ymm1, ymm1, ymm6            // b2 * p2 -- b3 * p3 -- b6 * p2 -- b7 * p3
-	vpand   ymm2, ymm1, ymm4            // mask high-order bits = the c0 part
-	vpsrlq  ymm1, ymm1, 12              // ymm1 = shift by 12 bits = the c1 part
-	vpslld  ymm3, ymm2, 1
-	vpaddd  ymm2, ymm2, ymm3            // ymm2 = 3 * c0
-	vpsubd  ymm1, ymm2, ymm1            // ymm1 = 3 * c0 - c1
-	vpaddd  ymm2, ymm0, ymm1            // ymm2 = b0 + red(p2 * b2) -- b2 + red(p3 * b3) -- b4 + red(p2 * b6) -- b5 + red(p3 * b7)
-	vpsubd  ymm3, ymm0, ymm1            // ymm3 = b0 - red(p2 * b2) -- b2 - red(p3 * b3) -- b4 - red(p2 * b6) -- b5 - red(p3 * b7)
+        vpmuldq ymm1, ymm1, ymm6            // b2 * p2 -- b3 * p3 -- b6 * p2 -- b7 * p3
+        vpand   ymm2, ymm1, ymm4            // mask high-order bits = the c0 part
+        vpsrlq  ymm1, ymm1, 12              // ymm1 = shift by 12 bits = the c1 part
+        vpslld  ymm3, ymm2, 1
+        vpaddd  ymm2, ymm2, ymm3            // ymm2 = 3 * c0
+        vpsubd  ymm1, ymm2, ymm1            // ymm1 = 3 * c0 - c1
+        vpaddd  ymm2, ymm0, ymm1            // ymm2 = b0 + red(p2 * b2) -- b2 + red(p3 * b3) -- b4 + red(p2 * b6) -- b5 + red(p3 * b7)
+        vpsubd  ymm3, ymm0, ymm1            // ymm3 = b0 - red(p2 * b2) -- b2 - red(p3 * b3) -- b4 - red(p2 * b6) -- b5 - red(p3 * b7)
 
 // Shuffle to prepare for Round3
-	vperm2i128 ymm0, ymm2, ymm3, 0x20
-	vperm2i128 ymm1, ymm2, ymm3, 0x31
+        vperm2i128 ymm0, ymm2, ymm3, 0x20
+        vperm2i128 ymm1, ymm2, ymm3, 0x31
 
-// Round3:	
-	vpmuldq ymm1, ymm1, ymm5
-	vpand   ymm2, ymm1, ymm4            // mask high-order bits = the c0 part
-	vpsrlq  ymm1, ymm1, 12              // ymm1 = shift by 12 bits = the c1 part
-	vpslld  ymm3, ymm2, 1
-	vpaddd  ymm2, ymm2, ymm3            // ymm2 = 3 * c0
-	vpsubd  ymm1, ymm2, ymm1            // ymm1 = 3 * c0 - c1
-	vpaddd  ymm2, ymm0, ymm1
-	vpsubd  ymm3, ymm0, ymm1
+// Round3:      
+        vpmuldq ymm1, ymm1, ymm5
+        vpand   ymm2, ymm1, ymm4            // mask high-order bits = the c0 part
+        vpsrlq  ymm1, ymm1, 12              // ymm1 = shift by 12 bits = the c1 part
+        vpslld  ymm3, ymm2, 1
+        vpaddd  ymm2, ymm2, ymm3            // ymm2 = 3 * c0
+        vpsubd  ymm1, ymm2, ymm1            // ymm1 = 3 * c0 - c1
+        vpaddd  ymm2, ymm0, ymm1
+        vpsubd  ymm3, ymm0, ymm1
 
 // Shuffle and merge into ymm0
-	vperm2i128 ymm0, ymm2, ymm3, 0x20
-	vperm2i128 ymm1, ymm2, ymm3, 0x31
-	vshufps    ymm0, ymm0, ymm1, 0x88
+        vperm2i128 ymm0, ymm2, ymm3, 0x20
+        vperm2i128 ymm1, ymm2, ymm3, 0x31
+        vshufps    ymm0, ymm0, ymm1, 0x88
 
 // Save result
-	vmovdqu [rax], ymm0
+        vmovdqu [rax], ymm0
 
-	add     rax, 32
-	cmp     rax, rsi
-	jb      size8_loop2
+        add     rax, 32
+        cmp     rax, rsi
+        jb      ct_r2s_size8_loop2
 
 /*
  * The rest of the code is the same as in ntt_ct_rev2std.
  * We setup registers and jump there.
  */
-	mov        rax, rdi                // rax = start of array a
-	vpmovsxwd  ymm6, [rdx+16]          // ymm6 = p[8] ... p[15] = eight multipliers
-	vpshufd    ymm5, ymm6, 0x31        // ymm5 = p[9] p[10] p[11] 0 p[13] p[14] p[15] 0
-	jmp        size16_loop
+        mov        rax, rdi                // rax = start of array a
+        vpmovsxwd  ymm6, [rdx+16]          // ymm6 = p[8] ... p[15] = eight multipliers
+        vpshufd    ymm5, ymm6, 0x31        // ymm5 = p[9] p[10] p[11] 0 p[13] p[14] p[15] 0
+        jmp        ct_r2s_size16_loop
+
+
+/***************************************************************************
+ * Basic NTT using Cooley-Tukey: standard to bit-reverse order
+ *
+ * Input:
+ * - rdi = start of array a
+ * - rsi = size of array a (must be a positive multiple of 16)
+ * - rdx = start of array p
+ *
+ * a is an array of 32bit integers.
+ * NTT a is stored in place. 
+ * p is a constant array of powers of omega (signed 16bit constants).
+ **************************************************************************/
+
+        .balign 16
+        .global _G(ntt_red_ct_std2rev_asm)
+_G(ntt_red_ct_std2rev_asm):
+        lea       r8, [rdi+4*rsi]         // r8 = end of array a
+        vmovdqa   ymm4, [mask+rip]        // ymm4 = bitmask = 8 copies of 4095
+
+/*
+ * First round:
+ *  rsi/2 = d >= 8
+ *  rax = start of array a
+ *  rcx = middle of array a
+ *
+ * We process elements of a by blocks of 8 32bit integers
+ *   a'[i, ..., i+7] = a[i, ..., i+7] + a[i+d, ..., i+d+7]
+ *   a'[i+d, ..., i+d+7] = a[i, ..., i+7] - a[i+d, ..., i+d+7]
+ * in the loop: rax --> block a[i, ..., i+7]
+ *              rcx --> block a[i+d, ..., i+d+7]
+ */
+        mov    rax, rdi
+        lea    rcx, [rdi+2*rsi]
+ct_s2r_loop1:
+        vmovdqu ymm0, [rax]
+        vmovdqu ymm1, [rcx]
+        vpaddd  ymm2, ymm0, ymm1
+        vpsubd  ymm3, ymm0, ymm1
+        vmovdqu [rax], ymm2
+        vmovdqu [rcx], ymm3
+        add     rcx, 32
+        add     rax, 32
+        cmp     rcx, r8
+        jb      ct_s2r_loop1
+
+/*
+ * Next rounds, as long as d >= 8
+ *  rsi/2 = d
+ *  rdx --> start of array p for the round
+ */
+        add     rdx, 4          // p starts with [0, 1, 1, W, 1, W, W^2, W^3 ...]
+                                // rdx --> [1, W, 1, W, W^2, W^3, ...
+        shr     rsi, 1          // rsi := rsi/2
+        cmp     rsi, 8
+        jbe     ct_s2r_finish
+
+ct_s2r_loop2:
+        mov     rax, rdi          // rax = start of array a = a[0 .... d-1]
+        lea     rcx, [rdi+2*rsi]  // rcx = a[d, ... 2d-1]
+        mov     r9, rcx           // end pointer
+
+ct_s2r_loop2_inner1:
+// inner loop1: W = 1: so no mul_red necessary
+        vmovdqu ymm0, [rax]
+        vmovdqu ymm1, [rcx]
+        vpaddd  ymm2, ymm0, ymm1
+        vpsubd  ymm3, ymm0, ymm1
+        vmovdqu [rax], ymm2
+        vmovdqu [rcx], ymm3
+        add     rax, 32
+        add     rcx, 32
+        cmp     rax, r9
+        jb      ct_s2r_loop2_inner1
+
+ct_s2r_loop2_aux:
+        add     rdx, 2               // rdx --> coefficient U for the inner loop (U is 16 bits)
+        vpbroadcastw xmm5, [rdx]     // xmm5 = 8 copies of U
+        vpmovsxwq  ymm5, xmm5        // ymm5 = 4 copies of U, sign-extended to 64bits
+        mov     rax, rcx             // rax --> a[i, ..., i+d-1]
+        lea     rcx, [rax+2*rsi]     // rcx --> a[i+d, ..., i+2d-1]
+        mov     r9, rcx              // end pointer
+/*
+ * inner loop2: processes blocks of 8 integers
+ *      a'[i, ..., i+7] = a[i, ..., i+7] + mul_red(U, a[i+d, ..., i+d+7])
+ *  a'[i+d, ..., i+d+7] = a[i, ..., i+7] - mul_red(U, a[i+d, ..., i+d+7])
+ *
+ * In the loop:
+ *  rax --> a[i, ..., i+7]
+ *  rcx --> a[i+d, ..., i+d+7]
+ *  ymm5 contains 4 copies of U
+ */
+ct_s2r_loop2_inner2:
+        vmovdqu ymm0, [rax]              // ymm0 = a[i, ..., i+7]
+        vmovdqu ymm1, [rcx]              // ymm1 = a[i+d, ..., i+d+7]
+
+        // mul-reduce: ymm1 * ymm5, result in ymm1
+        vpmuldq   ymm2, ymm1, ymm5
+        vpshufd   ymm1, ymm1, 0x31
+        vpmuldq   ymm3, ymm1, ymm5
+        vpslldq   ymm1, ymm3, 4
+        vpblendd  ymm1, ymm1, ymm2, 0x55
+        vpand     ymm1, ymm1, ymm4       // ymm1 = c0 part (8 32bit integers)
+
+        vpsrlq    ymm3, ymm3, 12
+        vpsrlq    ymm2, ymm2, 12
+        vpslldq   ymm3, ymm3, 4
+        vpblendd  ymm3, ymm3, ymm2, 0x55 // ymm3 = c1 part (also 8 32bit integers)
+
+        vpslld    ymm2, ymm1, 1
+        vpaddd    ymm1, ymm1, ymm2       // ymm1 = 3 * c0
+        vpsubd    ymm1, ymm1, ymm3       // ymm1 = mul_red(U, a[i+d, ..., i+d+7])
+
+        vpaddd    ymm2, ymm0, ymm1
+        vpsubd    ymm3, ymm0, ymm1
+        vmovdqu   [rax], ymm2
+        vmovdqu   [rcx], ymm3
+
+        add       rax, 32
+        add       rcx, 32
+        cmp       rax, r9
+        jb        ct_s2r_loop2_inner2
+
+        cmp       rcx, r8               // r8 = end of array a
+        jb        ct_s2r_loop2_aux
+        
+        add       rdx, 2                // rdx --> [1, W, W^2, ... for the next round]
+        shr       rsi, 1                // rsi := rsi/2
+        cmp       rsi, 8
+        ja        ct_s2r_loop2          // repeat if d > 8
+
+
+/*
+ * Final steps: for d = 4, 2, 1
+ */
+ct_s2r_finish:
+        mov      rax, rdi                  // start of array a
+        vmovdqa  ymm6, [perm2020+rip]
+ct_s2r_finish_size4:
+// process 16 elements at a time
+        vpmovsxwq xmm5, [rdx]               // xmm5 = [U, V] sign-extended to 64bit integers
+        vpermd    ymm5, ymm6, ymm5          // ymm5 = [U _ U _ | V _ V _ ]
+
+        vmovdqu  ymm0, [rax]               // ymm0 = a[0 ... 3]  a[4 ... 7]
+        vmovdqu  ymm1, [rax+32]            // ymm1 = a[8 ... 11] a[12 ... 15]
+        vperm2i128 ymm2, ymm0, ymm1, 0x20  // ymm2 = a[0 ... 3]  a[8 ... 11]
+        vperm2i128 ymm3, ymm0, ymm1, 0x31  // ymm3 = a[4 ... 7]  a[12 ... 15]
+
+        // mulreduce ymm3 and ymm5
+        vpmuldq   ymm0, ymm3, ymm5
+        vpshufd   ymm3, ymm3, 0x31
+        vpmuldq   ymm1, ymm3, ymm5
+        vpslldq   ymm3, ymm1, 4
+        vpblendd  ymm3, ymm3, ymm0, 0x55
+        vpand     ymm3, ymm3, ymm4          // ymm3 = c0 part
+
+        vpsrlq    ymm1, ymm1, 12
+        vpsrlq    ymm0, ymm0, 12
+        vpslldq   ymm1, ymm1, 4
+        vpblendd  ymm1, ymm1, ymm0, 0x55    // ymm1 = c1 part
+
+        vpslld    ymm0, ymm3, 1
+        vpaddd    ymm3, ymm3, ymm0          // ymm3 = 3 * c0
+        vpsubd    ymm3, ymm3, ymm1          // ymm3 = mul_red(U, a[4 ... 7]) | mul_red(V, a[12 ... 15])
+
+        vpaddd    ymm0, ymm2, ymm3          // ymm0: lower half = a'[0 ... 3], upper half = a'[8 ... 11]
+        vpsubd    ymm1, ymm2, ymm3          // ymm1: lower half = a'[4 ... 7], upper half = a'[12 ... 15]
+
+        vperm2i128 ymm2, ymm0, ymm1, 0x20   // ymm2 = a'[0 ... 3] a'[4 ... 7]
+        vperm2i128 ymm3, ymm0, ymm1, 0x31   // ymm3 = a'[8 ... 11] a'[12 ... 15]
+
+        vmovdqu   [rax], ymm2
+        vmovdqu   [rax+32], ymm3
+
+        add      rax, 64
+        add      rdx, 4
+        cmp      rax, r8        
+        jb       ct_s2r_finish_size4
+
+        mov      rax, rdi
+        vmovdqa  ymm6, [perm0426+rip]
+
+ct_s2r_finish_size2:
+        vpmovsxwq ymm5, [rdx]           // ymm5 = 4 multipliers: [U _ V _ W _ X _]
+        vpermd    ymm5, ymm6, ymm5      // shuffled to [U _ W _ V _ X _ ]
+
+        vmovdqu   ymm0, [rax]           // ymm0 = a[0 1] a[2 3]   a[4 5]   a[6 7]
+        vmovdqu   ymm1, [rax+32]        // ymm1 = a[8 9] a[10 11] a[12 13] a[14 15]
+
+        vshufpd   ymm2, ymm0, ymm1, 0x00   // ymm2 = a[0 1] a[8 9] a[4 5] a[12 13]
+        vshufpd   ymm3, ymm0, ymm1, 0x0F   // ymm3 = a[2 3] a[10 11] a[6 7] a[14 15]
+
+        // mulreduce ymm3 and ymm5: result in ymm3
+        vpmuldq   ymm0, ymm3, ymm5
+        vpshufd   ymm3, ymm3, 0x31
+        vpmuldq   ymm1, ymm3, ymm5
+        vpslldq   ymm3, ymm1, 4
+        vpblendd  ymm3, ymm3, ymm0, 0x55
+        vpand     ymm3, ymm3, ymm4          // ymm3 = c0 part
+
+        vpsrlq    ymm1, ymm1, 12
+        vpsrlq    ymm0, ymm0, 12
+        vpslldq   ymm1, ymm1, 4
+        vpblendd  ymm1, ymm1, ymm0, 0x55    // ymm1 = c1 part
+
+        vpslld    ymm0, ymm3, 1
+        vpaddd    ymm3, ymm3, ymm0          // ymm3 = 3 * c0
+        vpsubd    ymm3, ymm3, ymm1          // ymm3 = mul_red(U, a[4 ... 7]) | mul_red(V, a[12 ... 15])
+
+        vpaddd    ymm0, ymm2, ymm3          // ymm0 = a'[0 1] a'[8 9] a'[4 5] a'[12 13]
+        vpsubd    ymm1, ymm2, ymm3          // ymm1 = a'[2 3] a'[10 11] a'[6 7] a'[14 15]
+        
+        vshufpd   ymm2, ymm0, ymm1, 0x00    // ymm2 = a'[0 1] a'[2 3] a'[4 5] a'[6 7]
+        vshufpd   ymm3, ymm0, ymm1, 0x0F    // ymm3 = a'[8 9] a'[10 11] a'[12 13] a'[14 15]
+
+        vmovdqu   [rax], ymm2
+        vmovdqu   [rax+32], ymm3
+
+        add      rax, 64
+        add      rdx, 8
+        cmp      rax, r8        
+        jb       ct_s2r_finish_size2
+
+        mov      rax, rdi
+ct_s2r_finish_size1:
+        vpmovsxwq ymm5, [rdx]           // ymm5 = 4 multipliers: [U0 _ U1 _ U2 _ U3 _]
+        vpmovsxwq ymm6, [rdx+8]         // ymm6 = 4 next multipliers: [U4 _ U5 _ U6 _ U7 _]
+
+        vmovdqu   ymm0, [rax]           // ymm0 = a[0] a[1] a[2]  a[3]  a[4]  a[5]  a[6]  a[7]
+        vmovdqu   ymm1, [rax+32]        // ymm1 = a[8] a[9] a[10] a[11] a[12] a[13] a[14] a[15]
+
+        vpslldq   ymm2, ymm1, 4            // ymm2 = ___ a[8] a[9] a[10] ___ a[12] a[13] a[14]
+        vpblendd  ymm2, ymm0, ymm2, 0xaa   // ymm2 = a[0] a[8] a[2] a[10] a[4] a[12] a[6] a[14]
+
+        vpsrldq   ymm0, ymm0, 4         // ymm0 = a[1] a[2] a[3] ___ a[5] a[6] a[7] ___
+        vpmuldq   ymm0, ymm0, ymm5      // ymm0 = [U0 * a[1], U1 * a[3], U2 * a[5], U3 * a[7]]    (four 64bit numbers)
+        vpsrldq   ymm1, ymm1, 4         // ymm1 = a[9] a[10] a[11] ___ a[13] a[14] a[15] ___
+        vpmuldq   ymm1, ymm1, ymm6      // ymm1 = [U4 * a[9], U5 * a[11], U6 * a[13], U7 * a[15]] (four 64bit numbers)
+
+        vpslldq   ymm3, ymm1, 4           // ymm3 = ymm1 shifted by 32 bits to the left
+        vpblendd  ymm3, ymm3, ymm0, 0x55
+        vpand     ymm3, ymm3, ymm4        // ymm3 = c0 part: eight 32bit integers
+
+        vpsrlq    ymm1, ymm1, 12
+        vpsrlq    ymm0, ymm0, 12
+        vpslldq   ymm1, ymm1, 4
+        vpblendd  ymm1, ymm1, ymm0, 0x55  // ymm1 = c1 part
+
+        vpslld    ymm0, ymm3, 1
+        vpaddd    ymm3, ymm3, ymm0        // ymm3 = 3 * c0
+        vpsubd    ymm3, ymm3, ymm1        // ymm3 = 3 * c0 - c1 = mul_red
+
+        vpaddd    ymm0, ymm2, ymm3        // ymm0 = a'[0] a'[8] a'[2] a'[10] a'[4] a'[12] a'[6] a'[14]
+        vpsubd    ymm1, ymm2, ymm3        // ymm1 = a'[1] a'[9] a'[3] a'[11] a'[5] a'[13] a'[7] a'[15]
+
+        vpslldq   ymm2, ymm1, 4
+        vpblendd  ymm2, ymm0, ymm2, 0xaa  // ymm2 = a'[0] a'[1] a'[2] a'[3] a'[4] a'[5] a'[6] a'[7]
+        vpsrldq   ymm0, ymm0, 4
+        vpblendd  ymm3, ymm0, ymm1, 0xaa  // ymm3 = a'[8] a'[9] a'[10] .... a'[15]
+
+        vmovdqu   [rax], ymm2
+        vmovdqu   [rax+32], ymm3
+
+        add       rax, 64
+        add       rdx, 16
+        cmp       rax, r8
+        jb        ct_s2r_finish_size1   
+        
+        ret

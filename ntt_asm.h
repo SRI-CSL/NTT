@@ -82,6 +82,7 @@ extern void scalar_mul_reduce_array_asm(int32_t *a, uint32_t n, int32_t c);
 /******************
  *  NTT VARIANTS  *
  *****************/
+
 /*
  * COOLEY-TUKEY: BIT-REVERSE TO STANDARD ORDER
  */
@@ -115,6 +116,40 @@ extern void ntt_red_ct_rev2std_asm(int32_t *a, uint32_t n, const int16_t *p);
  * Same conditions as above to ensure no overflow.
  */
 extern void mulntt_red_ct_rev2std_asm(int32_t *a, uint32_t n, const int16_t *p);
+
+/*
+ * COOLEY-TUKEY: STANDARD TO BIT-REVERSE ORDER
+ */
+
+/*
+ * Version 3:
+ * - input: a[0 ... n-1] in standard order
+ * - p: array of powers of omega such that 
+ *   p[t + j] = omega^(n/2t)^bitrev(j) * inverse(3)
+ *   for t=1, 2, 4, .., n/2
+ *   and j=0, ..., t-1.
+ *
+ * - output: a contains NTT(a) in bit-reverse order
+ *
+ * To get the right result (i.e., make sure there's no numerical overflow),
+ * this function is intended to be called with
+ *   -21499 <= a[i] <= 21499
+ *    -6144 <= p[i] <= 6144
+ */
+extern void ntt_red_ct_std2rev_asm(int32_t *a, uint32_t n, const int16_t *p);
+
+/*
+ * Version 4: combined product by powers of psi and NTT
+ * - input: a[0 ... n-1] in standard order
+ * - p: constant array such that 
+ *   p[t+j] = psi^(n/2t) * omega^(n/2t)^bitrev(j) * inverse(3)
+ *
+ * - output: NTT(a') in bit-reverse order
+ *   where a'[i] = a[i] * psi^i
+ *
+ * Same conditions as above to ensure no overflow.
+ */
+extern void mulntt_red_ct_std2rev_asm(int32_t *a, uint32_t n, const int16_t *p);
 
 
 #endif

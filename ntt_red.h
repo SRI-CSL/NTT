@@ -162,7 +162,7 @@ extern void mulntt_red_ct_rev2std(int32_t *a, uint32_t n, const int16_t *p);
  *   for t=1, 2, 4, ..., n/2
  *   and j=0, ..., t-1.
  *
- * - output: NTT stored in a, in standard order.
+ * - output: NTT stored in a, in bit-reverse order.
  */
 extern void ntt_red_ct_std2rev(int32_t *a, uint32_t n, const int16_t *p);
 
@@ -172,7 +172,7 @@ extern void ntt_red_ct_std2rev(int32_t *a, uint32_t n, const int16_t *p);
  * - p: constant array such that 
  *   p[t+j] = psi^(n/2t) * omega^(n/2t)^ bitrev(j) * inverse(3)
  *
- * - output: NTT(a') in standard order
+ * - output: NTT(a') in bit-reverse order
  *           where a'[i] = a[i] * psi^i
  *
  * Same conditions as above to ensure no overflow.
