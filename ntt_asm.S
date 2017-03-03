@@ -814,7 +814,7 @@ _G(mulntt_red_ct_rev2std_asm):
 /*
  * First loop: blocks of 8 integers.
  */
-ct_r2s_size8_loop2:
+mct_r2s_size8_loop2:
         vmovdqu ymm0, [rax]                 // ymm0 = a0 a1 a2 a3 a4 a5 a6 a7
 
 // Round1:
@@ -866,7 +866,7 @@ ct_r2s_size8_loop2:
 
         add     rax, 32
         cmp     rax, rsi
-        jb      ct_r2s_size8_loop2
+        jb      mct_r2s_size8_loop2
 
 /*
  * The rest of the code is the same as in ntt_ct_rev2std.
@@ -1146,3 +1146,90 @@ ct_s2r_finish_size1:
         jb        ct_s2r_finish_size1   
         
         ret
+
+
+
+/***************************************************************************
+ * Combined product by powers of psi and NTT
+ * Cooley-Tukey algorithm, standard to bit-reverse order
+ *
+ * Input:
+ * - rdi = start of array a
+ * - rsi = size of array a (must be a positive multiple of 16)
+ * - rdx = start of array p
+ *
+ * a is an array of 32bit integers.
+ * NTT a is stored in place. 
+ * p is a constant array of powers of omega (signed 16bit constants).
+ **************************************************************************/
+
+        .balign 16
+        .global _G(mulntt_red_ct_std2rev_asm)
+_G(mulntt_red_ct_std2rev_asm):
+        lea       r8, [rdi+4*rsi]         // r8 = end of array a
+        vmovdqa   ymm4, [mask+rip]        // ymm4 = bitmask = 8 copies of 4095
+
+/*
+ * Basic rounds: as long as d=rsi/2 >= 8
+ */
+mct_s2r_loop:
+        mov     rax, rdi          // rax = first block in array aa --> a[0 ... d-1]
+        lea     rcx, [rdi+2*rsi]  // rcx = start of next block --> a[d, ... 2d-1]
+        mov     r9, rcx           // end pointer = end of the first block
+
+mct_s2r_loop_aux:
+        add     rdx, 2               // rdx --> coefficient U for the inner loop (U is 16 bits)
+        vpbroadcastw xmm5, [rdx]     // xmm5 = 8 copies of U
+        vpmovsxwq  ymm5, xmm5        // ymm5 = 4 copies of U, sign-extended to 64bits
+/*
+ * Inner loop: process eight elements at a time
+ * rax --> a[i ... i+7]
+ * rcx --> a[i+d ... i+d+7]
+ * ymm5 contains 4 copies of the multiplier U
+ */
+mct_s2r_loop_inner:
+        vmovdqu ymm0, [rax]              // ymm0 = a[i, ..., i+7]
+        vmovdqu ymm1, [rcx]              // ymm1 = a[i+d, ..., i+d+7]
+
+        // mul-reduce: ymm1 * ymm5, result in ymm1
+        vpmuldq   ymm2, ymm1, ymm5
+        vpshufd   ymm1, ymm1, 0x31
+        vpmuldq   ymm3, ymm1, ymm5
+        vpslldq   ymm1, ymm3, 4
+        vpblendd  ymm1, ymm1, ymm2, 0x55
+        vpand     ymm1, ymm1, ymm4       // ymm1 = c0 part (8 32bit integers)
+
+        vpsrlq    ymm3, ymm3, 12
+        vpsrlq    ymm2, ymm2, 12
+        vpslldq   ymm3, ymm3, 4
+        vpblendd  ymm3, ymm3, ymm2, 0x55 // ymm3 = c1 part (also 8 32bit integers)
+
+        vpslld    ymm2, ymm1, 1
+        vpaddd    ymm1, ymm1, ymm2       // ymm1 = 3 * c0
+        vpsubd    ymm1, ymm1, ymm3       // ymm1 = mul_red(U, a[i+d, ..., i+d+7])
+
+        vpaddd    ymm2, ymm0, ymm1
+        vpsubd    ymm3, ymm0, ymm1
+        vmovdqu   [rax], ymm2
+        vmovdqu   [rcx], ymm3
+
+        add       rax, 32
+        add       rcx, 32
+        cmp       rax, r9
+        jb        mct_s2r_loop_inner
+
+        mov       rax, rcx              // rax --> a[i ... i+d-1]
+        lea       rcx, [rax+2*rsi]      // rcx --> a[i+d ... i+2d-1]
+        mov       r9, rcx
+        cmp       rax, r8               // r8 = end of array a
+        jb        mct_s2r_loop_aux
+
+        shr       rsi, 1               // next block 
+        cmp       rsi, 8
+        ja        mct_s2r_loop
+
+/*
+ * The rest of the code is as in ntt_red_ct_std2rev_asm
+ */
+        add      rdx, 2
+        jmp      ct_s2r_finish
