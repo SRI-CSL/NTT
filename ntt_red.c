@@ -345,9 +345,6 @@ void ntt_red_ct_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
       w = p[t + j]; // w_t^bitrev(j)
       u += 2 * d;   // u = 2 * d * j
       for (s=u; s<u+d; s++) {
-        // x = modq(a[s + d] * w);
-        // a[s + d] = sub_mod(a[s], x);
-        // a[s] = add_mod(a[s], x);
         x = mul_red(a[s + d], w);
         a[s + d] = a[s] - x;
         a[s] = a[s] + x;
@@ -390,9 +387,6 @@ void mulntt_red_ct_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
     for (j=0, u=0; j<t; j++, u += 2*d) { // u = j * 2d
       w = p[t + j]; // psi_t * w_t^bitrev(j) * inverse(3)
       for (s=u; s<u+d; s++) {
-        // x = modq(a[s + d] * w);
-        // a[s + d] = sub_mod(a[s], x);
-        // a[s] = add_mod(a[s], x);
         x = mul_red(a[s + d], w);
         a[s + d] = a[s] - x;
         a[s] = a[s] + x;
@@ -432,8 +426,6 @@ void ntt_red_gs_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
     // first loop for j=0: w_t^rev(j) = 1
     for (s=0; s<d; s++) {
       x = a[s + d];
-      // a[s + d] = sub_mod(a[s], x);
-      // a[s] = add_mod(a[s], x);      
       a[s + d] = a[s] - x;
       a[s] = a[s] + x;
     }
@@ -442,8 +434,6 @@ void ntt_red_gs_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
       w = p[t + j];  // w_t^bitrev(j)
       for (s=u; s<u+d; s++) {
         x = a[s + d];
-        // a[s + d] = modq(sub_mod(a[s], x) * w);
-        // a[s] = add_mod(a[s], x);
         a[s + d] = mul_red(a[s] - x, w);
         a[s] = a[s] + x;
       }
@@ -480,8 +470,6 @@ void nttmul_red_gs_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
       w = p[t + j];  // psi_t * w_t ^ bitrev(j)
       for (s=u; s<u+d; s++) {
         x = a[s + d];
-        // a[s + d] = modq(sub_mod(a[s], x) * w);
-        // a[s] = add_mod(a[s], x);
         a[s + d] = mul_red(a[s] - x, w);
         a[s] = a[s] + x;
       }
@@ -524,8 +512,6 @@ void ntt_red_gs_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
       w = p[t + j]; // w_t^j
       for (s=j; s<n; s += t + t) {
         x = a[s + t];
-        // a[s + t] = modq(sub_mod(a[s], x) * w);
-        // a[s] = add_mod(a[s], x);
         a[s + t] = mul_red(a[s] - x, w);
         a[s] = a[s] + x;
       }
@@ -559,8 +545,6 @@ void nttmul_red_gs_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
       w = p[t + j]; // psi_t * w_t^j
       for (s=j; s<n; s += t + t) {
         x = a[s + t];
-        // a[s + t] = modq(sub_mod(a[s], x) * w);
-        // a[s] = add_mod(a[s], x);
         a[s + t] = mul_red(a[s] - x, w);
         a[s] = a[s] + x;
       }
