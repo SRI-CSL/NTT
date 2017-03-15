@@ -1394,7 +1394,7 @@ gs_r2s_size16_loop:
 	mov    r11, 64          // half-block size in bytes = (16 * 4)
 
 gs_r2s_size32_loop:
-	mov    rax, rdi         // rax --> start of array a = first block of bbb bytes
+	mov    rax, rdi         // rax --> start of array a = first block of r11 bytes
 	lea    rcx, [rax+r11]   // rcx --> next block
 	mov    r8, rcx          // r8 --> end marker
 	shr    rsi, 1
