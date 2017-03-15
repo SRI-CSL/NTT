@@ -1252,11 +1252,11 @@ mct_s2r_loop_inner:
         .global _G(ntt_red_gs_rev2std_asm)
 _G(ntt_red_gs_rev2std_asm):
 	lea	rcx, [rdi+4*rsi]      // rcx -> end of array a
-	lea     r8, [rdx+rsi]         //
+	lea     r8, [rdx+rsi]         // r8 --> multipliers for round 1
 	shr     rsi, 1
-	lea     r9, [rdx+rsi]
+	lea     r9, [rdx+rsi]         // r9 --> multipliers for round 2
 	shr 	rsi, 1
-	lea     r10, [rdx+rsi]
+	lea     r10, [rdx+rsi]        // r10 --> multipliers for round 3
 	mov	rax, rdi	      // rax -> start of array a
 
 	vmovdqa ymm4, [mask+rip]
@@ -1465,3 +1465,202 @@ gs_r2s_done:
 	ret
 
 
+/***************************************************************************
+ * Combined NTT and product by powers of psi
+ * Gentleman-Sande: bit-reverse to standard order
+ *
+ * Input:
+ * - rdi = start of array a
+ * - rsi = size of array a (must be a positive multiple of 16)
+ * - rdx = start of array p
+ *
+ * a is an array of 32bit integers.
+ * NTT a is stored in place. 
+ * p is a constant array of powers of omega (signed 16bit constants).
+ **************************************************************************/
+
+	.balign 16
+        .global _G(nttmul_red_gs_rev2std_asm)
+_G(nttmul_red_gs_rev2std_asm):
+	lea	rcx, [rdi+4*rsi]      // rcx -> end of array a
+	lea     r8, [rdx+rsi]         // r8 --> multipliers for round 1
+	shr     rsi, 1
+	lea     r9, [rdx+rsi]         // r9 --> multipliers for round 2
+	shr 	rsi, 1
+	lea     r10, [rdx+rsi]        // r10 --> multipliers for round 3
+	mov	rax, rdi	      // rax -> start of array a
+
+	vmovdqa ymm4, [mask+rip]
+	vmovdqa ymm6, [perm2020+rip]
+
+/*
+ * The first loop is the same as in ntt_red_gs_rev2std.
+ * It processes blocks of eight integers.
+ * Each iteration corresponds to three rounds.
+ */
+mgs_r2s_loop0:
+// first round
+	vpmovsxwq ymm5, [r8]         // ymm5 = 4 multipliers = [w0, w1, w2, w3] extended to 64 bits
+
+	vmovdqu  ymm0, [rax]         // ymm0 = a0 a1 a2 a3 a4 a5 a6 a7
+	vpsrldq  ymm1, ymm0, 4       // ymm1 = a1 a2 a3 0  a5 a6 a7 0
+	vpsubd   ymm2, ymm0, ymm1    // ymm2 = [a0 - a1 __ a2 - a3 __ a4 - a5 __ a6 - a7 __ ]
+	vpaddd   ymm0, ymm0, ymm1    // ymm0 = [a0 + a1 __ a2 + a3 __ a4 + a5 __ a6 + a7 __ ]
+	vpmuldq  ymm2, ymm2, ymm5    // ymm2 = [(a0 - a1) * w0, (a2 - a3) * w1, (a4 - a5) * w2, (a6 - a7) * w3]
+	vpand    ymm3, ymm2, ymm4    // ymm3 = masked parts = C0 parts
+	vpsrlq   ymm2, ymm2, 12      // ymm2 = C1 parts
+	vpslld   ymm1, ymm3, 1       // 2 * C0
+	vpaddd   ymm3, ymm3, ymm1    // 3 * C0
+	vpsubd   ymm1, ymm3, ymm2    // reduced part = 3 * C0 - C1
+
+// second round:
+// ymm0 = [b0 _ b2 _ b4 _ b6 _]
+// ymm1 = [b1 _ b3 _ b5 _ b7 _]
+
+	vpmovsxwq xmm5, [r9]         // xmm5 = [U, V]: two multipliers, sign-extended to 64bit
+	vpermd    ymm5, ymm6, ymm5   // ymm5 = [U _ U _ | V _ V _]
+	
+	vshufps ymm2, ymm0, ymm1, 0x44  // ymm2 = [b0 _ b1 _ b4 _ b5 _ ]
+	vshufps ymm3, ymm0, ymm1, 0xee  // ymm3 = [b2 _ b3 _ b6 _ b7 _]
+
+	vpsubd  ymm1, ymm2, ymm3    // ymm1 = [b0 - b2 __ b1 - b3 __ b4 - b6 __ b5 - b7 __ ]
+	vpaddd  ymm0, ymm2, ymm3    // ymm0 = [b0 + b2 __ b1 + b3 __ b4 + b6 __ b5 + b7 __ ]
+	vpmuldq ymm1, ymm1, ymm5    // ymm1 = [(b0 - b2) * U, (b1 - b3) * U, (b4 - b6) * V, (b5 - b7) * V]
+	vpand   ymm3, ymm1, ymm4    // ymm3 = C0 parts of ymm1
+	vpsrlq  ymm2, ymm1, 12      // ymm2 = C1 parts
+	vpslld  ymm1, ymm3, 1       // 2 * C0
+	vpaddd  ymm3, ymm3, ymm1    // 3 * C0
+	vpsubd  ymm1, ymm3, ymm2    // reduced part = 3 * C0 - C1
+
+// third round:
+// ymm0 = [c0 _ c1 _ c4 _ c5 _]
+// ymm1 = [c2 _ c3 _ c6 _ c7 _]
+	vpbroadcastw xmm5, [r10]    // xmm5 = 8 copies of multiplier U
+	vpmovsxwq ymm5, xmm5        // ymm5 = 4 copies of U, sign-extended to 64 bits
+
+        vperm2i128 ymm2, ymm0, ymm1, 0x20  // ymm2 = [c0 _ c1 _ c2 _ c3 _ ]
+        vperm2i128 ymm3, ymm0, ymm1, 0x31  // ymm3 = [c4 _ c5 _ c6 _ c7 _ ]
+
+	vpsubd  ymm1, ymm2, ymm3    // ymm1 = [c0 - c4 __ c1 - c5 __ c2 - c6 __ c3 - c7 __ ]
+	vpaddd  ymm0, ymm2, ymm3    // ymm0 = [c00 + c4 __ c1 + c5 __ c2 + c6 __ c3 + c7 __ ]
+	vpmuldq ymm1, ymm1, ymm5    // ymm1 = [(c0 - c4) * U, (c1 - c5) * U, (c2 - c6) * U, (c3 - c7) * U]
+	vpand   ymm3, ymm1, ymm4    // ymm3 = C0 parts of ymm1
+	vpsrlq  ymm2, ymm1, 12      // ymm2 = C1 parts
+	vpslld  ymm1, ymm3, 1       // 2 * C0
+	vpaddd  ymm3, ymm3, ymm1    // 3 * C0
+	vpsubd  ymm1, ymm3, ymm2    // reduced part = 3 * C0 - C1
+	
+// shuffle and merge into ymm0
+	vperm2i128 ymm2, ymm0, ymm1, 0x20
+	vperm2i128 ymm3, ymm0, ymm1, 0x31
+	vshufps    ymm0, ymm2, ymm3, 0x88
+	vmovdqu    [rax], ymm0
+	
+        add rax, 32
+	add r8, 8
+	add r9, 4
+	add r10, 2
+        cmp rax, rcx
+        jb mgs_r2s_loop0
+
+/*
+ * Blocks of size 16
+ */
+	mov    rax, rdi
+	shr    rsi, 1
+	lea    r9, [rdx+rsi]      // r9 --> multipliers for this round
+mgs_r2s_size16_loop:
+	vpbroadcastw xmm5, [r9]  // 8 copies of the multiplier W
+	vpmovsxwq ymm5, xmm5     // ymm5 = four copies of W, sign-extended to 64 bits
+
+	vmovdqu ymm0, [rax]
+	vmovdqu ymm1, [rax+32]
+	vpsubd ymm2, ymm0, ymm1  // ymm2 = [a[i] - a[i+8], ..., a[i+7] - a[i+15] ]
+	vpaddd ymm0, ymm0, ymm1  // ymm0 = [a[i] + a[i+8], ..., a[i+7] + a[i+15] ]
+
+	vpmuldq  ymm1, ymm2, ymm5   // ymm1 = four products (even indices)
+	vpshufd  ymm2, ymm2, 0x31
+	vpmuldq  ymm3, ymm2, ymm5   // ymm3 = four products (odd indices)
+	vpslldq  ymm2, ymm3, 4
+	vpblendd ymm2, ymm2, ymm1, 0x55
+	vpand    ymm2, ymm2, ymm4   // ymm2 = C0 part (eight integers)
+	
+	vpsrlq   ymm1, ymm1, 12
+	vpsrlq   ymm3, ymm3, 12
+	vpslldq  ymm3, ymm3, 4
+	vpblendd ymm1, ymm3, ymm1, 0x55 // ymm1 = C1 part (eight integers)
+	vpslld   ymm3, ymm2, 1
+	vpaddd   ymm2, ymm2, ymm3   // ymm2 = 3 * C0
+	vpsubd   ymm1, ymm2, ymm1
+
+	vmovdqu  [rax], ymm0
+	vmovdqu  [rax+32], ymm1
+
+	add	rax, 64
+	add     r9, 2
+	cmp     rax, rcx
+	jb      mgs_r2s_size16_loop
+	
+	cmp     rsi, 2
+	je      mgs_r2s_done
+	
+/*
+ * Blocks of size 32 and more
+ */
+	mov    r10, rcx         // r10 = end of array a
+	mov    r11, 64          // half-block size in bytes = (16 * 4)
+
+mgs_r2s_size32_loop:
+	mov    rax, rdi         // rax --> start of array a = first block of r11 bytes
+	lea    rcx, [rax+r11]   // rcx --> next block
+	mov    r8, rcx          // r8 --> end marker
+	shr    rsi, 1
+	lea    r9, [rdx+rsi]    // r9 --> multiplier table for this block size
+
+mgs_r2s_size32_blocks:
+	vpbroadcastw xmm5, [r9]  // 8 copies of the multiplier W
+	vpmovsxwq ymm5, xmm5     // ymm5 = four copies of W, sign-extended to 64 bits
+
+mgs_r2s_size32_inner_loop:
+	vmovdqu ymm0, [rax]      // ymm0 = eight elements of the first block
+	vmovdqu ymm1, [rcx]      // ymm1 = eight elements of the second block
+	vpsubd  ymm2, ymm0, ymm1
+	vpaddd  ymm0, ymm0, ymm1
+
+	// mulreduce ymm2 * ymm5: result in ymm1
+	vpmuldq  ymm1, ymm2, ymm5    // ymm1 = four products
+	vpshufd  ymm2, ymm2, 0x31
+	vpmuldq  ymm3, ymm2, ymm5    // ymm3 = four other products
+	vpslldq  ymm2, ymm3, 4
+	vpblendd ymm2, ymm2, ymm1, 0x55
+	vpand    ymm2, ymm2, ymm4    // ymm2 = C0 part
+
+	vpsrlq   ymm1, ymm1, 12
+	vpsrlq   ymm3, ymm3, 12
+	vpslldq  ymm3, ymm3, 4
+	vpblendd ymm1, ymm3, ymm1, 0x55 // ymm1 = C1 part (eight integers)
+	vpslld   ymm3, ymm2, 1
+	vpaddd   ymm2, ymm2, ymm3   // ymm2 = 3 * C0
+	vpsubd   ymm1, ymm2, ymm1
+
+	vmovdqu  [rax], ymm0
+	vmovdqu  [rcx], ymm1
+
+	add rax, 32
+	add rcx, 32
+	cmp rax, r8
+	jb  mgs_r2s_size32_inner_loop
+
+	mov  rax, rcx            // rax = start of block
+	add  rcx, r11            // rcx = start of the next block
+	mov  r8, rcx             // r8 = end of block
+	add  r9, 2
+	cmp  rax, r10
+	jb   mgs_r2s_size32_blocks
+
+	shl r11, 1                // double the block size
+	cmp rsi, 2
+	jne mgs_r2s_size32_loop
+
+mgs_r2s_done:
+	ret

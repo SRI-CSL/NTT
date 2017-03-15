@@ -504,114 +504,167 @@ static void ntt_gs_rev2std2048_base(int32_t *a) {
 }
 
 
+
+/*
+ * nttmul_gs_rev2std
+ */
+static void nttmul_gs_rev2std16_asm(int32_t *a) {
+  nttmul_red_gs_rev2std_asm(a, 16, rev_shoup_sred_scaled_ntt16_12289);
+}
+
+static void nttmul_gs_rev2std16_base(int32_t *a) {
+  nttmul_red_gs_rev2std(a, 16, rev_shoup_sred_scaled_ntt16_12289);
+}
+
+static void nttmul_gs_rev2std128_asm(int32_t *a) {
+  nttmul_red_gs_rev2std_asm(a, 128, rev_shoup_sred_scaled_ntt128_12289);
+}
+
+static void nttmul_gs_rev2std128_base(int32_t *a) {
+  nttmul_red_gs_rev2std(a, 128, rev_shoup_sred_scaled_ntt128_12289);
+}
+
+static void nttmul_gs_rev2std256_asm(int32_t *a) {
+  nttmul_red_gs_rev2std_asm(a, 256, rev_shoup_sred_scaled_ntt256_12289);
+}
+
+static void nttmul_gs_rev2std256_base(int32_t *a) {
+  nttmul_red_gs_rev2std(a, 256, rev_shoup_sred_scaled_ntt256_12289);
+}
+
+static void nttmul_gs_rev2std512_asm(int32_t *a) {
+  nttmul_red_gs_rev2std_asm(a, 512, rev_shoup_sred_scaled_ntt512_12289);
+}
+
+static void nttmul_gs_rev2std512_base(int32_t *a) {
+  nttmul_red_gs_rev2std(a, 512, rev_shoup_sred_scaled_ntt512_12289);
+}
+
+static void nttmul_gs_rev2std1024_asm(int32_t *a) {
+  nttmul_red_gs_rev2std_asm(a, 1024, rev_shoup_sred_scaled_ntt1024_12289);
+}
+
+static void nttmul_gs_rev2std1024_base(int32_t *a) {
+  nttmul_red_gs_rev2std(a, 1024, rev_shoup_sred_scaled_ntt1024_12289);
+}
+
+static void nttmul_gs_rev2std2048_asm(int32_t *a) {
+  nttmul_red_gs_rev2std_asm(a, 2048, rev_shoup_sred_scaled_ntt2048_12289);
+}
+
+static void nttmul_gs_rev2std2048_base(int32_t *a) {
+  nttmul_red_gs_rev2std(a, 2048, rev_shoup_sred_scaled_ntt2048_12289);
+}
+
+
 #if 0
-static void test_ntt_gs_rev2std16(void) {
+static void test_nttmul_gs_rev2std16(void) {
   int32_t a[16];
   uint32_t i;
 
-  printf("Test: ntt_gs_rev2std16\n");
+  printf("Test: nttmul_gs_rev2std16\n");
   for (i=0; i<16; i++) {
     a[i] = 100+i;
   }
   printf("--> input\n");
   print_array(stdout, a, 16);
-  ntt_red_gs_rev2std(a, 16, rev_shoup_sred_ntt16_12289);
+  nttmul_red_gs_rev2std(a, 16, rev_shoup_sred_scaled_ntt16_12289);
   printf("--> base output\n");
   print_array(stdout, a, 16);
   for (i=0; i<16; i++) {
     a[i] = 100+i;
   }
-  ntt_red_gs_rev2std_asm(a, 16, rev_shoup_sred_ntt16_12289);
+  nttmul_red_gs_rev2std_asm(a, 16, rev_shoup_sred_scaled_ntt16_12289);
   printf("--> assembler output\n");
   print_array(stdout, a, 16);
   printf("\n");
 
-  printf("Test: ntt_gs_rev2std16\n");
+  printf("Test: nttmul_gs_rev2std16\n");
   for (i=0; i<16; i++) {
     a[i] = 100+3*i;
   }
   printf("--> input\n");
   print_array(stdout, a, 16);
-  ntt_red_gs_rev2std(a, 16, rev_shoup_sred_ntt16_12289);
+  nttmul_red_gs_rev2std(a, 16, rev_shoup_sred_scaled_ntt16_12289);
   printf("--> base output\n");
   print_array(stdout, a, 16);
   for (i=0; i<16; i++) {
     a[i] = 100+3*i;
   }
-  ntt_red_gs_rev2std_asm(a, 16, rev_shoup_sred_ntt16_12289);
+  nttmul_red_gs_rev2std_asm(a, 16, rev_shoup_sred_scaled_ntt16_12289);
   printf("--> assembler output\n");
   print_array(stdout, a, 16);
   printf("\n");
 
-  printf("Test: ntt_gs_rev2std16\n");
+  printf("Test: nttmul_gs_rev2std16\n");
   for (i=0; i<16; i++) {
     a[i] = 100+7*i;
   }
   printf("--> input\n");
   print_array(stdout, a, 16);
-  ntt_red_gs_rev2std(a, 16, rev_shoup_sred_ntt16_12289);
+  nttmul_red_gs_rev2std(a, 16, rev_shoup_sred_scaled_ntt16_12289);
   printf("--> base output\n");
   print_array(stdout, a, 16);
   for (i=0; i<16; i++) {
     a[i] = 100+7*i;
   }
-  ntt_red_gs_rev2std_asm(a, 16, rev_shoup_sred_ntt16_12289);
+  nttmul_red_gs_rev2std_asm(a, 16, rev_shoup_sred_scaled_ntt16_12289);
   printf("--> assembler output\n");
   print_array(stdout, a, 16);
   printf("\n");
 }
 
-static void test_ntt_gs_rev2std128(void) {
+static void test_nttmul_gs_rev2std128(void) {
   int32_t a[128];
   uint32_t i;
 
-  printf("Test: ntt_gs_rev2std128\n");
+  printf("Test: nttmul_gs_rev2std128\n");
   for (i=0; i<128; i++) {
     a[i] = 100+i;
   }
   printf("--> input\n");
   print_array(stdout, a, 128);
-  ntt_red_gs_rev2std(a, 128, rev_shoup_sred_ntt128_12289);
+  nttmul_red_gs_rev2std(a, 128, rev_shoup_sred_scaled_ntt128_12289);
   printf("--> base output\n");
   print_array(stdout, a, 128);
   for (i=0; i<128; i++) {
     a[i] = 100+i;
   }
-  ntt_red_gs_rev2std_asm(a, 128, rev_shoup_sred_ntt128_12289);
+  nttmul_red_gs_rev2std_asm(a, 128, rev_shoup_sred_scaled_ntt128_12289);
   printf("--> assembler output\n");
   print_array(stdout, a, 128);
   printf("\n");
 
-  printf("Test: ntt_gs_rev2std128\n");
+  printf("Test: nttmul_gs_rev2std128\n");
   for (i=0; i<128; i++) {
     a[i] = 100+3*i;
   }
   printf("--> input\n");
   print_array(stdout, a, 128);
-  ntt_red_gs_rev2std(a, 128, rev_shoup_sred_ntt128_12289);
+  nttmul_red_gs_rev2std(a, 128, rev_shoup_sred_scaled_ntt128_12289);
   printf("--> base output\n");
   print_array(stdout, a, 128);
   for (i=0; i<128; i++) {
     a[i] = 100+3*i;
   }
-  ntt_red_gs_rev2std_asm(a, 128, rev_shoup_sred_ntt128_12289);
+  nttmul_red_gs_rev2std_asm(a, 128, rev_shoup_sred_scaled_ntt128_12289);
   printf("--> assembler output\n");
   print_array(stdout, a, 128);
   printf("\n");
 
-  printf("Test: ntt_gs_rev2std128\n");
+  printf("Test: nttmul_gs_rev2std128\n");
   for (i=0; i<128; i++) {
     a[i] = 100+7*i;
   }
   printf("--> input\n");
   print_array(stdout, a, 128);
-  ntt_red_gs_rev2std(a, 128, rev_shoup_sred_ntt128_12289);
+  nttmul_red_gs_rev2std(a, 128, rev_shoup_sred_scaled_ntt128_12289);
   printf("--> base output\n");
   print_array(stdout, a, 128);
   for (i=0; i<128; i++) {
     a[i] = 100+7*i;
   }
-  ntt_red_gs_rev2std_asm(a, 128, rev_shoup_sred_ntt128_12289);
+  nttmul_red_gs_rev2std_asm(a, 128, rev_shoup_sred_scaled_ntt128_12289);
   printf("--> assembler output\n");
   print_array(stdout, a, 128);
   printf("\n");
@@ -646,6 +699,10 @@ static void tests16(void) {
   speed_test2("ntt_red_gs_rev2std", 16, ntt_red_gs_rev2std);
   speed_test2("ntt_red_gs_rev2std_asm", 16, ntt_red_gs_rev2std_asm);
   printf("\n");
+  cross_check("nttmul_red_gs_rev2std_asm", 16, nttmul_gs_rev2std16_asm, nttmul_gs_rev2std16_base);
+  speed_test2("nttmul_red_gs_rev2std", 16, nttmul_red_gs_rev2std);
+  speed_test2("nttmul_red_gs_rev2std_asm", 16, nttmul_red_gs_rev2std_asm);
+  printf("\n");
 }
 
 static void tests128(void) {
@@ -670,6 +727,10 @@ static void tests128(void) {
   cross_check("ntt_red_gs_rev2std_asm", 128, ntt_gs_rev2std128_asm, ntt_gs_rev2std128_base);
   speed_test2("ntt_red_gs_rev2std", 128, ntt_red_gs_rev2std);
   speed_test2("ntt_red_gs_rev2std_asm", 128, ntt_red_gs_rev2std_asm);
+  printf("\n");
+  cross_check("nttmul_red_gs_rev2std_asm", 128, nttmul_gs_rev2std128_asm, nttmul_gs_rev2std128_base);
+  speed_test2("nttmul_red_gs_rev2std", 128, nttmul_red_gs_rev2std);
+  speed_test2("nttmul_red_gs_rev2std_asm", 128, nttmul_red_gs_rev2std_asm);
   printf("\n");
 }
 
@@ -696,6 +757,10 @@ static void tests256(void) {
   speed_test2("ntt_red_gs_rev2std", 256, ntt_red_gs_rev2std);
   speed_test2("ntt_red_gs_rev2std_asm", 256, ntt_red_gs_rev2std_asm);
   printf("\n");
+  cross_check("nttmul_red_gs_rev2std_asm", 256, nttmul_gs_rev2std256_asm, nttmul_gs_rev2std256_base);
+  speed_test2("nttmul_red_gs_rev2std", 256, nttmul_red_gs_rev2std);
+  speed_test2("nttmul_red_gs_rev2std_asm", 256, nttmul_red_gs_rev2std_asm);
+  printf("\n");
 }
 
 static void tests512(void) {
@@ -720,6 +785,10 @@ static void tests512(void) {
   cross_check("ntt_red_gs_rev2std_asm", 512, ntt_gs_rev2std512_asm, ntt_gs_rev2std512_base);
   speed_test2("ntt_red_gs_rev2std", 512, ntt_red_gs_rev2std);
   speed_test2("ntt_red_gs_rev2std_asm", 512, ntt_red_gs_rev2std_asm);
+  printf("\n");
+  cross_check("nttmul_red_gs_rev2std_asm", 512, nttmul_gs_rev2std512_asm, nttmul_gs_rev2std512_base);
+  speed_test2("nttmul_red_gs_rev2std", 512, nttmul_red_gs_rev2std);
+  speed_test2("nttmul_red_gs_rev2std_asm", 512, nttmul_red_gs_rev2std_asm);
   printf("\n");
 }
 
@@ -746,6 +815,10 @@ static void tests1024(void) {
   speed_test2("ntt_red_gs_rev2std", 1024, ntt_red_gs_rev2std);
   speed_test2("ntt_red_gs_rev2std_asm", 1024, ntt_red_gs_rev2std_asm);
   printf("\n");
+  cross_check("nttmul_red_gs_rev2std_asm", 1024, nttmul_gs_rev2std1024_asm, nttmul_gs_rev2std1024_base);
+  speed_test2("nttmul_red_gs_rev2std", 1024, nttmul_red_gs_rev2std);
+  speed_test2("nttmul_red_gs_rev2std_asm", 1024, nttmul_red_gs_rev2std_asm);
+  printf("\n");
 }
 
 static void tests2048(void) {
@@ -770,6 +843,10 @@ static void tests2048(void) {
   cross_check("ntt_red_gs_rev2std_asm", 2048, ntt_gs_rev2std2048_asm, ntt_gs_rev2std2048_base);
   speed_test2("ntt_red_gs_rev2std", 2048, ntt_red_gs_rev2std);
   speed_test2("ntt_red_gs_rev2std_asm", 2048, ntt_red_gs_rev2std_asm);
+  printf("\n");
+  cross_check("nttmul_red_gs_rev2std_asm", 2048, nttmul_gs_rev2std2048_asm, nttmul_gs_rev2std2048_base);
+  speed_test2("nttmul_red_gs_rev2std", 2048, nttmul_red_gs_rev2std);
+  speed_test2("nttmul_red_gs_rev2std_asm", 2048, nttmul_red_gs_rev2std_asm);
   printf("\n");
 }
 
