@@ -185,4 +185,33 @@ extern void ntt_red_gs_rev2std_asm(int32_t *a, uint32_t n, const int16_t *p);
 extern void nttmul_red_gs_rev2std_asm(int32_t *a, uint32_t n, const int16_t *p);
 
 
+/*
+ * GENTLEMAN-SANDE: STANDARD TO BIT-REVERSE ORDER
+ */
+
+/*
+ * Version 7:
+ * - input: a[0 ... n-1] in standard order
+ * - p: constant array such that p[t + j] = omega^(n/2t)^j * inverse(3)
+ *   for t=1, 2, ...., n/2
+ *       j=0 ... t-1
+ *
+ * - output:  NTT(a) in bit-reverse order
+ */
+extern void ntt_red_gs_std2rev_asm(int32_t *a, uint32_t n, const int16_t *p);
+
+/*
+ * Version 8: combined NTT and product by powers of psi
+ * - input: a[0 ... n-1] in standard
+ * - p: constant array such that 
+ *   p[t + j] = psi^(n/2t) * omega^(n/2t)^j * inverse(3)
+ *   for t=1, 2, ...., n/2
+ *       j=0 ... t-1
+ *
+ * - output:  a contains a' in reverse order
+ *            where a'[i] = NTT(a)[i] * psi^i.
+ */
+extern void nttmul_red_gs_std2rev_asm(int32_t *a, uint32_t n, const int16_t *p);
+
+
 #endif
