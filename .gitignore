@@ -10,10 +10,16 @@ kat_mul1024
 speed_mul1024
 kat_mul1024_red
 speed_mul1024_red
+kat_mul1024_red_asm
+speed_mul1024_red_asm
 test_ntt_red16
 test_ntt_red256
 test_ntt_red512
 test_ntt_red1024
+test_ntt_red_asm16
+test_ntt_red_asm256
+test_ntt_red_asm512
+test_ntt_red_asm1024
 test_ntt_red
 test_red_bounds
 test_avx

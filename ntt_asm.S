@@ -21,18 +21,23 @@
 
         .data
         .balign 32
+
 // mask = array of 8 integers, all equal to 4095 = 2^12 -1
 mask:
         .long  0xfff, 0xfff, 0xfff, 0xfff, 0xfff, 0xfff, 0xfff, 0xfff
         
-// q_x8 = array of 8 integers, all equal to 12289
+// q_x8 = array of 8 integers, all equal to Q
 q_x8:
         .long  12289, 12289, 12289, 12289, 12289, 12289, 12289, 12289
         
-// q_x8 = array of 8 integers, all equal to 12288
+// q_minus1_x8 = array of 8 integers, all equal to Q-1
 q_minus1_x8:
         .long  12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288
 
+// half_q_x8 = 8 integers, all equal to (Q-1)/2
+half_q_x8:
+	.long  6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144
+	
 // for testing ntt_x86_asm (from Microsoft)
 perm0246:
         .long 0, 2, 4, 6, 0, 0, 0, 0
@@ -72,7 +77,9 @@ perm_bdcst2:
 perm_bdcst3:
         .long 3, 0, 3, 0, 3, 0, 3, 0
 
+
         .text
+
 /***********************************************************
  * Check whether the processor + OS support AVX and AVX2
  *
@@ -315,6 +322,47 @@ loop2:
         cmp rax, rsi
         jb loop2
         ret
+
+/*************************************************************************
+ * Shift representation: convert a[i] in [0 .. q-1] to
+ * a number in [-(q-1)/2, +(q-1)/2].
+ *
+ * Input:
+ * - rdi = start of the array a
+ * - rsi = number of elements in a (must be a positive multiple of 16)
+ *
+ * The array is modified in place
+ *************************************************************************/
+	
+        .balign 16
+        .global _G(shift_array_asm)
+_G(shift_array_asm):
+	vmovdqa ymm3, [q_x8+rip]
+	vmovdqa ymm4, [half_q_x8+rip]
+	mov rax, rdi
+	lea rsi, [rdi+4*rsi]
+
+loop_shift:
+	vmovdqu ymm0, [rax]
+	vmovdqu ymm1, [rax+32]
+
+	vpcmpgtd ymm2, ymm0, ymm4     // ymm2[i] = -1 if ymm0[i] > (Q-1)/2
+	vpand    ymm2, ymm2, ymm3
+	vpsubd   ymm0, ymm0, ymm2
+
+	vmovdqu  [rax], ymm0
+
+	vpcmpgtd ymm2, ymm1, ymm4     // ymm2[i] = -1 if ymm1[i] > (Q-1)/2
+	vpand    ymm2, ymm2, ymm3
+	vpsubd   ymm1, ymm1, ymm2
+
+	vmovdqu  [rax+32], ymm1
+
+	add rax, 64
+	cmp rax, rsi
+	jb loop_shift	
+	ret
+
 
 /**************************************************************************
  * Element-wise multiplication + reduction in place:

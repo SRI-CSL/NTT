@@ -8,6 +8,15 @@
 #include "ntt_asm.h"
 #include "sort.h"
 
+/*
+ * Functions defined in ntt_asm.S but not declared in ntt_asm.h.
+ * These are alternative implementations.
+ */
+extern void reduce_array_asm2(int32_t *a, uint32_t n);
+extern void reduce_array_twice_asm2(int32_t *a, uint32_t n);
+extern void mul_reduce_array16_asm2(int32_t *a, uint32_t n, const int16_t *p);
+
+
 #define Q 12289
 
 /*
@@ -330,6 +339,44 @@ static void test_correction(uint32_t n) {
 
 
 /*
+ * Test of the shift/shift_asm functions
+ * - the input array must have elements in [0,Q-1]
+ */
+static void random_array_for_shift(int32_t *a, uint32_t n) {
+  uint32_t i;
+
+  for (i=0; i<n; i++) {
+    a[i] = random() % Q;
+  }
+}
+
+static void test_shift(uint32_t n) {
+  int32_t a[n], b[n], c[n];
+  uint32_t j;
+
+  printf("Testing shift_array_asm: n = %"PRIu32"\n", n);
+  for (j=0; j<10000; j++) {
+    random_array_for_shift(a, n);
+    copy_array(b, a, n);
+    copy_array(c, a, n);  // keep a copy of the input
+    shift_array_asm(a, n);
+    shift_array(b, n);
+    if (!equal_arrays(a, b, n)) {
+      printf("failed on test %"PRIu32"\n", j);
+      printf("--> input:\n");
+      print_array(stdout, c, n);
+      printf("--> result from shift_array_asm:\n");
+      print_array(stdout, a, n);
+      printf("--> correct result:\n");
+      print_array(stdout, b, n);
+      exit(1);
+    }
+  }
+  printf("all tests passed\n");
+}
+
+
+/*
  * Tests for mul_reduce_array
  */
 static void random_arrays_for_mul_reduce16(int32_t *a, int16_t *p, uint32_t n) {
@@ -496,6 +543,7 @@ static void run_tests(void) {
     cross_check("reduce_array_twice_asm", n, reduce_array_twice_asm, reduce_array_twice);
     cross_check("reduce_array_twice_asm2", n, reduce_array_twice_asm2, reduce_array_twice);
     test_correction(n);
+    test_shift(n);
     test_mul_reduce_array16(n);
     test_mul_reduce_array(n);
     test_scalar_mul_reduce_array(n);
@@ -506,6 +554,7 @@ static void run_tests(void) {
     speed_test("reduce_array", n, reduce_array);
     speed_test("reduce_array_twice", n, reduce_array_twice);
     speed_test("correct", n, correct);
+    speed_test("shift_array", n, shift_array);
     speed_test2("mul_reduce_array16", n, mul_reduce_array16);
     speed_test3("mul_reduce_array", n, mul_reduce_array);
     speed_test4("scalar_mul_reduce_array", n, scalar_mul_reduce_array);
@@ -515,6 +564,7 @@ static void run_tests(void) {
     speed_test("reduce_array_twice_asm", n, reduce_array_twice_asm);
     speed_test("reduce_array_twice_asm2", n, reduce_array_twice_asm2);
     speed_test("correct_asm", n, correct_asm);
+    speed_test("shift_array_asm", n, shift_array_asm);
     speed_test2("mul_reduce_array16_asm", n, mul_reduce_array16_asm);
     speed_test2("mul_reduce_array16_asm2", n, mul_reduce_array16_asm2);
     speed_test3("mul_reduce_array_asm", n, mul_reduce_array_asm);

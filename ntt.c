@@ -207,8 +207,8 @@ void ntt_ct_rev2std_v1(int32_t *a, uint32_t n, const uint16_t *p) {
  *   this array looks like:
  *     p[0] --> not used
  *     p[1] --> 1
- *     p[2] --> 1, omega^(n/)
- *     p[4] --> 1, omega^(n/4), omega^(2*n/2), omega^(3*n/4)
+ *     p[2] --> 1, omega^(n/4)
+ *     p[4] --> 1, omega^(n/8), omega^(2*n/8), omega^(3*n/8)
  *     p[8] --> 1, ...
  *
  * - output: a contains the NTT(a) in standard order

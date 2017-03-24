@@ -21,9 +21,17 @@
  */
 extern bool avx2_supported(void);
 
+
 /****************
  *  REDUCTIONS  *
  ***************/
+
+/*
+ * Shift representation: convert a[i] in [0 .. q-1] to 
+ * a'[i] in [-(q-1)/2, +(q-1)/2] (i.e., [-6144, +6144]).
+ * a'[i] is either a[i] or a[i] - q.
+ */
+extern void shift_array_asm(int32_t *a, uint32_t n);
 
 /*
  * Reduce all elements of array a: (i.e., a'[i] = red(a[i]))
@@ -34,7 +42,6 @@ extern bool avx2_supported(void);
  *  -524287 <= a'[i] <= 536573
  */
 extern void reduce_array_asm(int32_t *a, uint32_t n);
-extern void reduce_array_asm2(int32_t *a, uint32_t n);
 
 /*
  * Reduce all elements of array a twice: a[i] = red(red(a[i]))
@@ -47,7 +54,6 @@ extern void reduce_array_asm2(int32_t *a, uint32_t n);
  *   -130 <= a'[i] <= 12413
  */
 extern void reduce_array_twice_asm(int32_t *a, uint32_t n);
-extern void reduce_array_twice_asm2(int32_t *a, uint32_t n);
 
 /*
  * Convert to integers in the range [0, Q-1] after double reduction.
@@ -62,7 +68,6 @@ extern void correct_asm(int32_t *a, uint32_t n);
  * - n = size of both arrays, must be positive and a multiple of 16
  */
 extern void mul_reduce_array16_asm(int32_t *a, uint32_t n, const int16_t *p);
-extern void mul_reduce_array16_asm2(int32_t *a, uint32_t n, const int16_t *p);
 
 /*
  * Multiply b[i] by c[i] then reduce and store the result in a[i]

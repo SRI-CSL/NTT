@@ -15,8 +15,9 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include "ntt1024.h"
+#include "ntt_red_asm1024.h"
 #include "data_poly1024.h"
+#include "sort.h"
 
 static void copy_poly(int32_t a[1024], const int32_t b[1024]) {
   uint32_t i;
@@ -48,20 +49,20 @@ static void test_mul_from_KAT_values(void (*f)(int32_t *, int32_t *, int32_t *))
 int main(void){
   build_kat();
 
-  printf("Testing ntt1024_product1 (KAT values)\n");
-  test_mul_from_KAT_values(ntt1024_product1);
+  printf("Testing ntt_red1024_product1_asm (KAT values)\n");
+  test_mul_from_KAT_values(ntt_red1024_product1_asm);
 
-  printf("\nTesting ntt1024_product2 (KAT values)\n");
-  test_mul_from_KAT_values(ntt1024_product2);
+  printf("\nTesting ntt_red1024_product2_asm (KAT values)\n");
+  test_mul_from_KAT_values(ntt_red1024_product2_asm);
 
-  printf("\nTesting ntt1024_product3 (KAT values)\n");
-  test_mul_from_KAT_values(ntt1024_product3);
+  printf("\nTesting ntt_red1024_product3_asm (KAT values)\n");
+  test_mul_from_KAT_values(ntt_red1024_product3_asm);
 
-  printf("\nTesting ntt1024_product4 (KAT values)\n");
-  test_mul_from_KAT_values(ntt1024_product4);
+  printf("\nTesting ntt_red1024_product4_asm (KAT values)\n");
+  test_mul_from_KAT_values(ntt_red1024_product4_asm);
 
-  printf("\nTesting ntt1024_product5 (KAT values)\n");
-  test_mul_from_KAT_values(ntt1024_product5);
+  printf("\nTesting ntt_red1024_product5_asm (KAT values)\n");
+  test_mul_from_KAT_values(ntt_red1024_product5_asm);
 
   return 0;
 }
