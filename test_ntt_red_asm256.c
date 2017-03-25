@@ -424,6 +424,11 @@ static void speed_test2(const char *name, void (*f)(int32_t *, int32_t *, int32_
 
 
 int main(void) {
+  if (!avx2_supported()) {
+    printf("AVX2 is not supported\n");
+    return 0;
+  }
+  
   test_simple_polys("ntt_red256_ct_rev2std_asm", ntt_red256_ct_rev2std_asm, ntt_red256_omega, false);
   test_simple_polys("ntt_red256_gs_rev2std_asm", ntt_red256_gs_rev2std_asm, ntt_red256_omega, false);
   test_simple_polys("ntt_red256_ct_std2rev_asm", ntt_red256_ct_std2rev_asm, ntt_red256_omega, true);
