@@ -229,7 +229,7 @@ void scalar_mul_reduce_array(int32_t *a, uint32_t n, int32_t c) {
  */
 
 /*
- * Version 1:
+ * NTT computation
  * - input: a[0 ... n-1] in bit-reverse order
  *   with | a[i] | <= 12288
  *
@@ -308,7 +308,7 @@ void mulntt_red_ct_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
  */
 
 /*
- * Version 4:
+ * NTT computation
  * - input: a[0 ... n-1] in standard order
  * - p: constant array ow powers of omega
  *   such that p[t + j] = omega^(n/2t)^ bitrev(j) * inverse(3)
@@ -401,7 +401,7 @@ void mulntt_red_ct_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
  */
 
 /*
- * Version 1:
+ * NTT Computation
  * - input: a[0 ... n-1] in bit-reverse order
  * - p: constant array such that
  *   p[t + j] = omega^(n/2t)^rev(j) * inverse(3)
@@ -442,7 +442,7 @@ void ntt_red_gs_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
 }
 
 /*
- * Version 2: combined NTT and product by powers of psi
+ * Combined NTT and product by powers of psi
  * - input: a[0 ... n-1] in bit-reverse order
  * - p: constant array such that
  *   p[t + j] = psi^(n/2t) * omega^(n/2t)^rev(j) * inverse(3)
@@ -483,7 +483,7 @@ void nttmul_red_gs_rev2std(int32_t *a, uint32_t n, const int16_t *p) {
  */
 
 /*
- * Version 1
+ * NTT Computation
  * - input: a[0 ... n-1] in standard order
  * - p: constant array such that p[t + j] = omega^(n/2t)^j * inverse(3)
  *   for t=1, 2, ...., n/2
@@ -520,7 +520,7 @@ void ntt_red_gs_std2rev(int32_t *a, uint32_t n, const int16_t *p) {
 }
 
 /*
- * Version 2: combined NTT and product by powers of psi
+ * Combined NTT and product by powers of psi
  * - input: a[0 ... n-1] in standard order
  * - p: constant array such that 
  *   p[t + j] = psi^(n/2t) * omega^(n/2t)^j * inverse(3)

@@ -7,10 +7,47 @@
  *
  * These variants use the reduction method introduced by
  * Longa and Naehrig, 2016.
+ *
+ * Here's how the reduction is defined:
+ *
+ * 1) write Q as 2^m * k + 1
+ *    where k is an odd number
+ *    define mask = (2^m -1)
+ *
+ * 2) given an integer x, its reduction is
+ *
+ *    red(x) = k * (x & mask) - (x >> m)
+ *           = k * (x % 2^m) - (x / 2^m)
+ *
+ *   then we have red(x) == k * x modulo Q
+ *
+ *   To see this: we have
+ *
+ *     red(x) = k * r - q
+ *
+ *   where q and r are the quotient and remainder in
+ *   the division of x by 2^m. We also have:
+ *
+ *      x = 2^m * q + r
+ *
+ *  Then
+ *
+ *    k * x - red(x) = 2^m * k * q + q
+ *                   = q * (2^m * k + 1) = q * Q.
+ *
+ * Other nice properties: red(x) is cheap to compute
+ * and it grows slowly.
+ *
+ * In our case:
+ *
+ *   Q is 12289
+ *   m is 12
+ *   k is 3
+ *
  */
 
-#ifndef __NTT_RED_H
-#define __NTT_RED_H
+#ifndef NTT_RED_H
+#define NTT_RED_H
 
 #include <stdint.h>
 
@@ -246,4 +283,4 @@ extern void ntt_red_gs_std2rev(int32_t *a, uint32_t n, const int16_t *p);
  */
 extern void nttmul_red_gs_std2rev(int32_t *a, uint32_t n, const int16_t *p);
 
-#endif /* __NTT_RD_H */
+#endif /* NTT_RED_H */
