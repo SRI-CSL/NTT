@@ -20,7 +20,7 @@ static inline uint64_t cpucycles(void) {
   return result;
 }
 
-#define NTESTS 10240
+#define NTESTS 102400
 
 static uint64_t t[NTESTS];
 

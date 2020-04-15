@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include "ntt_red1024.h"
+#include "naive_ntt1024.h"
 #include "sort.h"
 
 /*
@@ -76,9 +76,9 @@ static void test_mul(void) {
   
   for (i=0; i<NTESTS; i++) {
     t[i] = cpucycles();
-    ntt_red1024_product1(c, a, b);
+    naive_ntt1024_product1(c, a, b);
   }
-  print_results("ntt_red1024_product1 ", cpucycles());
+  print_results("naive_ntt1024_product1 ", cpucycles());
 
   for (i=0; i<1024; i++) {
     a[i] = i;
@@ -87,9 +87,9 @@ static void test_mul(void) {
   
   for (i=0; i<NTESTS; i++) {
     t[i] = cpucycles();
-    ntt_red1024_product2(c, a, b);
+    naive_ntt1024_product2(c, a, b);
   }
-  print_results("ntt_red1024_product2 ", cpucycles());
+  print_results("naive_ntt1024_product2 ", cpucycles());
 
   for (i=0; i<1024; i++) {
     a[i] = i;
@@ -98,9 +98,9 @@ static void test_mul(void) {
   
   for (i=0; i<NTESTS; i++) {
     t[i] = cpucycles();
-    ntt_red1024_product3(c, a, b);
+    naive_ntt1024_product3(c, a, b);
   }
-  print_results("ntt_red1024_product3 ", cpucycles());
+  print_results("naive_ntt1024_product3 ", cpucycles());
 
   for (i=0; i<1024; i++) {
     a[i] = i;
@@ -109,9 +109,9 @@ static void test_mul(void) {
   
   for (i=0; i<NTESTS; i++) {
     t[i] = cpucycles();
-    ntt_red1024_product4(c, a, b);
+    naive_ntt1024_product4(c, a, b);
   }
-  print_results("ntt_red1024_product4 ", cpucycles());
+  print_results("naive_ntt1024_product4 ", cpucycles());
 
   for (i=0; i<1024; i++) {
     a[i] = i;
@@ -120,13 +120,13 @@ static void test_mul(void) {
   
   for (i=0; i<NTESTS; i++) {
     t[i] = cpucycles();
-    ntt_red1024_product5(c, a, b);
+    naive_ntt1024_product5(c, a, b);
   }
-  print_results("ntt_red1024_product5 ", cpucycles());
+  print_results("naive_ntt1024_product5 ", cpucycles());
 }
 
 int main(void){
-  printf("Testing ntt_red1024 product functions\n\n");
+  printf("Testing naive_ntt1024 product functions\n\n");
   test_mul();
   return 0;
 }

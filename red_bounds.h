@@ -36,9 +36,9 @@ extern int64_t min_red_mul(int64_t a, int64_t b, int64_t w, int64_t *m);
 extern int64_t max_red_mul_interval(int64_t a, int64_t b, int64_t low, int64_t high,
 				    int64_t *m, int64_t *mw);
 
- /*
-  * Minimum of red(x * w) for a <= x <= b and low <= w <= high
-  */
+/*
+ * Minimum of red(x * w) for a <= x <= b and low <= w <= high
+ */
 extern int64_t min_red_mul_interval(int64_t a, int64_t b, int64_t low, int64_t high,
 				    int64_t *m, int64_t *wm);
 
