@@ -67,4 +67,15 @@ extern interval_t *normal_inv3(const interval_t *a);
 extern interval_t *shift(const interval_t *a);
 
 
+/*
+ * Correct: assume x is in the interval [-q, 2*q-1] then
+ * correct(x) is if (x<0) then x+q elsif (x >= q) then x-q else x.
+ * So correct(x) is in thee interval [0 .. q-1]
+ *
+ * Interval a must be a subinterval of [-q, 2q-1]
+ * Correct(a) returns [l, h] such that l <= correct(x) <= h for x in a.
+ */
+extern interval_t *correct(const interval_t *a);
+
+
 #endif /* INTERVALS_H */

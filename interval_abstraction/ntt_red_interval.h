@@ -119,6 +119,7 @@ extern void abstract_reduce_array_twice(interval_t **a, uint32_t n);
 
 /*
  * Convert to integers in the range [0, Q-1] after double reduction.
+ * This checks whether a[i] is a sub-interval of [-Q, 2*Q-1]
  */
 extern void abstract_correct(interval_t **a, uint32_t n);
 

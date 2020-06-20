@@ -2,7 +2,7 @@ The modulus q is 2^m * k + 1 where k is small.
 
 For Q=12289, we have k=3 and m=12.
 
-Given an integer x, write x = a * 2^m + r where (0 <= r < 2^m-1)
+Given an integer x, write x = a * 2^m + r where (0 <= r <= 2^m-1)
 then red(x) is defined as (k*r - a).
 
 Prop 1: red(x) = k*x modulo q

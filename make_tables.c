@@ -182,7 +182,7 @@ static void build_rev_table(uint32_t *a, uint32_t n, uint32_t q, uint32_t x, uin
     c = power(y, n/(2*t), q);
     for (j=0; j<t; j++) {
       i = t + reverse(j, k);
-      assert(t <=i && i < 2*t);
+      assert(t <= i && i < 2*t);
       a[i] = b;
       b = (b * c) % q;
     }

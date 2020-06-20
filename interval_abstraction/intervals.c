@@ -257,3 +257,30 @@ interval_t *shift(const interval_t *a) {
     return make_interval(-6144, +6144);
   }
 }
+
+/*
+ * Correct(x) := if x < 0 then x+Q elsif x >= Q then x-Q else x
+ * The implementation requires -Q <= x < 2*Q 
+ */
+interval_t *correct(const interval_t *a) {
+  assert(-12289 <= a->min && a->min <= a->max && a->max < 2 * 12289);
+  if (a->max < 0) {
+    assert(a->min + 12289 >= 0 && a->max + 12289 <= 12288);
+    return make_interval(a->min + 12289, a->max + 12289);    
+  }
+  if (a->min >= 12289) {
+    assert(a->min - 12289 >= 0 && a->max - 12289 <= 12288);
+    return make_interval(a->min - 12289, a->max - 12289);
+  }
+  if (a->min >= 0 && a->max < 12289) {
+    return make_interval(a->min, a->max);
+  }
+  /*
+   * We have either a->min < 0 <= a->max  or a->min < 12289 < a->max.
+   * - correct(-1) is 12288 so
+   *   a->min < 0 < a->max => min(correct(a)) = 0 and max(correct(a)) = 12288
+   * - correct(12289) is 0 so
+   *   a->min < 12289 <= a->max => min(correct(a)) = 0 and max(correct(a)) = 12288
+   */
+  return make_interval(0, 12288);
+}

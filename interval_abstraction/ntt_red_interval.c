@@ -45,6 +45,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <inttypes.h>
+#include <stdlib.h>
 
 #include "ntt_red_interval.h"
 
@@ -137,13 +138,29 @@ void abstract_reduce_array_twice(interval_t **a, uint32_t n) {
 
 /*
  * Convert to integers in the range [0, Q-1] after double reduction.
+ * The correct function is
+ *   if (x < 0) --> x + Q
+ *   if (x >= Q) --> x - Q
+ *   otherwise --> x
+ * So the input must be in the interval [-Q, 2*Q-1] for the function to
+ * produce a number in [0, Q-1].
+ *
+ * This function checks the pre-condition.
  */
 void abstract_correct(interval_t **a, uint32_t n) {
+  interval_t *x;
   uint32_t i;
 
   for (i=0; i<n; i++) {
-    delete_interval(a[i]);
-    a[i] = interval(0, 12288);
+    x = a[i];
+    if (x->min < -12289 || x->max >= 2*12289) {
+      fprintf(stderr, "Invalid input to correct: a[%"PRIu32"] in [%"PRId64", %"PRId64"]\n", i, x->min, x->max);
+      fprintf(stderr, "  valid input must be in [-12289, 24577]\n");
+      fprintf(stderr, "\n");
+      abort();
+    }
+    a[i] = correct(x);
+    delete_interval(x);
   }
 }
 
@@ -210,7 +227,7 @@ void abstract_scalar_mul_reduce_array(interval_t **a, uint32_t n, int32_t c) {
 
 
 /*
- * Print intervals
+ * Print intervals & check overflow
  */
 static void show_intervals(const char *prefix, uint32_t loop_counter, interval_t **a, uint32_t n) {
   uint32_t i;

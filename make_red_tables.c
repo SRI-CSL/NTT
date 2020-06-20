@@ -146,12 +146,24 @@ static bool is_primitive_root(uint32_t x, uint32_t n, uint32_t q) {
 /*
  * Factor for final scaling: inv_k^8 * inv_n
  */
-static uint32_t rescale_factor(uint32_t inv_n, uint32_t inv_k, uint32_t q) {
+static uint32_t rescale_factor8(uint32_t inv_n, uint32_t inv_k, uint32_t q) {
   uint32_t s;
 
   s = power(inv_k, 8, q);
   return (s * inv_n) % q;
 }
+
+/*
+ * Factor for final scaling: inv_k^6 * inv_n
+ */
+static uint32_t rescale_factor6(uint32_t inv_n, uint32_t inv_k, uint32_t q) {
+  uint32_t s;
+
+  s = power(inv_k, 6, q);
+  return (s * inv_n) % q;
+}
+
+
 
 /*
  * Store a[i] = (x * y^i) mod q for i=0 to n-1
@@ -300,13 +312,15 @@ static void print_declarations(FILE *f, parameters_t *p) {
   print_param_def(f, "inv_omega", n, p->inv_phi);
   print_param_def(f, "inv_n", n, p->inv_n);
   print_param_def(f, "inv_k", n, p->inv_k);
-  print_param_def(f, "rescale", n, rescale_factor(p->inv_n, p->inv_k, p->q));
+  print_param_def(f, "rescale8", n, rescale_factor8(p->inv_n, p->inv_k, p->q));
+  print_param_def(f, "rescale6", n, rescale_factor6(p->inv_n, p->inv_k, p->q));
   fprintf(f, "\n");
 
   print_comment(f, "POWERS OF PSI");
   print_table_decl(f, "psi_powers", n);
   print_table_decl(f, "inv_psi_powers", n);
   print_table_decl(f, "scaled_inv_psi_powers", n);
+  print_table_decl(f, "scaled_inv_psi_powers_var", n);
   fprintf(f, "\n");
 
   print_comment(f, "TABLES FOR NTT COMPUTATION");
@@ -353,9 +367,13 @@ static void print_tables(FILE *f, parameters_t *p) {
   print_table(f, "inv_psi_powers", table, n, q);
 
   // scaled table: powers of inv_psi * inverse(n) * inverse(k)^8
-  s = rescale_factor(p->inv_n, p->inv_k, q);
+  s = rescale_factor8(p->inv_n, p->inv_k, q);
   build_power_table(table, n, q, s, p->inv_psi);
   print_table(f, "scaled_inv_psi_powers", table, n, q);
+  // variant: powers of inv_psi * inverse(n) * inverse(k)^6
+  s = rescale_factor6(p->inv_n, p->inv_k, q);
+  build_power_table(table, n, q, s, p->inv_psi);
+  print_table(f, "scaled_inv_psi_powers_var", table, n, q);
 
   // NTT tables
   build_table(table, n, q, 1, p->phi, p->inv_k);
