@@ -123,7 +123,7 @@ void ntt_red512_product5(int32_t *c, int32_t *a, int32_t *b) {
   reduce_array_twice(c, 512);  // c[i] = 9 * c[i] mod Q
 
   inttmul_red512_gs_rev2std(c);
-  scalar_mul_reduce_array(c, 512, ntt_red512_rescale);
+  scalar_mul_reduce_array(c, 512, ntt_red512_rescale8);
   reduce_array_twice(c, 512);
   correct(c, 512);
 }

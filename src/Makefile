@@ -3,7 +3,7 @@
 # is not declared in <stdlib.h>
 #
 
-CC=clang
+CC?=clang
 CPPFLAGS=-DNDEBUG -D_BSD_SOURCE -DNDEBUG
 CFLAGS=-Wall -std=c99 -O3
 # CFLAGS=-Wall -std=c99 -g
