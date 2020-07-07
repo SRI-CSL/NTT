@@ -15,12 +15,10 @@
  * The result is also in that range.
  */
 void ntt_red1024_product1(int32_t *c, int32_t *a, int32_t *b) {
-  //  shift_array(a, 1024); // convert to [-(Q-1)/2, (Q-1)/2]
   mul_reduce_array16(a, 1024, ntt_red1024_psi_powers);
   ntt_red1024_ct_std2rev(a);
   reduce_array(a, 1024);
 
-  //  shift_array(b, 1024);
   mul_reduce_array16(b, 1024, ntt_red1024_psi_powers);
   ntt_red1024_ct_std2rev(b);
   reduce_array(b, 1024);

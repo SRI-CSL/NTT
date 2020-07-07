@@ -15,12 +15,10 @@
  * The result is also in that range.
  */
 void ntt_red1024_product1_asm(int32_t *c, int32_t *a, int32_t *b) {
-  //  shift_array(a, 1024); // convert to [-(Q-1)/2, (Q-1)/2]
   mul_reduce_array16_asm(a, 1024, ntt_red1024_psi_powers);
   ntt_red1024_ct_std2rev_asm(a);
   reduce_array_asm(a, 1024);
 
-  //  shift_array(b, 1024);
   mul_reduce_array16_asm(b, 1024, ntt_red1024_psi_powers);
   ntt_red1024_ct_std2rev_asm(b);
   reduce_array_asm(b, 1024);
@@ -29,11 +27,11 @@ void ntt_red1024_product1_asm(int32_t *c, int32_t *a, int32_t *b) {
   // a = NTT(a) * 3, -524287 <= a[i] <= 536573
   // b = NTT(b) * 3, -524287 <= b[i] <= 536573
   mul_reduce_array_asm(c, 1024, a, b); // c[i] = 3 * a[i] * b[i] 
-  reduce_array_twice_asm(c, 1024);  // c[i] = 9 * c[i] mod Q
+  //  reduce_array_twice_asm(c, 1024);  // c[i] = 9 * c[i] mod Q
 
   // we have: -130 <= c[i] <= 12413
   intt_red1024_ct_rev2std_asm(c);
-  mul_reduce_array16_asm(c, 1024, ntt_red1024_scaled_inv_psi_powers);
+  mul_reduce_array16_asm(c, 1024, ntt_red1024_scaled_inv_psi_powers_var);
   reduce_array_twice_asm(c, 1024); // c[i] = 9 * c[i] mod Q
   correct_asm(c, 1024);
 }

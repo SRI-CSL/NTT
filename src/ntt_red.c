@@ -145,6 +145,7 @@ void reduce_array_twice(int32_t *a, uint32_t n) {
 
 /*
  * Convert to integers in the range [0, Q-1] after double reduction.
+ * - the input must be in the interval [-Q, 2*Q-1]
  */
 void correct(int32_t *a, uint32_t n) {
   uint32_t i;
@@ -159,7 +160,7 @@ void correct(int32_t *a, uint32_t n) {
 #else
     if (x < 0) {
       x += Q;
-    } else if (x > Q) {
+    } else if (x >= Q) {
       x -= Q;
     }
 #endif
