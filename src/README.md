@@ -14,6 +14,12 @@ respective header files.
 ```
 ntt[16, 256, 512, 1024].[ch]
 ```
+These fixed n versions depend on precomputed tables. Explicitly
+
+* `naive_ntt[16, 256, 512, 1024].c` depends on `ntt[16, 256, 512, 1024]_tables.h`
+
+* `ntt[16, 256, 512, 1024].c` depends on `ntt[16, 256, 512, 1024]_tables.h`
+
 
 For parametric n 
 ```
@@ -37,13 +43,28 @@ ntt_red.[ch]
 ntt_red[16, 256, 512, 11024].[ch]
 ```
 
+* `ntt_red[16, 256, 512, 1024].c` depends on `ntt_red[16, 256, 512, 1024]_tables.h`, `ntt.[ch]`, `ntt_red.[ch]`, 
+and the `bitrev[16, 256, 512, 1024]_table.h`
+
+
+
+
+
 ```
 ntt_red_asm[16, 256, 512, 1024].[ch]
 ```
 
+* `ntt_red_asm[16, 256, 512, 1024].c` depends on `ntt_red[16, 256, 512, 1024]_tables.h`, `ntt.[ch]`, `ntt_asm.[hS]`, `ntt_red.[ch]`, 
+and the `bitrev[16, 256, 512, 1024]_table.h`
+
+
+
 ```
 speed_mul1024[, _naive, _red, _red_asm].c
 ```
+
+
+
 
 
 ## The Tables
@@ -51,4 +72,12 @@ speed_mul1024[, _naive, _red, _red_asm].c
 
 ## The Tests
 
+
+
+Known Answer Tests (kat):
+
+```
+data_poly1024.[ch]
+kat_mul1024[, _red, red_asm].c
+```
 
