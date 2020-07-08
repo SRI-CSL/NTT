@@ -11,7 +11,7 @@ It also includes the analysis of these algorithms.
 
 The repository is organized into three subdirectories:
 
-* [src](https://github.com/SRI-CSL/NTT/tree/master/src/README.md)
+* [src](https://github.com/SRI-CSL/NTT/tree/master/src/README.md) contains a plethora of code implementing the algorithms described in the analysis, and paper.
 
 * analysis 
 
