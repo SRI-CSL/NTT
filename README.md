@@ -1,6 +1,4 @@
-# NTT
-
-## The Number Theoretic Transform
+# The Number Theoretic Transform
 
 The Number Theoretic Transform ([NTT](https://en.wikipedia.org/wiki/Discrete_Fourier_transform_(general)#Number-theoretic_transform)) is an efficient algorithm for
 computing the products of polynomials whose coefficients belong to
