@@ -1,13 +1,13 @@
 # NTT
-The Number Theoretic Transform
 
-The Number Theoretic Transform (NTT) is an efficient algorithm for
+## The Number Theoretic Transform
+
+The Number Theoretic Transform ([NTT](https://en.wikipedia.org/wiki/Discrete_Fourier_transform_(general)#Number-theoretic_transform)) is an efficient algorithm for
 computing the products of polynomials whose coefficients belong to
 a finite field.
 
-This repository contains SRI's various implementations of the NTT (that were developed while 
-implementing the [Bliss: The Lattice Signature Schemes](https://github.com/SRI-CSL/Bliss))
-Bimodal).
+This repository contains SRI's various implementations of the NTT (developed while 
+implementing the [Bliss](https://github.com/SRI-CSL/Bliss)).
 
 It also includes the analysis of these algorithms.
 
