@@ -29,23 +29,20 @@ extern int64_t max_red_mul(int64_t a, int64_t b, int64_t w, int64_t *m);
 extern int64_t min_red_mul(int64_t a, int64_t b, int64_t w, int64_t *m);
 
 /*
- * Maximum of red(w * x) for a <= x <= b and low <= w <= high. 
+ * Maximum of red(w * x) for a <= x <= b and low <= w <= high.
  * - the max is returned. The corresponding x and w are stored in *m and
  * *mw, respectively.
  */
-extern int64_t max_red_mul_interval(int64_t a, int64_t b, int64_t low, int64_t high,
-				    int64_t *m, int64_t *mw);
+extern int64_t max_red_mul_interval(int64_t a, int64_t b, int64_t low, int64_t high, int64_t *m, int64_t *mw);
 
 /*
  * Minimum of red(x * w) for a <= x <= b and low <= w <= high
  */
-extern int64_t min_red_mul_interval(int64_t a, int64_t b, int64_t low, int64_t high,
-				    int64_t *m, int64_t *wm);
-
+extern int64_t min_red_mul_interval(int64_t a, int64_t b, int64_t low, int64_t high, int64_t *m, int64_t *wm);
 
 /*
  * Bounds after a CT step
- * - assuming |x| <= b and |y| <= b, this function returns b' 
+ * - assuming |x| <= b and |y| <= b, this function returns b'
  *   such that |x'| <= b' and |y'| <= b'  after executing
  *      x' = x + red(w * y)
  *      y' = x - red(w * y)

@@ -8,6 +8,9 @@ CPPFLAGS=-DNDEBUG -D_BSD_SOURCE -DNDEBUG
 CFLAGS=-Wall -std=c99 -O3
 # CFLAGS=-Wall -std=c99 -g
 
+# objects needed for the tests in the paper
+obj=intervals.o red_bounds.o ntt_red_interval.o ntt_red1024_tables.o
+
 all: test_ntt test_ntt16 test_ntt256 test_ntt512 test_ntt1024 \
 	test_naive_ntt16 test_naive_ntt256 test_naive_ntt512 test_naive_ntt1024 \
 	kat_mul1024 speed_mul1024 kat_mul1024_red speed_mul1024_red \
@@ -16,6 +19,10 @@ all: test_ntt test_ntt16 test_ntt256 test_ntt512 test_ntt1024 \
 	test_ntt_red test_red_bounds test_avx test_ntt_avx \
 	test_ntt_red_asm16 test_ntt_red_asm256 test_ntt_red_asm512 \
 	test_ntt_red_asm1024
+
+
+paper_tests: ${obj}
+	make -C tests_in_paper
 
 #
 # Utility to generate tables
@@ -32,13 +39,13 @@ make_bitrev_table: make_bitrev_table.c
 #
 # Auto-generated source files
 #
-# 'make_tables <size> <psi>' generates 
+# 'make_tables <size> <psi>' generates
 # ntt<size>_tables.h and ntt<size>_tables.c
 #
-# 'make_red_tables <size> <psi>' generates 
+# 'make_red_tables <size> <psi>' generates
 # ntt_red<size>_tables.h and ntt_red<size>_tables.c
 #
-# 'make_bitrev_table <size>' generates 
+# 'make_bitrev_table <size>' generates
 # bitrev<size>_table.h and bitrev<size>_table.c
 #
 ntt16_tables.h ntt16_tables.c: make_tables
@@ -102,6 +109,10 @@ ntt_red.o: ntt_red.c ntt_red.h
 ntt_asm.o: ntt_asm.S
 
 red_bounds.o: red_bounds.c red_bounds.h
+
+intervals.o: intervals.c intervals.h
+
+ntt_red_interval.o: ntt_red_interval.c ntt_red_interval.h
 
 
 #
@@ -260,33 +271,33 @@ test_ntt_red.o: test_ntt_red.c ntt_red.h ntt.h test_ntt_red_tables.h sort.h
 
 sort.o: sort.c sort.h
 
-test_ntt16.o: test_ntt16.c ntt.h ntt16.h ntt16_tables.h bitrev16_table.h sort.h 
+test_ntt16.o: test_ntt16.c ntt.h ntt16.h ntt16_tables.h bitrev16_table.h sort.h
 
-test_ntt256.o: test_ntt256.c ntt.h ntt256.h ntt256_tables.h bitrev256_table.h sort.h 
+test_ntt256.o: test_ntt256.c ntt.h ntt256.h ntt256_tables.h bitrev256_table.h sort.h
 
-test_ntt512.o: test_ntt512.c ntt.h ntt512.h ntt512_tables.h bitrev512_table.h sort.h 
+test_ntt512.o: test_ntt512.c ntt.h ntt512.h ntt512_tables.h bitrev512_table.h sort.h
 
-test_ntt1024.o: test_ntt1024.c ntt.h ntt1024.h ntt1024_tables.h bitrev1024_table.h sort.h 
+test_ntt1024.o: test_ntt1024.c ntt.h ntt1024.h ntt1024_tables.h bitrev1024_table.h sort.h
 
-test_ntt_red16.o: test_ntt_red16.c ntt.h ntt_red16.h ntt_red16_tables.h bitrev16_table.h sort.h 
+test_ntt_red16.o: test_ntt_red16.c ntt.h ntt_red16.h ntt_red16_tables.h bitrev16_table.h sort.h
 
-test_ntt_red256.o: test_ntt_red256.c ntt.h ntt_red256.h ntt_red256_tables.h bitrev256_table.h sort.h 
+test_ntt_red256.o: test_ntt_red256.c ntt.h ntt_red256.h ntt_red256_tables.h bitrev256_table.h sort.h
 
-test_ntt_red512.o: test_ntt_red512.c ntt.h ntt_red512.h ntt_red512_tables.h bitrev512_table.h sort.h 
+test_ntt_red512.o: test_ntt_red512.c ntt.h ntt_red512.h ntt_red512_tables.h bitrev512_table.h sort.h
 
-test_ntt_red1024.o: test_ntt_red1024.c ntt.h ntt_red1024.h ntt_red1024_tables.h bitrev1024_table.h sort.h 
+test_ntt_red1024.o: test_ntt_red1024.c ntt.h ntt_red1024.h ntt_red1024_tables.h bitrev1024_table.h sort.h
 
 test_ntt_red_asm16.o: test_ntt_red_asm16.c ntt.h ntt_red.h ntt_red_asm16.h ntt_red16_tables.h \
-	 bitrev16_table.h sort.h 
+	 bitrev16_table.h sort.h
 
 test_ntt_red_asm256.o: test_ntt_red_asm256.c ntt.h ntt_red.h ntt_red_asm256.h ntt_red256_tables.h \
-	bitrev256_table.h sort.h 
+	bitrev256_table.h sort.h
 
 test_ntt_red_asm512.o: test_ntt_red_asm512.c ntt.h ntt_red.h ntt_red_asm512.h ntt_red512_tables.h \
-	bitrev512_table.h sort.h 
+	bitrev512_table.h sort.h
 
 test_ntt_red_asm1024.o: test_ntt_red_asm1024.c ntt.h ntt_red.h ntt_red_asm1024.h ntt_red1024_tables.h \
-	bitrev1024_table.h sort.h 
+	bitrev1024_table.h sort.h
 
 
 speed_mul1024.o: speed_mul1024.c ntt.h ntt1024.h ntt1024_tables.h sort.h
@@ -316,6 +327,7 @@ test_ntt_avx.o: test_ntt_avx.c ntt_asm.h ntt_red.h test_ntt_red_tables.h sort.h
 # Cleanup
 #
 clean:
+	make -C tests_in_paper clean
 	rm -f *~ *.o
 	rm -f test_ntt test_ntt_red test_red test_mod test_shift \
 	  test_ntt16 test_ntt256 test_ntt512 test_ntt1024 \
