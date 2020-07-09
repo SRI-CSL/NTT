@@ -77,5 +77,11 @@ kat_mul1024[, _red, red_asm].c
 speed_mul1024[, _naive, _red, _red_asm].c
 ```
 
+The tests in the paper can be found in this [subdirectory](https://github.com/SRI-CSL/NTT/tree/master/src/tests_in_paper). To make them one can simply do
+```
+make paper_tests
+```
+in *this* directory (not the subdirectory).
+
 
 
