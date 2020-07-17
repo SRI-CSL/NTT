@@ -9,10 +9,11 @@ implementing the [Bliss](https://github.com/SRI-CSL/Bliss)).
 
 It also includes the analysis of these algorithms.
 
-The repository is organized into three subdirectories:
+The repository is organized into three (soon to be existent) subdirectories:
 
 * [src](https://github.com/SRI-CSL/NTT/tree/master/src/README.md) contains a plethora of code implementing the algorithms described in the analysis, and paper.
 
-* analysis 
+* analysis (coming once [Jorge](https://github.com/caballa) gets back from maternity leave).
 
-* paper
+* [paper](https://github.com/SRI-CSL/NTT/blob/master/paper/main_final.pdf) contains the conference version of the paper, describing the source and 
+analysis.
