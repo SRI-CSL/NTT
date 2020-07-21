@@ -15,5 +15,5 @@ The repository is organized into three (soon to be existent) subdirectories:
 
 * analysis (coming once [Jorge](https://github.com/caballa) gets back from maternity leave).
 
-* [paper](https://github.com/SRI-CSL/NTT/blob/master/paper/main_final.pdf) contains the conference version of the paper, describing the source and 
-analysis.
+* [paper](https://github.com/SRI-CSL/NTT/blob/master/paper/main_final.pdf) contains the [VSTTE20 conference](https://sri-csl.github.io/VSTTE20/) version of the paper, describing the source and 
+analysis, as well as the slides from the conference talk.
