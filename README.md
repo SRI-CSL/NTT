@@ -13,7 +13,7 @@ The repository is organized into three (soon to be existent) subdirectories:
 
 * [src](https://github.com/SRI-CSL/NTT/tree/master/src/README.md) contains a plethora of code implementing the algorithms described in the analysis, and paper.
 
-* analysis (coming once [Jorge](https://github.com/caballa) gets back from maternity leave).
+* analysis (coming soon, or file an issue, we will respond).
 
 * [paper](https://github.com/SRI-CSL/NTT/blob/master/paper/main_final.pdf) contains the [VSTTE20 conference](https://sri-csl.github.io/VSTTE20/) version of the paper, describing the source and 
 analysis, as well as the [slides](https://github.com/SRI-CSL/NTT/blob/master/paper/slides.pdf) from the conference talk.
