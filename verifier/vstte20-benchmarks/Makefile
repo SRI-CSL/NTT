@@ -36,70 +36,71 @@ GET_BC=get-bc
 
 all: intt_red1024 intt_red1024b ntt_red1024 ntt_red1024b ntt_red1024c ntt_red1024d ntt_red1024e ntt_red1024f
 
+
 intt_red1024: ntt_red1024_tables.o ntt_red.o 
-	$(CC) ${CFLAGS} -c -emit-llvm harness_intt_red1024.c 
+	clang ${CFLAGS} -c -emit-llvm harness_intt_red1024.c 
 	$(GET_BC) ntt_red1024_tables.o
 	$(GET_BC) ntt_red.o
 	$(LINKER) --override harness_intt_red1024.bc \
-		.ntt_red1024_tables.o.bc \
-		.ntt_red.o.bc -o harness_intt_red1024.all_linked.bc
+		ntt_red1024_tables.o.bc \
+		ntt_red.o.bc -o harness_intt_red1024.all_linked.bc
 
 intt_red1024b: ntt_red1024_tables.o ntt_red.o 
-	$(CC) ${CFLAGS} -c -emit-llvm harness_intt_red1024b.c
+	clang ${CFLAGS} -c -emit-llvm harness_intt_red1024b.c
 	$(GET_BC) ntt_red1024_tables.o
 	$(GET_BC) ntt_red.o
 	$(LINKER) --override harness_intt_red1024b.bc \
-		.ntt_red1024_tables.o.bc \
-		.ntt_red.o.bc -o harness_intt_red1024b.all_linked.bc
+		ntt_red1024_tables.o.bc \
+		ntt_red.o.bc -o harness_intt_red1024b.all_linked.bc
 
 ntt_red1024: ntt_red1024_tables.o ntt_red.o 
-	$(CC) ${CFLAGS} -c -emit-llvm harness_ntt_red1024.c
+	clang ${CFLAGS} -c -emit-llvm harness_ntt_red1024.c
 	$(GET_BC) ntt_red1024_tables.o
 	$(GET_BC) ntt_red.o
 	$(LINKER) --override harness_ntt_red1024.bc \
-		.ntt_red1024_tables.o.bc \
-		.ntt_red.o.bc -o harness_ntt_red1024.all_linked.bc
+		ntt_red1024_tables.o.bc \
+		ntt_red.o.bc -o harness_ntt_red1024.all_linked.bc
 
 ntt_red1024b: ntt_red1024_tables.o ntt_red.o 
-	$(CC) ${CFLAGS} -c -emit-llvm harness_ntt_red1024b.c
+	clang ${CFLAGS} -c -emit-llvm harness_ntt_red1024b.c
 	$(GET_BC) ntt_red1024_tables.o
 	$(GET_BC) ntt_red.o
 	$(LINKER) --override harness_ntt_red1024b.bc \
-		.ntt_red1024_tables.o.bc \
-		.ntt_red.o.bc -o harness_ntt_red1024b.all_linked.bc
+		ntt_red1024_tables.o.bc \
+		ntt_red.o.bc -o harness_ntt_red1024b.all_linked.bc
 
 ntt_red1024c: ntt_red1024_tables.o ntt_red.o 
-	$(CC) ${CFLAGS} -c -emit-llvm harness_ntt_red1024c.c
+	clang ${CFLAGS} -c -emit-llvm harness_ntt_red1024c.c
 	$(GET_BC) ntt_red1024_tables.o
 	$(GET_BC) ntt_red.o
 	$(LINKER) --override harness_ntt_red1024c.bc \
-		.ntt_red1024_tables.o.bc \
-		.ntt_red.o.bc -o harness_ntt_red1024c.all_linked.bc
+		ntt_red1024_tables.o.bc \
+		ntt_red.o.bc -o harness_ntt_red1024c.all_linked.bc
 
 
 ntt_red1024d: ntt_red1024_tables.o ntt_red.o 
-	$(CC) ${CFLAGS} -c -emit-llvm harness_ntt_red1024d.c
+	clang ${CFLAGS} -c -emit-llvm harness_ntt_red1024d.c
 	$(GET_BC) ntt_red1024_tables.o
 	$(GET_BC) ntt_red.o
 	$(LINKER) --override harness_ntt_red1024d.bc \
-		.ntt_red1024_tables.o.bc \
-		.ntt_red.o.bc -o harness_ntt_red1024d.all_linked.bc
+		ntt_red1024_tables.o.bc \
+		ntt_red.o.bc -o harness_ntt_red1024d.all_linked.bc
 
 ntt_red1024e: ntt_red1024_tables.o ntt_red.o 
-	$(CC) ${CFLAGS} -c -emit-llvm harness_ntt_red1024e.c
+	clang ${CFLAGS} -c -emit-llvm harness_ntt_red1024e.c
 	$(GET_BC) ntt_red1024_tables.o
 	$(GET_BC) ntt_red.o
 	$(LINKER) --override harness_ntt_red1024e.bc \
-		.ntt_red1024_tables.o.bc \
-		.ntt_red.o.bc -o harness_ntt_red1024e.all_linked.bc
+		ntt_red1024_tables.o.bc \
+		ntt_red.o.bc -o harness_ntt_red1024e.all_linked.bc
 
 ntt_red1024f: ntt_red1024_tables.o ntt_red.o 
-	$(CC) ${CFLAGS} -c -emit-llvm harness_ntt_red1024f.c
+	clang ${CFLAGS} -c -emit-llvm harness_ntt_red1024f.c
 	$(GET_BC) ntt_red1024_tables.o
 	$(GET_BC) ntt_red.o
 	$(LINKER) --override harness_ntt_red1024f.bc \
-		.ntt_red1024_tables.o.bc \
-		.ntt_red.o.bc -o harness_ntt_red1024f.all_linked.bc
+		ntt_red1024_tables.o.bc \
+		ntt_red.o.bc -o harness_ntt_red1024f.all_linked.bc
 
 #
 # Utility to generate tables
