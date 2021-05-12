@@ -1,0 +1,40 @@
+#!/bin/bash
+
+VERIFY=./verify.sh
+make realclean
+make all
+make install INSTALL_DIR=./bitcode
+
+echo "=== Verifying harness_intt_red1024.all_linked.bc ==="
+time $VERIFY ./bitcode/harness_intt_red1024.all_linked.bc
+echo "=== Verifying harness_intt_red1024b.all_linked.bc ==="
+time $VERIFY ./bitcode/harness_intt_red1024b.all_linked.bc
+echo "=== Verifying harness_ntt_red1024.all_linked.bc ==="
+time $VERIFY ./bitcode/harness_ntt_red1024.all_linked.bc
+echo "=== Verifying harness_ntt_red1024b.all_linked.bc ==="
+time $VERIFY ./bitcode/harness_ntt_red1024b.all_linked.bc
+echo "=== Verifying harness_ntt_red1024c.all_linked.bc ==="
+time $VERIFY ./bitcode/harness_ntt_red1024c.all_linked.bc
+echo "=== Verifying harness_ntt_red1024d.all_linked.bc ==="
+time $VERIFY ./bitcode/harness_ntt_red1024d.all_linked.bc
+echo "=== Verifying harness_ntt_red1024e.all_linked.bc ==="
+time $VERIFY ./bitcode/harness_ntt_red1024e.all_linked.bc
+echo "=== Verifying harness_ntt_red1024f.all_linked.bc ==="
+time $VERIFY ./bitcode/harness_ntt_red1024f.all_linked.bc
+
+echo "=== Verifying harness_intt_red1024.all_linked.bc with inlining ==="
+time $VERIFY --inline ./bitcode/harness_intt_red1024.all_linked.bc
+echo "=== Verifying harness_intt_red1024b.all_linked.bc with inlining ==="
+time $VERIFY --inline ./bitcode/harness_intt_red1024b.all_linked.bc
+echo "=== Verifying harness_ntt_red1024.all_linked.bc with inlining ==="
+time $VERIFY --inline ./bitcode/harness_ntt_red1024.all_linked.bc
+echo "=== Verifying harness_ntt_red1024b.all_linked.bc with inlining ==="
+time $VERIFY --inline ./bitcode/harness_ntt_red1024b.all_linked.bc
+echo "=== Verifying harness_ntt_red1024c.all_linked.bc with inlining ==="
+time $VERIFY --inline ./bitcode/harness_ntt_red1024c.all_linked.bc
+echo "=== Verifying harness_ntt_red1024d.all_linked.bc with inlining ==="
+time $VERIFY --inline ./bitcode/harness_ntt_red1024d.all_linked.bc
+echo "=== Verifying harness_ntt_red1024e.all_linked.bc with inlining ==="
+time $VERIFY --inline ./bitcode/harness_ntt_red1024e.all_linked.bc
+echo "=== Verifying harness_ntt_red1024f.all_linked.bc with inlining ==="
+time $VERIFY --inline ./bitcode/harness_ntt_red1024f.all_linked.bc
