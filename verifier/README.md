@@ -1,5 +1,6 @@
 # Requirements #
 
+- Install [cmake](https://cmake.org/) >= 3.13 
 - Install [llvm 11](https://releases.llvm.org/download.html)
 - Install [gllvm](https://github.com/SRI-CSL/gllvm)
 - Install [gmp](https://gmplib.org/)
