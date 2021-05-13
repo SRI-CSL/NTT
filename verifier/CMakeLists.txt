@@ -43,11 +43,15 @@ else()
 endif ()
 
 ## Llvm  
-find_package (LLVM 11.1 CONFIG)
+find_package (LLVM 11 QUIET CONFIG)
+if (NOT LLVM_FOUND)
+  find_package (LLVM 11.1 CONFIG)
+endif()
+
 if (NOT LLVM_FOUND)
   message (FATAL_ERROR
     "No llvm 11 found. If you installed it in a non-standard location "
-    " then set LLVM_DIR=<path>/lib/cmake/llvm")
+    " then set -DLLVM_DIR=<path>/lib/cmake/llvm")
 else()
   message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
   message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
