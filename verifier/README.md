@@ -2,7 +2,7 @@
 
 - Install [cmake](https://cmake.org/) >= 3.13 
 - Install [llvm 11](https://releases.llvm.org/download.html)
-- Install [gllvm](https://github.com/SRI-CSL/gllvm)
+- Install [gllvm](https://github.com/SRI-CSL/gllvm) >= 1.3.0
 - Install [gmp](https://gmplib.org/)
 - Install [boost](https://www.boost.org/) >= 1.65
 
