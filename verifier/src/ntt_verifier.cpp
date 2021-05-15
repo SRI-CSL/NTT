@@ -35,8 +35,6 @@
 #include "crab/domains/array_adaptive.hpp"
 #include "ntt_intervals.hpp"
 
-#include <fstream>
-
 using namespace clam;
 using namespace llvm;
 
@@ -76,9 +74,6 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   
-  std::ifstream source;
-  source.open(argv[1]);
-
   //////////////////////////////////////  
   // Get module from LLVM file
   //////////////////////////////////////  
