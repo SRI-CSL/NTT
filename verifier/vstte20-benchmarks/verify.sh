@@ -57,9 +57,9 @@ if [ "${NTTVERIFIER}" == "" ]; then
 fi    
 
 ### Clam preprocessor
-CLAMPP_OPTS="--simplifycfg-sink-common=false --crab-devirt --devirt-resolver=sea-dsa --sea-dsa-type-aware=true"
+CLAMPP_OPTS="--simplifycfg-sink-common=false --clam-devirt --devirt-resolver=sea-dsa --sea-dsa-type-aware=true"
 if [ ${INLINE} == true ] ; then
-CLAMPP_OPTS="${CLAMPP_OPTS} --crab-inline-all" 
+CLAMPP_OPTS="${CLAMPP_OPTS} --clam-inline-all" 
 fi    
 ${CLAMPP} ${FILE} ${CLAMPP_OPTS} -o ${FILE}.pp.bc
 ### Static loop unrolling
