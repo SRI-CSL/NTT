@@ -33,6 +33,7 @@
 
 // Abstract domains
 #include "crab/domains/array_adaptive.hpp"
+#include "crab/domains/abstract_domain_params.hpp"
 #include "ntt_intervals.hpp"
 
 using namespace clam;
@@ -43,26 +44,9 @@ namespace CrabDomain {
 constexpr Type NTT_INTERVALS(1, "ntt-intervals", "ntt-intervals", false, false);  
 } //end CrabDomain
 
-class ArrayAdaptParams {
-public:
-  /* options for array smashing */
-  enum { is_smashable = 0 };
-  enum { smash_at_nonzero_offset = 0 };
-  enum { max_smashable_cells = 1024 };
-  /* options for array expansion */
-  enum { max_array_size = 1024 };
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wenum-compare"
-  static_assert(
-      max_array_size <= max_smashable_cells,
-      "max_array_size must be less or equal than max_smashable_cells");
-#pragma GCC diagnostic pop
-};
-
 using ntt_interval_domain_t = ntt_verifier::ntt_interval_domain<number_t, varname_t>;
 using array_ntt_interval_domain_t =
-  crab::domains::array_adaptive_domain<ntt_interval_domain_t, ArrayAdaptParams>;
+  crab::domains::array_adaptive_domain<ntt_interval_domain_t>;
 REGISTER_DOMAIN(CrabDomain::NTT_INTERVALS, array_ntt_interval_domain_t)    
 } //end clam
 
@@ -155,6 +139,12 @@ int main(int argc, char *argv[]) {
   aparams.check = clam::CheckerKind::ASSERTION;
   // disable Clam/Crab warnings
   crab::CrabEnableWarningMsg(false);
+  // set parameters of the array adaptive domain
+  crab::domains::array_adaptive_domain_params p(false/*is_smashable*/,
+						false/*smash_at_nonzero_offset*/,
+						1024/*max_smashable_cells*/,
+						1024/*max_array_size*/);
+  crab::domains::crab_domain_params_man::get().update_params(p);
   
   /// Create an inter-analysis instance 
   InterGlobalClam ga(*module, man);
