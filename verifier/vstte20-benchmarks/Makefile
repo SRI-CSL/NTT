@@ -14,6 +14,9 @@ LINKER=llvm-link
 INSTALL=install
 INSTALL_DIR=.
 
+PROCESSOR=$(shell uname -p)
+OS=$(shell uname -s)
+
 #CPPFLAGS=-DNDEBUG -D_BSD_SOURCE -DNDEBUG 
 CFLAGS=-Wall -std=c99 -Wno-nullability-completeness
 #export CGO_CPPFLAGS="-Wno-error -Wno-nullability-completeness -Wno-expansion-to-defined"
@@ -21,7 +24,15 @@ CFLAGS=-Wall -std=c99 -Wno-nullability-completeness
 # Disable here optimization. Clam has its own version of the LLVM
 # optimization "opt".
 #CFLAGS += -O1
-CFLAGS += -m64 -O0 -Xclang -disable-O0-optnone # avoid add optnone
+CFLAGS += -m64 
+ifeq ($(PROCESSOR), arm)
+ifeq ($(OS), Darwin)
+CFLAGS += -arch arm64
+# To find -lSystem
+LDFLAGS += -L $(shell xcrun --show-sdk-path)/usr/lib
+endif 
+endif
+CFLAGS += -O0 -Xclang -disable-O0-optnone # avoid add optnone
 # Clam does not like vector operations
 CFLAGS += -fno-vectorize -fno-slp-vectorize
 
@@ -114,7 +125,7 @@ ntt_red1024f: ntt_red1024_tables.o ntt_red.o
 # Utility to generate tables
 #
 make_red_tables: make_red_tables.c
-	$(CC) $(CFLAGS) -Wall -o make_red_tables make_red_tables.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o make_red_tables make_red_tables.c
 
 ntt_red1024_tables.h ntt_red1024_tables.c: make_red_tables
 	./make_red_tables 1024 1014
