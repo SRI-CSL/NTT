@@ -28,6 +28,7 @@ CFLAGS += -m64
 ifeq ($(PROCESSOR), arm)
 ifeq ($(OS), Darwin)
 CFLAGS += -arch arm64
+CFLAGS += -isysroot $(shell xcrun --show-sdk-path)
 # To find -lSystem
 LDFLAGS += -L $(shell xcrun --show-sdk-path)/usr/lib
 endif 
