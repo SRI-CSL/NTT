@@ -65,6 +65,7 @@ public:
 
   void operator-=(const variable_t &v) override;
   interval_t operator[](const variable_t &v) override;
+  interval_t at(const variable_t &v) const override;  
   void operator+=(const linear_constraint_system_t &csts) override;
   void assign(const variable_t &x, const linear_expression_t &e) override;
   void apply(crab::domains::arith_operation_t op, const variable_t &x,

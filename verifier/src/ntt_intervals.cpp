@@ -101,6 +101,12 @@ ntt_interval_domain<N,V>::operator[](const variable_t &v)  {
 }
 
 template <typename N, typename V>  
+typename ntt_interval_domain<N,V>::interval_t
+ntt_interval_domain<N,V>::at(const variable_t &v) const {
+  return m_inv.at(v);
+}
+
+template <typename N, typename V>  
 void ntt_interval_domain<N,V>::operator+=(const linear_constraint_system_t &csts)  {
   crab::CrabStats::count(domain_name() + ".count.add_constraints");
   crab::ScopedCrabStats __st__(domain_name() + ".add_constraints");
