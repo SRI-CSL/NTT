@@ -60,7 +60,7 @@ public:
   ntt_interval_domain_t operator||(const ntt_interval_domain_t &o) const override;
   ntt_interval_domain_t widening_thresholds(
       const ntt_interval_domain_t &o,
-      const crab::iterators::thresholds<number_t> &ts) const override;
+      const crab::thresholds<number_t> &ts) const override;
   ntt_interval_domain_t operator&&(const ntt_interval_domain_t &o) const override;
 
   void operator-=(const variable_t &v) override;

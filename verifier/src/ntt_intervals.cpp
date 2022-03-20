@@ -74,7 +74,7 @@ ntt_interval_domain<N,V> ntt_interval_domain<N,V>::operator||(const ntt_interval
 template <typename N, typename V>
 ntt_interval_domain<N,V> ntt_interval_domain<N,V>::widening_thresholds(
       const ntt_interval_domain<N,V> &o,
-      const crab::iterators::thresholds<number_t> &ts) const  {
+      const crab::thresholds<number_t> &ts) const  {
   crab::CrabStats::count(domain_name() + ".count.widening");
   crab::ScopedCrabStats __st__(domain_name() + ".widening");
   return m_inv.widening_thresholds(o.m_inv, ts);
