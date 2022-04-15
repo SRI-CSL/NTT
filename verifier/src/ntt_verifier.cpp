@@ -47,9 +47,13 @@ constexpr Type NTT_INTERVALS(1, "ntt-intervals", "ntt-intervals", false, false);
 using ntt_interval_domain_t = ntt_verifier::ntt_interval_domain<number_t, varname_t>;
 using array_ntt_interval_domain_t =
   crab::domains::array_adaptive_domain<ntt_interval_domain_t>;
-REGISTER_DOMAIN(CrabDomain::NTT_INTERVALS, array_ntt_interval_domain_t)    
 } //end clam
 
+static void registerDomain() {
+  auto &map = DomainRegistry::getFactoryMap();		
+  clam::clam_abstract_domain val(std::move(clam::array_ntt_interval_domain_t()));	
+  map.insert({clam::CrabDomain::NTT_INTERVALS, val});	       
+}
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
@@ -145,8 +149,8 @@ int main(int argc, char *argv[]) {
 						1024/*max_smashable_cells*/,
 						1024/*max_array_size*/);
   crab::domains::crab_domain_params_man::get().update_params(p);
-  
-  /// Create an inter-analysis instance 
+  /// Create an inter-analysis instance
+  registerDomain(); // register the domain before creating an InterGlobalClam instance  
   InterGlobalClam ga(*module, man);
   /// Run the Crab analysis
   ClamGlobalAnalysis::abs_dom_map_t assumptions;
