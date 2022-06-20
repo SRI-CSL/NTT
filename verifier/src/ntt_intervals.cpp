@@ -49,7 +49,14 @@ void ntt_interval_domain<N,V>::operator|=(const ntt_interval_domain<N,V> &o)  {
   crab::ScopedCrabStats __st__(domain_name() + ".join");
   m_inv = m_inv | o.m_inv;
 }
-  
+
+template <typename N, typename V>  
+void ntt_interval_domain<N,V>::operator&=(const ntt_interval_domain<N,V> &o)  {
+  crab::CrabStats::count(domain_name() + ".count.meet");
+  crab::ScopedCrabStats __st__(domain_name() + ".meet");
+  m_inv = m_inv & o.m_inv;
+}
+
 template <typename N, typename V>  
 ntt_interval_domain<N,V> ntt_interval_domain<N,V>::operator|(const ntt_interval_domain<N,V> &o) const  {
   crab::CrabStats::count(domain_name() + ".count.join");

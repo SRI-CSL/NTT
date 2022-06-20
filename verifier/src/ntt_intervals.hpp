@@ -55,6 +55,7 @@ public:
 
   bool operator<=(const ntt_interval_domain_t &o) const override;
   void operator|=(const ntt_interval_domain_t &o) override;
+  void operator&=(const ntt_interval_domain_t &o) override;  
   ntt_interval_domain_t operator|(const ntt_interval_domain_t &o) const override;
   ntt_interval_domain_t operator&(const ntt_interval_domain_t &o) const override;
   ntt_interval_domain_t operator||(const ntt_interval_domain_t &o) const override;
