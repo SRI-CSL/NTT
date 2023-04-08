@@ -192,6 +192,17 @@ void ntt_interval_domain<N,V>::intrinsic(std::string name,
   }  
 }
 
+
+template <typename N, typename V>    
+bool ntt_interval_domain<N,V>::entails(const linear_constraint_t &cst) const {
+  return m_inv.entails(cst);
+}
+
+template <typename N, typename V>      
+void ntt_interval_domain<N,V>::weak_assign(const variable_t &x, const linear_expression_t &e) {
+  m_inv.weak_assign(x, e);
+}
+
 template <typename N, typename V>  
 void ntt_interval_domain<N,V>::backward_intrinsic(std::string name,
 					     const variable_or_constant_vector_t &inputs,

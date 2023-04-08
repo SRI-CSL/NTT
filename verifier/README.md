@@ -8,19 +8,13 @@
 
 # Compilation and Installation #
 
-```
-mkdir build && cd build
-cmake ..
-cmake --build . --target clam-seadsa && cmake ..
-cmake --build . --target clam-seallvm && cmake ..
-cmake --build . --target ntt-clam && cmake ..
-cmake --build . --target crab && cmake ..
-cmake --build . --target install
+``` bash
+./install.sh
 ```
 
 # Run VSTTE 2020 programs #
 
-```
+``` bash
 cd vstte20-benchmarks
 ./verify_all
 

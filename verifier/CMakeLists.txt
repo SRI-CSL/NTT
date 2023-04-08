@@ -88,12 +88,14 @@ endif()
 ##------------------------------------------------------------------##
 #       Clam and its requirements (sea-dsa and llvm-seahorn)
 ##------------------------------------------------------------------##
+set(CRAB_SOURCE_DIR    "${CMAKE_SOURCE_DIR}/clam/crab" CACHE STRING "crab source directory" FORCE)
 set(CLAM_SOURCE_DIR    "${CMAKE_SOURCE_DIR}/clam" CACHE STRING "clam source directory" FORCE)
 set(SEADSA_SOURCE_DIR  "${CMAKE_SOURCE_DIR}/clam-ext/sea-dsa" CACHE STRING "sea-dsa source directory" FORCE)
 set(SEALLVM_SOURCE_DIR "${CMAKE_SOURCE_DIR}/clam-ext/llvm-seahorn" CACHE STRING "llvm-seahorn source directory" FORCE)
 
 find_package(Git)
 if (GIT_FOUND)
+  set(CRAB_REPO "https://github.com/seahorn/crab" CACHE STRING "crab repo")  
   set(CLAM_REPO "https://github.com/seahorn/crab-llvm" CACHE STRING "clam repo")
   set(SEADSA_REPO "https://github.com/seahorn/sea-dsa" CACHE STRING "sea-dsa repo")
   set(SEALLVM_REPO "https://github.com/seahorn/llvm-seahorn" CACHE STRING "llvm-seahorn repo")
@@ -102,12 +104,14 @@ if (GIT_FOUND)
     ${GIT_EXECUTABLE} clone -b dev11 ${SEADSA_REPO} ${SEADSA_SOURCE_DIR})
   add_custom_target(seahorn-llvm-git
     ${GIT_EXECUTABLE} clone -b dev11 ${SEALLVM_REPO} ${SEALLVM_SOURCE_DIR})
+  add_custom_target(crab-ntt-git
+    ${GIT_EXECUTABLE} clone -b ntt ${CRAB_REPO} ${CRAB__SOURCE_DIR})  
   add_custom_target(clam-git 
     ${GIT_EXECUTABLE} clone -b dev11 ${CLAM_REPO} ${CLAM_SOURCE_DIR})
   
   add_custom_target(clam-seallvm DEPENDS seahorn-llvm-git)
   add_custom_target(clam-seadsa  DEPENDS sea-dsa-git )  
-  add_custom_target(ntt-clam    DEPENDS clam-git)
+  add_custom_target(ntt-clam    DEPENDS clam-git crab-ntt-git)
 else()
   message (FATAL_ERROR "Clam cannot be downloaded because git is not found")
 endif()

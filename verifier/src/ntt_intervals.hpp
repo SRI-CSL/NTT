@@ -84,7 +84,9 @@ public:
   void intrinsic(std::string name,
 		 const variable_or_constant_vector_t &inputs,
                  const variable_vector_t &outputs) override; 
-    
+  bool entails(const linear_constraint_t &cst) const override;
+  void weak_assign(const variable_t &x, const linear_expression_t &e) override;  
+
   void backward_assign(const variable_t &x, const linear_expression_t &e,
                        const ntt_interval_domain_t &inv) override;
   void backward_apply(crab::domains::arith_operation_t op, const variable_t &x,
