@@ -105,7 +105,7 @@ if (GIT_FOUND)
   add_custom_target(seahorn-llvm-git
     ${GIT_EXECUTABLE} clone -b dev11 ${SEALLVM_REPO} ${SEALLVM_SOURCE_DIR})
   add_custom_target(crab-ntt-git
-    ${GIT_EXECUTABLE} clone -b ntt ${CRAB_REPO} ${CRAB__SOURCE_DIR})  
+    ${GIT_EXECUTABLE} clone -b v2.0 ${CRAB_REPO} ${CRAB__SOURCE_DIR})  
   add_custom_target(clam-git 
     ${GIT_EXECUTABLE} clone -b dev11 ${CLAM_REPO} ${CLAM_SOURCE_DIR})
   
