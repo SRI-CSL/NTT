@@ -2,9 +2,11 @@
 # -D_BSD_SOURCE is needed on Linux otherwise random()
 # is not declared in <stdlib.h>
 #
+# Update: BSD_SOURCE is deprecated: use _DEFAULT_SOURCE instead
+#
 
 CC?=clang
-CPPFLAGS=-DNDEBUG -D_BSD_SOURCE -DNDEBUG
+CPPFLAGS=-DNDEBUG -D_DEFAULT_SOURCE
 CFLAGS=-Wall -std=c99 -O3
 # CFLAGS=-Wall -std=c99 -g
 
@@ -278,6 +280,14 @@ test_ntt256.o: test_ntt256.c ntt.h ntt256.h ntt256_tables.h bitrev256_table.h so
 test_ntt512.o: test_ntt512.c ntt.h ntt512.h ntt512_tables.h bitrev512_table.h sort.h
 
 test_ntt1024.o: test_ntt1024.c ntt.h ntt1024.h ntt1024_tables.h bitrev1024_table.h sort.h
+
+test_naive_ntt16.o: test_naive_ntt16.c naive_ntt.h naive_ntt16.h ntt16_tables.h bitrev16_table.h sort.h
+
+test_naive_ntt256.o: test_naive_ntt256.c naive_ntt.h naive_ntt256.h ntt256_tables.h bitrev256_table.h sort.h
+
+test_naive_ntt512.o: test_naive_ntt512.c naive_ntt.h naive_ntt512.h ntt512_tables.h bitrev512_table.h sort.h
+
+test_naive_ntt1024.o: test_naive_ntt1024.c naive_ntt.h naive_ntt1024.h ntt1024_tables.h bitrev1024_table.h sort.h
 
 test_ntt_red16.o: test_ntt_red16.c ntt.h ntt_red16.h ntt_red16_tables.h bitrev16_table.h sort.h
 
